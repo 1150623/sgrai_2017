@@ -153,46 +153,31 @@ void TimerFunction(int value)
 	{
 		// Get keyboard input
 		//move right
-		if (GetAsyncKeyState(VK_RIGHT) && !GetAsyncKeyState(VK_LEFT)
-			&& (int)myCharacter->y - myCharacter->y > -0.1 && myCharacter->angle != 0)
+		if (GetAsyncKeyState(VK_RIGHT) && !GetAsyncKeyState(VK_LEFT))
 		{
-			if (board->IsOpen(myCharacter->x + 1, myCharacter->y))
-			{
-				myCharacter->animate = true;
-				myCharacter->angle = 0;
-			}
+			if (board->IsOpen(myCharacter->x +1, myCharacter->y))
+				myCharacter->x++;
 		}
 		else
 			//move left
-			if (GetAsyncKeyState(VK_LEFT) && !GetAsyncKeyState(VK_RIGHT)
-				&& (int)myCharacter->y - myCharacter->y > -0.1 && myCharacter->angle != 180)
+			if (GetAsyncKeyState(VK_LEFT) && !GetAsyncKeyState(VK_RIGHT))
 			{
-				if (board->IsOpen(myCharacter->x - 1, myCharacter->y))
-				{
-					myCharacter->animate = true;
-					myCharacter->angle = 180;
-				}
+				if(board->IsOpen(myCharacter->x -1 , myCharacter->y))
+						myCharacter->x--;
 			}
 		//move up
-		if (GetAsyncKeyState(VK_UP) && !GetAsyncKeyState(VK_DOWN)
-			&& (int)myCharacter->x - myCharacter->x > -0.1 && myCharacter->angle != 270)
+		if (GetAsyncKeyState(VK_UP) && !GetAsyncKeyState(VK_DOWN))
 		{
-			if (board->IsOpen(myCharacter->x, myCharacter->y - 1))
-			{
-				myCharacter->animate = true;
-				myCharacter->angle = 270;
-			}
+				if (board->IsOpen(myCharacter->x, myCharacter->y - 1))
+					myCharacter->y--;
+			
 		}
 		else
 			//move down
-			if (GetAsyncKeyState(VK_DOWN) && !GetAsyncKeyState(VK_UP)
-				&& (int)myCharacter->x - myCharacter->x > -0.1 && myCharacter->angle != 90)
+			if (GetAsyncKeyState(VK_DOWN) && !GetAsyncKeyState(VK_UP))
 			{
 				if (board->IsOpen(myCharacter->x, myCharacter->y + 1))
-				{
-					myCharacter->animate = true;
-					myCharacter->angle = 90;
-				}
+					myCharacter->y++;
 			}
 
 	}

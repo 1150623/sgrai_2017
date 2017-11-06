@@ -84,8 +84,9 @@ void desenhaPoligono(GLfloat a[], GLfloat b[], GLfloat c[], GLfloat  d[], GLfloa
 
 void Board::desenhaCubo(){
 
+
+	GLfloat a = 0;
 	GLfloat d = 1;
-	GLfloat a = -d;
 
 	GLfloat vertice0[3] = { a,a,a };
 	GLfloat vertice1[3] = { d,a,a };
@@ -105,12 +106,12 @@ void Board::desenhaCubo(){
 	{ 0.0,0.0,1.0 },
 	{ 1.0,1.0,1.0 } };
 
-	desenhaPoligono(vertice0, vertice3, vertice2, vertice1, cores[1]);
-	desenhaPoligono(vertice1, vertice5, vertice6, vertice2, cores[1]);
-	desenhaPoligono(vertice4, vertice5, vertice6, vertice7, cores[1]);
-	desenhaPoligono(vertice3, vertice7, vertice4, vertice0, cores[1]);
-	desenhaPoligono(vertice7, vertice6, vertice2, vertice3, cores[1]);
-	desenhaPoligono(vertice4, vertice5, vertice1, vertice0, cores[1]);
+	desenhaPoligono(vertice0, vertice3, vertice2, vertice1, cores[0]);
+	desenhaPoligono(vertice1, vertice5, vertice6, vertice2, cores[0]);
+	desenhaPoligono(vertice4, vertice5, vertice6, vertice7, cores[0]);
+	desenhaPoligono(vertice3, vertice7, vertice4, vertice0, cores[0]);
+	desenhaPoligono(vertice7, vertice6, vertice2, vertice3, cores[0]);
+	desenhaPoligono(vertice4, vertice5, vertice1, vertice0, cores[0]);
 
 }
 
@@ -123,7 +124,7 @@ void Board::desenhaParedes() {
 	int i, j;
 	for (i = 0; i < Board::BOARD_X; i++) {
 		for (j = 0; j < Board::BOARD_Y / 2; j++) {
-			glColor3f(0, 0, 1);
+			glColor3f(0.5, 1, 1);
 			glPushMatrix();
 			{
 				glTranslatef(-(float)BOARD_X / 2.0, -(float)BOARD_Y / 2.0, 0);
@@ -149,11 +150,11 @@ void Board::desenhaParedes() {
 	{
 		for (int j = BOARD_Y - 1; j >= BOARD_Y/2; j--)
 		{
-			glColor3f(0, 0, 1);
+			glColor3f(0.5, 1, 1);
 			int call_this = 0;
 			glPushMatrix();
 			{
-				glTranslatef(-(float)BOARD_X / 2.0f, -(float)BOARD_Y / 2.0f, 0);
+				glTranslatef(-(float)BOARD_X / 2.0, -(float)BOARD_Y / 2.00, 0);
 				glTranslatef(j, BOARD_Y - i, 0);
 				glPushMatrix();
 				{
@@ -164,10 +165,12 @@ void Board::desenhaParedes() {
 							glPushMatrix(); {
 								Board::desenhaCubo();
 							}glPopMatrix();
+							glutPostRedisplay();
 							break;
 						case 0:
 							break;
 					}
+
 				}
 				glPopMatrix();
 			}

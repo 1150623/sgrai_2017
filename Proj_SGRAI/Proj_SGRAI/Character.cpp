@@ -40,7 +40,7 @@ void
 Character::Draw(void)
 {
 	//draw current Character
-	glColor3f(1.0, 1.0, 0.0);	//YELLOW
+	glColor3f(1.0, 0.25, 0.25);	
 	glPushMatrix();
 	{
 		glTranslatef(Character::x, -Character::y, 0);
