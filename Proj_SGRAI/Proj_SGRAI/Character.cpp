@@ -4,13 +4,14 @@
 #include <GL/glut.h>
 #include <Math.h>
 
-
+float boardScale;
 // Destructor
 Character::~Character(void) {}
 
 //Constructor (inicializa)
-Character::Character(double tx, double ty)
+Character::Character(double tx, double ty, float scale)
 {
+	boardScale = scale;
 	lives = NUM_LIVES;
 	x = tx;
 	y = ty;
@@ -53,8 +54,9 @@ Character::Draw(void)
 	//draw remaining Character lives above the board
 	for (int i = 0; i < lives - 1; i++)
 	{
+		glColor3f(0.4, 0.15, 0.25);
 		glPushMatrix(); {
-			glTranslatef((float)Board::BOARD_X / -2.0 + i * 2, (float)Board::BOARD_Y / 2.0 + 3, 1.0);
+			glTranslatef((float)Board::BOARD_X*boardScale / -2.0 + i * 2, (float)Board::BOARD_Y* boardScale / 2.0 + 3, 1.0);
 			glutSolidSphere(0.5, 10, 10);
 		}
 		glPopMatrix();

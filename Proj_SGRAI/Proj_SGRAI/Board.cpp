@@ -11,7 +11,8 @@ const int Board::BOARD_Y = 40;
 
 //0 -> wall
 //1 -> path
-//3 -> key
+// Sujeito a alterações (seria mais eficiente se fosse desenhado por faces, para evitar que paredes tivessem mais faces do que o desejado)
+//		Para isso é necessário colocar mais numeros para além de 0 e 1
 int board_walls[Board::BOARD_Y][Board::BOARD_X] =
 { 
 	{ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1 },
@@ -57,7 +58,8 @@ int board_walls[Board::BOARD_Y][Board::BOARD_X] =
 };
 
 
-Board::Board() {
+Board::Board(float scale) {
+	Board::scale = scale;
 	//( tp_restore)
 }
 
@@ -117,23 +119,24 @@ void Board::desenhaCubo(){
 
 
 void Board::desenhaParedes() {
-
+	
 	//Divided in 2 parts to avoid depth issues
 
 	// 1 Part
 	int i, j;
 	for (i = 0; i < Board::BOARD_X; i++) {
 		for (j = 0; j < Board::BOARD_Y / 2; j++) {
-			glColor3f(0.5, 1, 1);
+			
 			glPushMatrix();
 			{
 				glTranslatef(-(float)BOARD_X / 2.0, -(float)BOARD_Y / 2.0, 0);
-				glTranslatef(j, BOARD_Y - i, 0);
+				glTranslatef(j*scale, BOARD_Y - i*scale, 0);
 				glPushMatrix(); {
-					glTranslatef(BOARD_WALL_SIZE, BOARD_WALL_SIZE, 0);
+					glTranslatef(BOARD_WALL_SIZE*scale, BOARD_WALL_SIZE*scale, 0);
 					switch (board_walls[i][j]) {
 					case 1:// Means there is a cube/wall there
 						glPushMatrix(); {
+							glScalef(BOARD_WALL_SIZE*scale, BOARD_WALL_SIZE*scale, BOARD_WALL_SIZE*scale);
 							Board::desenhaCubo();
 						}glPopMatrix();
 						break;
@@ -150,31 +153,24 @@ void Board::desenhaParedes() {
 	{
 		for (int j = BOARD_Y - 1; j >= BOARD_Y/2; j--)
 		{
-			glColor3f(0.5, 1, 1);
-			int call_this = 0;
 			glPushMatrix();
 			{
-				glTranslatef(-(float)BOARD_X / 2.0, -(float)BOARD_Y / 2.00, 0);
-				glTranslatef(j, BOARD_Y - i, 0);
-				glPushMatrix();
-				{
-					glTranslatef(BOARD_WALL_SIZE, BOARD_WALL_SIZE, 0);
-					switch (board_walls[i][j])
-					{
-						case 1:
-							glPushMatrix(); {
-								Board::desenhaCubo();
-							}glPopMatrix();
-							glutPostRedisplay();
-							break;
-						case 0:
-							break;
+				glTranslatef(-(float)BOARD_X / 2.0, -(float)BOARD_Y / 2.0, 0);
+				glTranslatef(j*scale, BOARD_Y - i*scale, 0);
+				glPushMatrix(); {
+					glTranslatef(BOARD_WALL_SIZE*scale, BOARD_WALL_SIZE*scale, 0);
+					switch (board_walls[i][j]) {
+					case 1:// Means there is a cube/wall there
+						glPushMatrix(); {
+							glScalef(BOARD_WALL_SIZE*scale, BOARD_WALL_SIZE*scale, BOARD_WALL_SIZE*scale);
+							Board::desenhaCubo();
+						}glPopMatrix();
+						break;
+					case 0:
+						break;
 					}
-
-				}
-				glPopMatrix();
-			}
-			glPopMatrix();
+				}glPopMatrix();
+			}glPopMatrix();
 		}
 	}
 }
@@ -182,10 +178,11 @@ void Board::desenhaParedes() {
 
 //Desenha Labirinto
 void Board::Draw(void) {
-	glColor3f(0.2, 0.2, 0.9);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
 	desenhaParedes();
-	glutPostRedisplay();
 
+	glFlush();
 }
 
 
@@ -194,6 +191,9 @@ void Board::Draw(void) {
 bool
 Board::IsOpen(int x, int y)
 {
+	x /= scale;
+	y /= scale;
+
 	if (board_walls[y][x] > 0)
 	{
 		return false;

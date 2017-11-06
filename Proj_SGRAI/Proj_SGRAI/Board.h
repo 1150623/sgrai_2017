@@ -15,8 +15,10 @@ class Board {
 		static const int BOARD_X;
 		static const int BOARD_Y;
 
+		float scale;
+
 		//Construtor
-		Board();
+		Board(float);
 
 		//Destructor
 		~Board();

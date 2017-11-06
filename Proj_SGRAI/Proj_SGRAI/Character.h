@@ -10,7 +10,7 @@
 #include <gl/glut.h>
 
 #define NUM_LIVES 3
-#define CHAR_ANGLE 90
+#define CHAR_ANGLE 30
 #define CHAR_SPEED 0.1
 
 class Character {
@@ -26,7 +26,7 @@ public:
 	double x, y;
 	bool animate;
 
-	Character(double, double);
+	Character(double, double, float);
 
 	~Character(void);
 

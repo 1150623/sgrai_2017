@@ -5,10 +5,15 @@
 #include "Board.h"
 #include "Character.h"
 #include "Camera.h"
+#include <time.h>
 
 #ifndef M_PI
 #define M_PI 3.1415926535897932384626433832795
 #endif
+
+#define DEBBUG 1
+#define BOARD_SCALE_DEFAULT 1.5
+
 
 //delays in game
 int start_timer;
@@ -35,27 +40,6 @@ void RenderScene()
 	
   //camera update
 	camera->Set_position(myCharacter->x, myCharacter->y, view);
-
-	//pipe transport
-	if ((int)myCharacter->x == 27 && (int)myCharacter->y == 14 && myCharacter->angle == 0)
-	{
-		myCharacter->x = 0;
-		myCharacter->animate = true;
-	}
-	else
-		if ((int)(myCharacter->x + 0.9) == 0 && (int)myCharacter->y == 14 && myCharacter->angle == 180)
-		{
-			myCharacter->x = 27;
-			myCharacter->animate = true;
-		}
-	
-	if (myCharacter->animate)
-		myCharacter->Move();
-	if (!(board->IsOpen((int)(myCharacter->x + cos(M_PI / 180 * myCharacter->angle)),
-		(int)(myCharacter->y + sin(M_PI / 180 * myCharacter->angle)))) &&
-		myCharacter->x - (int)myCharacter->x < 0.1 && myCharacter->y - (int)myCharacter->y < 0.1)
-		myCharacter->animate = false;
-
 
 	//labirinto Init (where to put objects for example)
 
@@ -93,6 +77,7 @@ void RenderScene()
 //SET UP THE GAME
 void init(void)
 {
+	srand((unsigned)time(NULL));
 	start_timer = 140;
 	myCharacter->Reinit();
 
@@ -110,7 +95,10 @@ void init(void)
 	
 	*/
 
-
+	glEnable(GL_POINT_SMOOTH);
+	glEnable(GL_LINE_SMOOTH);
+	glEnable(GL_POLYGON_SMOOTH);
+	glEnable(GL_DEPTH_TEST);
 
 }
 
@@ -120,7 +108,7 @@ void TimerFunction(int value)
 {
 
 
-	//switch views from 3D to classic
+	//switch views from 3D to 2D (top view)
 	if (GetAsyncKeyState(0x56) && v_timer == 0)
 	{
 		view = (view + 1) % 2;
@@ -130,13 +118,11 @@ void TimerFunction(int value)
 		v_timer--;
 
 
-	//character moving + key recognition - ex: press VK_UP to move up
-
-
+	
 	//start a new game
 	if (GetAsyncKeyState(VK_RETURN) && gameover)
 	{
-		//myCharacter->lives = ???? how many ????;
+		myCharacter->lives = 5;
 		init();
 		//labirinto->tp_restore();
 		gameover = false;
@@ -183,6 +169,35 @@ void TimerFunction(int value)
 	}
 
 
+	if (DEBBUG) {
+		float d = 0;
+		if (GetAsyncKeyState(VK_F1) && !GetAsyncKeyState(VK_F2))
+		{
+			d = camera->distance += 0.7;
+			camera = new Camera(camera->ratio,d);
+			camera->Set_position(myCharacter->x, myCharacter->y, view);
+		}
+		if(GetAsyncKeyState(VK_F2) && !GetAsyncKeyState(VK_F1)) {
+			d = camera->distance-=0.7;
+			camera = new Camera(camera->ratio, d);
+			camera->Set_position(myCharacter->x, myCharacter->y, view);
+		}
+
+		if (GetAsyncKeyState(VK_F3) && !GetAsyncKeyState(VK_F4))
+		{
+			camera = new Camera(camera->ratio, camera->distance);
+			camera->Set_position((myCharacter->x + 1), (myCharacter->y), view);
+		}
+		if (GetAsyncKeyState(VK_F4) && !GetAsyncKeyState(VK_F3)) {
+			camera = new Camera(camera->ratio, camera->distance);
+			camera->Set_position((myCharacter->x - 1), (myCharacter->y), view);
+		}
+
+
+	}
+
+
+
 	//quit
 	if (GetAsyncKeyState(VK_ESCAPE))
 	{
@@ -190,8 +205,7 @@ void TimerFunction(int value)
 	}
 
 	glutPostRedisplay();
-
-	glutTimerFunc(15, TimerFunction, 1);
+	glutTimerFunc(1, TimerFunction, 1);
 }
 
 void ChangeSize(GLsizei w, GLsizei h)
@@ -201,20 +215,22 @@ void ChangeSize(GLsizei w, GLsizei h)
 
 	ratio = 1.0f * w / (h);
 	glViewport(0, 0, w, h);
-	camera = new Camera(ratio);
+	int distance = 70;
+	camera = new Camera(ratio, distance);
 
 }
 
-int main() {
-
-	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
+int main(int argc, char **argv) {
+	glutInit(&argc, argv);
+	glutInitWindowPosition(0, 0);
+	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
 
 	//windowed mode
 	glutInitWindowSize(1080, 820);
-	glutCreateWindow("Labirinto 3D");
+	if (glutCreateWindow("Labirinto 3D") == GL_FALSE)
+		exit(1);
 
 	//fullscreen mode
-	
 	//glutGameModeString("800x600:16@60");
 	//glutEnterGameMode();
 
@@ -222,16 +238,18 @@ int main() {
 	glutSetCursor(GLUT_CURSOR_NONE);
 	glutDisplayFunc(RenderScene);
 	glutReshapeFunc(ChangeSize);
-	glutTimerFunc(15, TimerFunction, 1);
+	
 
 	//draw the level/floor...
 	glClearColor(.3, .3, .3, 1.0);
 
 	//set up board
-	board = new Board();
+	board = new Board(BOARD_SCALE_DEFAULT);
 	int start_x[4] = { 11,12,15,16 }; //staring position
+	
+									  
 	//Inicialize character
-	myCharacter = new Character(13.5, 23);
+	myCharacter = new Character(13.5, 23, board->scale);
 
 	//put monster in starting positions
 	/*
@@ -247,6 +265,7 @@ int main() {
 	view = 0;
 	v_timer = 0;
 
+	glutTimerFunc(15, TimerFunction, 1);
 	glutMainLoop();
 
 	return 0;

@@ -10,11 +10,14 @@
 Camera::~Camera(void) {}
 
 //Constructor
-Camera::Camera(float ratio)
+Camera::Camera(float ratio, float distance)
 {
+	Camera::ratio = ratio;
+	Camera::distance = distance;
+
 	//Cull back faces
 	glEnable(GL_CULL_FACE);
-
+	
 	double  eye[3];
 	float   color[4], dir[4];
 
@@ -22,16 +25,14 @@ Camera::Camera(float ratio)
 	glEnable(GL_LIGHT0);
 	glEnable(GL_LIGHTING);
 
-	// Ambient and diffuse lighting track the current color.
+	
 	glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 	glEnable(GL_COLOR_MATERIAL);
 
-	// Turn on normal vector normalization. You don't have to give unit
-	// normal vector, and you can scale objects.
+	// Turn on normal vector normalization. 
 	glEnable(GL_NORMALIZE);
 
-	// Do some light stuff. Diffuse color, and zero specular color
-	// turns off specular lighting.
+	
 	color[0] = 1.0f; 
 	color[1] = 1.0f;
 	color[2] = 1.0f;
@@ -47,7 +48,7 @@ Camera::Camera(float ratio)
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	// Set the clipping volume
-	gluPerspective(60, ratio, 0.005, 100);
+	gluPerspective(Camera::distance, ratio, 0.005, 100);
 
 	// Clear the screen.
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

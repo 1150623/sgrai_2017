@@ -11,8 +11,10 @@ private:
 
 public:
 
+	float distance, ratio;
+
 	// Constructor.
-	Camera(float);
+	Camera(float, float);
 
 	// Destructor.
 	~Camera(void);
