@@ -9,9 +9,10 @@ float boardScale;
 Character::~Character(void) {}
 
 //Constructor (inicializa)
-Character::Character(double tx, double ty, float scale)
+Character::Character(double tx, double ty, float scale, float size)
 {
 	boardScale = scale;
+	Character::size = size;
 	lives = NUM_LIVES;
 	x = tx;
 	y = ty;
@@ -47,7 +48,7 @@ Character::Draw(void)
 		glTranslatef(Character::x, -Character::y, 0);
 		glTranslatef(.5, 0.6, 0);
 		glTranslatef((float)Board::BOARD_X / -2.0, (float)Board::BOARD_Y / 2.0, 0.5);
-		glutSolidSphere(0.5, 10, 10);
+		glutSolidSphere(size/2, 10, 10);
 	}
 	glPopMatrix();
 
@@ -57,7 +58,7 @@ Character::Draw(void)
 		glColor3f(0.4, 0.15, 0.25);
 		glPushMatrix(); {
 			glTranslatef((float)Board::BOARD_X*boardScale / -2.0 + i * 2, (float)Board::BOARD_Y* boardScale / 2.0 + 3, 1.0);
-			glutSolidSphere(0.5, 10, 10);
+			glutSolidSphere(size / 2, 10, 10);
 		}
 		glPopMatrix();
 	}

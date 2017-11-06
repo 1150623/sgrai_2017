@@ -84,23 +84,23 @@ void desenhaPoligono(GLfloat a[], GLfloat b[], GLfloat c[], GLfloat  d[], GLfloa
 
 
 
-void Board::desenhaCubo(){
+void Board::desenhaCubo() {
 
 
 	GLfloat a = 0;
 	GLfloat d = 1;
 
-	GLfloat vertice0[3] = { a,a,a };
-	GLfloat vertice1[3] = { d,a,a };
-	GLfloat vertice2[3] = { d,d,a };
-	GLfloat vertice3[3] = { a,d,a };
-	GLfloat vertice4[3] = { a,a,d };
-	GLfloat vertice5[3] = { d,a,d };
-	GLfloat vertice6[3] = { d,d,d };
-	GLfloat vertice7[3] = { a,d,d };
+	GLfloat v0[3] = { a,a,a };
+	GLfloat v1[3] = { d,a,a };
+	GLfloat v2[3] = { d,d,a };
+	GLfloat v3[3] = { a,d,a };
+	GLfloat v4[3] = { a,a,d };
+	GLfloat v5[3] = { d,a,d };
+	GLfloat v6[3] = { d,d,d };
+	GLfloat v7[3] = { a,d,d };
 
 
-	GLfloat cores[][3] = { { 0.75,0.75,0.75},
+	GLfloat cores[][3] = { { 0.30,0.75,0.75 },
 	{ 1.0,0.0,0.0 },
 	{ 1.0,1.0,0.0 },
 	{ 0.0,1.0,0.0 },
@@ -108,32 +108,49 @@ void Board::desenhaCubo(){
 	{ 0.0,0.0,1.0 },
 	{ 1.0,1.0,1.0 } };
 
-	desenhaPoligono(vertice0, vertice3, vertice2, vertice1, cores[0]);
-	desenhaPoligono(vertice1, vertice5, vertice6, vertice2, cores[0]);
-	desenhaPoligono(vertice4, vertice5, vertice6, vertice7, cores[0]);
-	desenhaPoligono(vertice3, vertice7, vertice4, vertice0, cores[0]);
-	desenhaPoligono(vertice7, vertice6, vertice2, vertice3, cores[0]);
-	desenhaPoligono(vertice4, vertice5, vertice1, vertice0, cores[0]);
+	desenhaPoligono(v5, v6, v7, v4, cores[0]);
+	desenhaPoligono(v1, v2, v6, v5, cores[0]);
+	desenhaPoligono(v2, v3, v7, v6, cores[0]);
+	desenhaPoligono(v1, v5, v4, v0, cores[0]);
+	desenhaPoligono(v3, v0, v4, v7, cores[0]);
 
 }
 
 
+
 void Board::desenhaParedes() {
 	
+	/*
+	GLint tex;
+	// some init gl code here
+
+	// the texture (2x2)
+	GLbyte textureData[] = { 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 0 };
+	GLsizei width = 2;
+	GLsizei heigth = 2;
+
+
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	glPixelStorei(GL_PACK_ALIGNMENT, 1);
+	//glGenTextures(1, &amp; tex);   // generate a texture handler really reccomanded (mandatory in openGL 3.0)
+	glBindTexture(GL_TEXTURE_2D, tex); // tell openGL that we are using the texture 
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, BOARD_WALL_SIZE*scale, BOARD_WALL_SIZE*scale, 0, GL_UNSIGNED_BYTE, (GLvoid*)textureData); // send the texture data
+	*/
 	//Divided in 2 parts to avoid depth issues
 
 	// 1 Part
 	int i, j;
 	for (i = 0; i < Board::BOARD_X; i++) {
 		for (j = 0; j < Board::BOARD_Y / 2; j++) {
-			
+			glColor3f(0, 0, 1);
 			glPushMatrix();
 			{
 				glTranslatef(-(float)BOARD_X / 2.0, -(float)BOARD_Y / 2.0, 0);
-				glTranslatef(j*scale, BOARD_Y - i*scale, 0);
+				glTranslatef(i*scale, BOARD_Y - j*scale, 0);
 				glPushMatrix(); {
 					glTranslatef(BOARD_WALL_SIZE*scale, BOARD_WALL_SIZE*scale, 0);
-					switch (board_walls[i][j]) {
+					switch (board_walls[j][i]) {
 					case 1:// Means there is a cube/wall there
 						glPushMatrix(); {
 							glScalef(BOARD_WALL_SIZE*scale, BOARD_WALL_SIZE*scale, BOARD_WALL_SIZE*scale);
@@ -156,10 +173,10 @@ void Board::desenhaParedes() {
 			glPushMatrix();
 			{
 				glTranslatef(-(float)BOARD_X / 2.0, -(float)BOARD_Y / 2.0, 0);
-				glTranslatef(j*scale, BOARD_Y - i*scale, 0);
+				glTranslatef(i*scale, BOARD_Y - j*scale, 0);
 				glPushMatrix(); {
 					glTranslatef(BOARD_WALL_SIZE*scale, BOARD_WALL_SIZE*scale, 0);
-					switch (board_walls[i][j]) {
+					switch (board_walls[j][i]) {
 					case 1:// Means there is a cube/wall there
 						glPushMatrix(); {
 							glScalef(BOARD_WALL_SIZE*scale, BOARD_WALL_SIZE*scale, BOARD_WALL_SIZE*scale);
@@ -200,3 +217,4 @@ Board::IsOpen(int x, int y)
 	}
 	return true;
 }
+

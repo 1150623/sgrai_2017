@@ -12,8 +12,9 @@
 #endif
 
 #define DEBBUG 1
-#define BOARD_SCALE_DEFAULT 1.5
-
+#define BOARD_SCALE_DEFAULT 2
+#define Character_SIZE 1
+#define MOVE_RATIO 1
 
 //delays in game
 int start_timer;
@@ -102,8 +103,6 @@ void init(void)
 
 }
 
-
-
 void TimerFunction(int value)
 {
 
@@ -141,21 +140,25 @@ void TimerFunction(int value)
 		//move right
 		if (GetAsyncKeyState(VK_RIGHT) && !GetAsyncKeyState(VK_LEFT))
 		{
-			if (board->IsOpen(myCharacter->x +1, myCharacter->y))
-				myCharacter->x++;
+			if (myCharacter->x < ((Board::BOARD_X *Board::BOARD_WALL_SIZE* board->scale) - myCharacter->size)
+				&& (myCharacter->x+MOVE_RATIO) <= ((Board::BOARD_X *Board::BOARD_WALL_SIZE* board->scale) - myCharacter->size)) {
+				myCharacter->x+=MOVE_RATIO;
+			}
 		}
 		else
 			//move left
 			if (GetAsyncKeyState(VK_LEFT) && !GetAsyncKeyState(VK_RIGHT))
 			{
-				if(board->IsOpen(myCharacter->x -1 , myCharacter->y))
-						myCharacter->x--;
+				if (myCharacter->x > ((Board::BOARD_WALL_SIZE * board->scale) + myCharacter->size)
+					&& (myCharacter->x - MOVE_RATIO) >= ((Board::BOARD_WALL_SIZE * board->scale) + myCharacter->size)) {
+					myCharacter->x -= MOVE_RATIO;
+				}
 			}
 		//move up
 		if (GetAsyncKeyState(VK_UP) && !GetAsyncKeyState(VK_DOWN))
 		{
-				if (board->IsOpen(myCharacter->x, myCharacter->y - 1))
-					myCharacter->y--;
+				if (board->IsOpen(myCharacter->x, myCharacter->y - MOVE_RATIO))
+					myCharacter->y-= MOVE_RATIO;
 			
 		}
 		else
@@ -173,12 +176,12 @@ void TimerFunction(int value)
 		float d = 0;
 		if (GetAsyncKeyState(VK_F1) && !GetAsyncKeyState(VK_F2))
 		{
-			d = camera->distance += 0.7;
+			d = camera->distance += 0.5;
 			camera = new Camera(camera->ratio,d);
 			camera->Set_position(myCharacter->x, myCharacter->y, view);
 		}
 		if(GetAsyncKeyState(VK_F2) && !GetAsyncKeyState(VK_F1)) {
-			d = camera->distance-=0.7;
+			d = camera->distance-=0.5;
 			camera = new Camera(camera->ratio, d);
 			camera->Set_position(myCharacter->x, myCharacter->y, view);
 		}
@@ -249,7 +252,7 @@ int main(int argc, char **argv) {
 	
 									  
 	//Inicialize character
-	myCharacter = new Character(13.5, 23, board->scale);
+	myCharacter = new Character(13, 20, board->scale, Character_SIZE);
 
 	//put monster in starting positions
 	/*
