@@ -1,20 +1,8 @@
-#include <windows.h>
-#include <gl/glut.h>
-#include <math.h>
-#include <stdio.h>
+#include "globalHeader.h"
 #include "Board.h"
 #include "Character.h"
 #include "Camera.h"
-#include <time.h>
 
-#ifndef M_PI
-#define M_PI 3.1415926535897932384626433832795
-#endif
-
-#define DEBBUG 1
-#define BOARD_SCALE_DEFAULT 2
-#define Character_SIZE 1
-#define MOVE_RATIO 1
 
 //delays in game
 int start_timer;
@@ -82,19 +70,6 @@ void init(void)
 	start_timer = 140;
 	myCharacter->Reinit();
 
-	/**
-	//Monsters inicial positions
-	int start_x[4] = { 11,12,15,16 };
-	float ghost_colors[4][3] = { { 255,0,0 },{ 120,240,120 },{ 255,200,200 },{ 255,125,0 } };
-
-	for (int i = 0; i < num_monsters; i++)
-	{
-		monsters[i]->Reinit();
-	}
-
-	//PUT HERE Monsters starting positions + colors + speed +.....
-	
-	*/
 
 	glEnable(GL_POINT_SMOOTH);
 	glEnable(GL_LINE_SMOOTH);
@@ -140,38 +115,38 @@ void TimerFunction(int value)
 		//move right
 		if (GetAsyncKeyState(VK_RIGHT) && !GetAsyncKeyState(VK_LEFT))
 		{
-			if (myCharacter->x < ((Board::BOARD_X *Board::BOARD_WALL_SIZE* board->scale) - myCharacter->size)
-				&& (myCharacter->x+MOVE_RATIO) <= ((Board::BOARD_X *Board::BOARD_WALL_SIZE* board->scale) - myCharacter->size)) {
-				myCharacter->x+=MOVE_RATIO;
+			if (board->IsOpen((int)ceil(myCharacter->x + MOVE_RATIO), myCharacter->y)) {
+				myCharacter->x += MOVE_RATIO;
 			}
 		}
 		else
 			//move left
 			if (GetAsyncKeyState(VK_LEFT) && !GetAsyncKeyState(VK_RIGHT))
 			{
-				if (myCharacter->x > ((Board::BOARD_WALL_SIZE * board->scale) + myCharacter->size)
-					&& (myCharacter->x - MOVE_RATIO) >= ((Board::BOARD_WALL_SIZE * board->scale) + myCharacter->size)) {
+				if (board->IsOpen((int)ceil(myCharacter->x - MOVE_RATIO), myCharacter->y)) {
 					myCharacter->x -= MOVE_RATIO;
 				}
 			}
 		//move up
 		if (GetAsyncKeyState(VK_UP) && !GetAsyncKeyState(VK_DOWN))
 		{
-				if (board->IsOpen(myCharacter->x, myCharacter->y - MOVE_RATIO))
-					myCharacter->y-= MOVE_RATIO;
+			if (board->IsOpen(myCharacter->x, (int)ceil(myCharacter->y - MOVE_RATIO))) {
+				myCharacter->y -= MOVE_RATIO;
+			}
 			
 		}
 		else
 			//move down
 			if (GetAsyncKeyState(VK_DOWN) && !GetAsyncKeyState(VK_UP))
 			{
-				if (board->IsOpen(myCharacter->x, myCharacter->y + 1))
-					myCharacter->y++;
+				if (board->IsOpen(myCharacter->x, (int)ceil(myCharacter->y + MOVE_RATIO))) {
+					myCharacter->y += MOVE_RATIO;
+				}
 			}
 
 	}
 
-
+	//DEBBUG KEYS
 	if (DEBBUG) {
 		float d = 0;
 		if (GetAsyncKeyState(VK_F1) && !GetAsyncKeyState(VK_F2))
@@ -186,17 +161,13 @@ void TimerFunction(int value)
 			camera->Set_position(myCharacter->x, myCharacter->y, view);
 		}
 
-		if (GetAsyncKeyState(VK_F3) && !GetAsyncKeyState(VK_F4))
-		{
-			camera = new Camera(camera->ratio, camera->distance);
-			camera->Set_position((myCharacter->x + 1), (myCharacter->y), view);
+		if (GetAsyncKeyState(VK_F3) && !GetAsyncKeyState(VK_F4)) {
+			board->ang++;
 		}
 		if (GetAsyncKeyState(VK_F4) && !GetAsyncKeyState(VK_F3)) {
-			camera = new Camera(camera->ratio, camera->distance);
-			camera->Set_position((myCharacter->x - 1), (myCharacter->y), view);
+			board->ang--;
+
 		}
-
-
 	}
 
 
@@ -204,6 +175,7 @@ void TimerFunction(int value)
 	//quit
 	if (GetAsyncKeyState(VK_ESCAPE))
 	{
+		board->~Board();
 		exit(0);
 	}
 
@@ -247,20 +219,13 @@ int main(int argc, char **argv) {
 	glClearColor(.3, .3, .3, 1.0);
 
 	//set up board
-	board = new Board(BOARD_SCALE_DEFAULT);
+	board = new Board();
 	int start_x[4] = { 11,12,15,16 }; //staring position
 	
 									  
 	//Inicialize character
-	myCharacter = new Character(13, 20, board->scale, Character_SIZE);
+	myCharacter = new Character(CHARACTER_STARTLOCATION_X, CHARACTER_STARTLOCATION_Y, CHARACTER_SIZE);
 
-	//put monster in starting positions
-	/*
-	for (int i = 0; i < num_monsters; i++)
-	{
-		monsters[i] = new Monsters(start_x[i], 14);
-	}
-	*/
 
 	init();
 

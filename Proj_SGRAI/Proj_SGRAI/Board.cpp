@@ -1,65 +1,83 @@
 #include "Board.h"
-#include <stdio.h>
-#include <GL/glut.h>
 
 
 //Inicializar Dimensões do Board/(Labirinto)
-const int Board::BOARD_WALL_SIZE = 1;
-const int Board::BOARD_X = 30;
-const int Board::BOARD_Y = 40;
+const float Board::BOARD_WALL_SIZE = 1.0;
+const int Board::BOARD_X = 8;
+const int Board::BOARD_Y = 8;
 
 
 //0 -> wall
 //1 -> path
 // Sujeito a alterações (seria mais eficiente se fosse desenhado por faces, para evitar que paredes tivessem mais faces do que o desejado)
 //		Para isso é necessário colocar mais numeros para além de 0 e 1
-int board_walls[Board::BOARD_Y][Board::BOARD_X] =
+int board_walls[Board::BOARD_X][Board::BOARD_Y] =
 { 
-	{ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1 },
-	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
-	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
-	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
-	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
-	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
-	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
-	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
-	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
-	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
-	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
-	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
-	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
-	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
-	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
-	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
-	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
-	{ 1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
-	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
-	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
-	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
-	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
-	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
-	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
-	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
-	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
-	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
-	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
-	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
-	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
-	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
-	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
-	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
-	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
-	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
-	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
-	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
-	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
-	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
-	{ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1 },
-};
+	{ 1,1,1,1,1,1,1,1},
+	{ 1,0,0,0,0,0,0,1},
+	{ 1,0,1,1,1,1,0,1},
+	{ 1,0,1,0,0,1,0,1},
+	{ 1,0,1,0,0,1,0,1},
+	{ 1,0,1,0,0,1,0,1},
+	{ 1,0,0,0,0,0,0,1},
+	{ 1,1,1,1,1,1,1,1}
+	};
 
 
-Board::Board(float scale) {
-	Board::scale = scale;
+static const int X = BOARD_SCALE_DEFAULT * Board::BOARD_X;
+static const int Y = BOARD_SCALE_DEFAULT * Board::BOARD_Y;
+
+int** scaledWalls;
+
+bool firstTime = true;
+void Board::scaleWalls() {
+
+	scaledWalls = (int**) calloc(X, sizeof(Y));
+
+	if (scaledWalls == NULL  && DEBBUG) {
+		printf("NULL");
+	}
+	else {
+		for (int i = 0; i < X; i++) {
+			scaledWalls[i] = (int*)calloc(Y, sizeof(X));
+			if (scaledWalls[0] == NULL  && DEBBUG) {
+				printf("NULL");
+			}
+		}
+
+
+		for (int j = 0; j < Y; j++) {
+			for (int i = 0; i < X; i++) {
+				scaledWalls[i][j] = 0;
+			}
+		}
+
+
+
+		for (int i = 0; i < X; i++) {
+			for (int j = 0; j < Y; j++) {
+					scaledWalls[i][j] = board_walls[(i/2)][(j/2)];
+					if(firstTime && DEBBUG)printf("[%d][%d] = %d\n", i, j, board_walls[i/2-1][j/2-1]);
+			
+			}
+		}
+	if (firstTime && DEBBUG) {
+		printf("+-------------------+\n");
+		for (int i = 0; i < X; i++) {
+			for (int j = 0; j < Y; j++) {
+				printf(" %d ", scaledWalls[i][j]);
+			}
+			printf("\n");
+		}
+	}
+		firstTime = false;
+	}
+}
+
+
+Board::Board() {
+	scaleWalls();
+	ang = 0;
 	//( tp_restore)
 }
 
@@ -67,7 +85,7 @@ void Board::tp_restore(){}
 
 
 // Destructor
-Board::~Board(void) {}
+Board::~Board(void) { free(scaledWalls); }
 
 
 void desenhaPoligono(GLfloat a[], GLfloat b[], GLfloat c[], GLfloat  d[], GLfloat cor[])
@@ -87,8 +105,8 @@ void desenhaPoligono(GLfloat a[], GLfloat b[], GLfloat c[], GLfloat  d[], GLfloa
 void Board::desenhaCubo() {
 
 
-	GLfloat a = 0;
-	GLfloat d = 1;
+	GLfloat a = BOARD_WALL_SIZE/2;
+	GLfloat d = -a;
 
 	GLfloat v0[3] = { a,a,a };
 	GLfloat v1[3] = { d,a,a };
@@ -108,11 +126,12 @@ void Board::desenhaCubo() {
 	{ 0.0,0.0,1.0 },
 	{ 1.0,1.0,1.0 } };
 
+
 	desenhaPoligono(v5, v6, v7, v4, cores[0]);
 	desenhaPoligono(v1, v2, v6, v5, cores[0]);
-	desenhaPoligono(v2, v3, v7, v6, cores[0]);
-	desenhaPoligono(v1, v5, v4, v0, cores[0]);
-	desenhaPoligono(v3, v0, v4, v7, cores[0]);
+	desenhaPoligono(v2, v3, v7, v6, cores[1]);
+	desenhaPoligono(v1, v5, v4, v0, cores[1]);
+	desenhaPoligono(v3, v0, v4, v7, cores[1]);
 
 }
 
@@ -120,76 +139,41 @@ void Board::desenhaCubo() {
 
 void Board::desenhaParedes() {
 	
-	/*
-	GLint tex;
-	// some init gl code here
 
-	// the texture (2x2)
-	GLbyte textureData[] = { 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 0 };
-	GLsizei width = 2;
-	GLsizei heigth = 2;
-
-
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	glPixelStorei(GL_PACK_ALIGNMENT, 1);
-	//glGenTextures(1, &amp; tex);   // generate a texture handler really reccomanded (mandatory in openGL 3.0)
-	glBindTexture(GL_TEXTURE_2D, tex); // tell openGL that we are using the texture 
-
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, BOARD_WALL_SIZE*scale, BOARD_WALL_SIZE*scale, 0, GL_UNSIGNED_BYTE, (GLvoid*)textureData); // send the texture data
-	*/
-	//Divided in 2 parts to avoid depth issues
-
-	// 1 Part
 	int i, j;
-	for (i = 0; i < Board::BOARD_X; i++) {
-		for (j = 0; j < Board::BOARD_Y / 2; j++) {
-			glColor3f(0, 0, 1);
-			glPushMatrix();
-			{
-				glTranslatef(-(float)BOARD_X / 2.0, -(float)BOARD_Y / 2.0, 0);
-				glTranslatef(i*scale, BOARD_Y - j*scale, 0);
-				glPushMatrix(); {
-					glTranslatef(BOARD_WALL_SIZE*scale, BOARD_WALL_SIZE*scale, 0);
-					switch (board_walls[j][i]) {
-					case 1:// Means there is a cube/wall there
-						glPushMatrix(); {
-							glScalef(BOARD_WALL_SIZE*scale, BOARD_WALL_SIZE*scale, BOARD_WALL_SIZE*scale);
-							Board::desenhaCubo();
-						}glPopMatrix();
-						break;
-					case 0:
-						break;
-					}
-				}glPopMatrix();
-			}glPopMatrix();
-		}
-	}
+	glColor3f(0, 0, 1);
+	glPushMatrix();
+	{glRotatef(ang, 0, 0, 1);
+		glTranslatef(0, 0, 0);
+		
+			for (i = 0; i < X; i++) {
+				for (j = 0; j < Y ; j++) {
+					glPushMatrix();
+					{
+						glTranslatef(-(float)X / 2.0f, -(float)Y / 2.0f, 0);
+						//glTranslatef(j*BOARD_SCALE_DEFAULT, Y - i*BOARD_SCALE_DEFAULT, 0);
 
-	// 2 Part
-	for (int i = 0; i < BOARD_X; i++)
-	{
-		for (int j = BOARD_Y - 1; j >= BOARD_Y/2; j--)
-		{
-			glPushMatrix();
-			{
-				glTranslatef(-(float)BOARD_X / 2.0, -(float)BOARD_Y / 2.0, 0);
-				glTranslatef(i*scale, BOARD_Y - j*scale, 0);
-				glPushMatrix(); {
-					glTranslatef(BOARD_WALL_SIZE*scale, BOARD_WALL_SIZE*scale, 0);
-					switch (board_walls[j][i]) {
-					case 1:// Means there is a cube/wall there
+						glTranslatef(i*BOARD_SCALE_DEFAULT*BOARD_WALL_SIZE, -j*BOARD_SCALE_DEFAULT*BOARD_WALL_SIZE, 0);
 						glPushMatrix(); {
-							glScalef(BOARD_WALL_SIZE*scale, BOARD_WALL_SIZE*scale, BOARD_WALL_SIZE*scale);
-							Board::desenhaCubo();
+							glTranslatef(BOARD_SCALE_DEFAULT, 0.5*BOARD_SCALE_DEFAULT, 0);
+
+							switch (scaledWalls[j][i]) {
+							case 1:// Means there is a cube/wall there
+
+								glPushMatrix(); {
+									glScalef(BOARD_WALL_SIZE*BOARD_SCALE_DEFAULT, BOARD_WALL_SIZE*BOARD_SCALE_DEFAULT, BOARD_WALL_SIZE*BOARD_SCALE_DEFAULT);
+									Board::desenhaCubo();
+								}glPopMatrix();
+								break;
+							case 0:
+								break;
+							}
 						}glPopMatrix();
-						break;
-					case 0:
-						break;
-					}
-				}glPopMatrix();
-			}glPopMatrix();
-		}
-	}
+					}glPopMatrix();
+				}
+			}
+
+	}glPopMatrix();
 }
 
 
@@ -208,10 +192,8 @@ void Board::Draw(void) {
 bool
 Board::IsOpen(int x, int y)
 {
-	x /= scale;
-	y /= scale;
-
-	if (board_walls[y][x] > 0)
+	if (DEBBUG)printf("[%d][%d]", x, y);
+	if (scaledWalls[x][y] > 0)
 	{
 		return false;
 	}

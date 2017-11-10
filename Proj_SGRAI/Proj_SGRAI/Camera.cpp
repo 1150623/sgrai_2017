@@ -18,7 +18,7 @@ Camera::Camera(float ratio, float distance)
 	//Cull back faces
 	glEnable(GL_CULL_FACE);
 	
-	double  eye[3];
+	//double  eye[3];
 	float   color[4], dir[4];
 
 	// Enable lighting with one light.
@@ -59,7 +59,7 @@ Camera::Camera(float ratio, float distance)
 	// Position the light source. This has to happen after the viewing
 	// transformation is set up, so that the light stays fixed in world
 	// space. This is a directional light - note the 0 in the w component.
-	dir[0] = 0.0; dir[1] = 1.0; dir[2] = 1.0; dir[3] = 0.0;
+	dir[0] = 0.2; dir[1] = 1.0; dir[2] = 1.0; dir[3] = 0.2;
 	glLightfv(GL_LIGHT0, GL_POSITION, dir);
 }
 
@@ -69,7 +69,7 @@ Camera::Set_position(float x_at, float y_at, int view)
 	// Clear the screen.
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glColor3f(1.0f, 1.0f, 1.0f);
-	glMatrixMode(GL_MODELVIEW);
+	//glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
 	if (view == 1)

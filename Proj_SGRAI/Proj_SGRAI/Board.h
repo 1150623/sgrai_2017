@@ -2,23 +2,25 @@
 #ifndef _BOARD_H_
 #define _BOARD_H_
 
-
+#include "globalHeader.h"
 class Board {
 
 	private:
 		void desenhaCubo();
 		void desenhaParedes();
+		void scaleWalls();
 
+		
 	public:
 
-		static const int BOARD_WALL_SIZE;
+		static const float BOARD_WALL_SIZE;
 		static const int BOARD_X;
 		static const int BOARD_Y;
 
-		float scale;
+		float ang;
 
 		//Construtor
-		Board(float);
+		Board();
 
 		//Destructor
 		~Board();
