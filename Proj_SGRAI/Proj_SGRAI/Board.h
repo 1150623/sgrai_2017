@@ -6,11 +6,14 @@
 class Board {
 
 	private:
-		void desenhaCubo();
-		void desenhaParedes();
-		void scaleWalls();
+		//void desenhaCubo();
+		//void desenhaParedes();
+		//void scaleWalls();
 
-		
+		GLubyte list[5];  //display lists for each wall
+
+		void create_list_lib(void);
+		void drawWalls(void);
 	public:
 
 		static const float BOARD_WALL_SIZE;

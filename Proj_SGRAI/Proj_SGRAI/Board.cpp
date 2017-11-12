@@ -3,8 +3,8 @@
 
 //Inicializar Dimensões do Board/(Labirinto)
 const float Board::BOARD_WALL_SIZE = 1.0;
-const int Board::BOARD_X = 8;
-const int Board::BOARD_Y = 8;
+const int Board::BOARD_X = 31;
+const int Board::BOARD_Y = 28;
 
 
 //0 -> wall
@@ -12,72 +12,49 @@ const int Board::BOARD_Y = 8;
 // Sujeito a alterações (seria mais eficiente se fosse desenhado por faces, para evitar que paredes tivessem mais faces do que o desejado)
 //		Para isso é necessário colocar mais numeros para além de 0 e 1
 int board_walls[Board::BOARD_X][Board::BOARD_Y] =
-{ 
-	{ 1,1,1,1,1,1,1,1},
-	{ 1,0,0,0,0,0,0,1},
-	{ 1,0,1,1,1,1,0,1},
-	{ 1,0,1,0,0,1,0,1},
-	{ 1,0,1,0,0,1,0,1},
-	{ 1,0,1,0,0,1,0,1},
-	{ 1,0,0,0,0,0,0,1},
-	{ 1,1,1,1,1,1,1,1}
-	};
-
+{ { 8,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	1,	1,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	7 },	
+{	6,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	2,	4,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	6 },	
+{	6,	0,	8,	5,	1,	7,	0,	8,	1,	1,	1,	7,	0,	2,	4,	0,	8,	1,	1,	1,	7,	0,	8,	1,	1,	7,	0,	6 },	
+{	6,	0,	6,	0,	11,	4,	0,	2,	11,	11,	11,	4,	0,	2,	4,	0,	2,	11,	11,	11,	4,	0,	2,	11,	11,	4,	0,	6 },	
+{	6,	0,	9,	0,	3,	6,	 0,	9,	3,	3,	3,	10,	0,	9,	10,	0,	9,	3,	3,	3,	10,	0,	9,	3,	3,	10,	0,	6 },	
+{	6,	0,	0,	0,	6,	6,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	6,	6,	0,	0,	0,	0,	0,	0,	6 },	
+{	6,	0,	8,	1,	1,	6,	0,	8,	7,	0,	8,	1,	1,	1,	1,	1,	1,	7,	0,	8,	7,	0,	8,	1,	1,	7,	0,	6 },	
+{	6,	0,	9,	3,	3,	10,	0,	2,	4,	0,	9,	3,	3,	11,	11,	3,	3,	10,	0,	2,	4,	0,	9,	3,	3,	10,	0,	6 },	
+{	6,	0,	0,	0,	0,	0,	0,	2,	4,	0,	0,	0,	0,	2,	4,	0,	0,	0,	0,	2,	4,	0,	0,	0,	0,	0,	0,	6 },	
+{	6,	5,	5,	5,	5,	7,	0,	2,	11,	1,	1,	7,	0,	2,	4,	0,	8,	1,	1,	11,	4,	0,	8,	5,	5,	5,	5,	6 },	
+{	6,	0,	0,	0,	0,	6,	0,	2,	11,	3,	3,	10,	0,	9,	10,	0,	9,	3,	3,	11,	4,	0,	6,	0,	0,	0,	0,	6 },	
+{	6,	0,	6,	0,	0,	6,	0,	2,	4,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	2,	4,	0,	6,	0,	0,	0,	0,	6 },	
+{	6,	0,	6,	0,	0,	6,	0,	2,	4,	0,	8,	5,	0,	5,	5,	5,	5,	7,	0,	2,	4,	0,	6,	0,	0,	0,	0,	6 },	
+{	6,	0,	9,	5,	5,	10,	0,	9,	10,	5,	6,	6,	0,	0,	0,	0,	0,	6,	0,	9,	10,	0,	9,	5,	5,	5,	5,	6 },	
+{	6,	0,	0,	0,	0,	0,	0,	0,	0,	8,	6,	6,	5,	6,	6,	6,	0,	6,	0,	0,	0,	0,	0,	0,	0,	0,	0,	6 },	
+{	6,	0,	5,	5,	5,	7,	0,	8,	7,	0,	6,	0,	0,	0,	0,	0,	0,	6,	0,	8,	7,	0,	8,	7,	0,	8,	5,	6 },	
+{	6,	0,	6,	0,	0,	6,	0,	2,	4,	0,	9,	5,	5,	0,	5,	5,	5,	10,	0,	2,	4,	0,	6,	0,	0,	6,	0,	6 },	
+{	6,	0,	9,	10,	0,	6,	0,	2,	4,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	2,	4,	0,	6,	0,	0,	6,	0,	6 },	
+{	6,	0,	0,	0,	0,	6,	0,	2,	4,	0,	8,	1,	1,	1,	1,	1,	1,	7,	0,	2,	4,	0,	6,	0,	0,	6,	0,	6 },	
+{	6,	5,	5,	5,	5,	10,	0,	9,	10,	0,	9,	3,	3,	11,	11,	3,	3,	10,	0,	9,	10,	0,	9,	10,	0,	9,	5,	6 },	
+{	6,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	2,	4,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	6 },	
+{	6,	0,	8,	1,	1,	7,	0,	8,	1,	1,	1,	7,	0,	2,	4,	0,	8,	1,	1,	1,	7,	0,	8,	1,	1,	7,	0,	6 },	
+{	6,	0,	9,	3,	11,	4,	0,	9,	3,	3,	3,	10,	0,	9,	10,	0,	9,	3,	3,	3,	10,	0,	2,	11,	3,	10,	0,	6 },	
+{	6,	0,	0,	0,	2,	4,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	2,	4,	0,	0,	0,	6 },	
+{	2,	1,	7,	0,	2,	4,	0,	8,	7,	0,	8,	1,	1,	1,	1,	1,	1,	7,	0,	8,	7,	0,	2,	4,	0,	8,	1,	4 },	
+{	2,	3,	10,	0,	9,	10,	0,	2,	4,	0,	9,	3,	3,	11,	11,	3,	3,	10,	0,	2,	4,	0,	9,	10,	0,	9,	3,	4 },	
+{	6,	0,	0,	0,	0,	0,	0,	2,	4,	0,	0,	0,	0,	2,	4,	0,	0,	0,	0,	2,	4,	0,	0,	0,	0,	0,	0,	6 },	
+{	6,	0,	8,	1,	1,	1,	1,	11,	11,	1,	1,	7,	0,	2,	4,	0,	8,	1,	1,	11,	11,	1,	1,	1,	1,	7,	0,	6 },	
+{	6,	0,	9,	3,	3,	3,	3,	3,	3,	3,	3,	10,	0,	9,	10,	0,	9,	3,	3,	3,	3,	3,	3,	3,	3,	10,	0,	6 },	
+{	6,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	6 },	
+{	9,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	10 } };
 
 static const int X = BOARD_SCALE_DEFAULT * Board::BOARD_X;
 static const int Y = BOARD_SCALE_DEFAULT * Board::BOARD_Y;
 
-int** scaledWalls;
-
-bool firstTime = true;
-void Board::scaleWalls() {
-
-	scaledWalls = (int**) calloc(X, sizeof(Y));
-
-	if (scaledWalls == NULL  && DEBBUG) {
-		printf("NULL");
-	}
-	else {
-		for (int i = 0; i < X; i++) {
-			scaledWalls[i] = (int*)calloc(Y, sizeof(X));
-			if (scaledWalls[0] == NULL  && DEBBUG) {
-				printf("NULL");
-			}
-		}
-
-
-		for (int j = 0; j < Y; j++) {
-			for (int i = 0; i < X; i++) {
-				scaledWalls[i][j] = 0;
-			}
-		}
-
-
-
-		for (int i = 0; i < X; i++) {
-			for (int j = 0; j < Y; j++) {
-					scaledWalls[i][j] = board_walls[(i/2)][(j/2)];
-					if(firstTime && DEBBUG)printf("[%d][%d] = %d\n", i, j, board_walls[i/2-1][j/2-1]);
-			
-			}
-		}
-	if (firstTime && DEBBUG) {
-		printf("+-------------------+\n");
-		for (int i = 0; i < X; i++) {
-			for (int j = 0; j < Y; j++) {
-				printf(" %d ", scaledWalls[i][j]);
-			}
-			printf("\n");
-		}
-	}
-		firstTime = false;
-	}
-}
+bool firstTime = false;
 
 
 Board::Board() {
-	scaleWalls();
+	//scaleWalls();
 	ang = 0;
+	//create the different possible cells
+	create_list_lib();
 	//( tp_restore)
 }
 
@@ -85,7 +62,74 @@ void Board::tp_restore(){}
 
 
 // Destructor
-Board::~Board(void) { free(scaledWalls); }
+Board::~Board(void) { //free(scaledWalls);
+}
+
+void Board::create_list_lib(void)
+{
+	// Draw poligons instead of cubes
+	list[1] = glGenLists(1);
+	glNewList(list[1], GL_COMPILE);
+	//north facing wall
+	glBegin(GL_QUADS);
+	glNormal3f(0.0f, 1.0f, 0.0f);
+	glVertex3f(1.0f, 1.0f, 1.0f);
+	glVertex3f(1.0f, 1.0f, 0.0f);
+	glVertex3f(0.0f, 1.0f, 0.0f);
+	glVertex3f(0.0f, 1.0f, 1.0f);
+	glEnd();
+	glEndList();
+
+	list[2] = glGenLists(1);
+	glNewList(list[2], GL_COMPILE);
+	glBegin(GL_QUADS);
+	//north facing wall
+	glNormal3f(0.0f, 1.0f, 0.0f);
+	glVertex3f(1.0f, 1.0f, 1.0f);
+	glVertex3f(1.0f, 1.0f, 0.0f);
+	glVertex3f(0.0f, 1.0f, 0.0f);
+	glVertex3f(0.0f, 1.0f, 1.0f);
+
+	//south facing wall
+	glNormal3f(0.0f, -1.0f, 0.0f);
+	glVertex3f(1.0f, 0.0f, 0.0f);
+	glVertex3f(1.0f, 0.0f, 1.0f);
+	glVertex3f(0.0f, 0.0f, 1.0f);
+	glVertex3f(0.0f, 0.0f, 0.0f);
+	glEnd();
+	glEndList();
+
+	list[3] = glGenLists(1);
+	glNewList(list[3], GL_COMPILE);
+	glBegin(GL_QUADS);
+	//north facing wall
+	glNormal3f(0.0f, 1.0f, 0.0f);
+	glVertex3f(1.0f, 1.0f, 1.0f);
+	glVertex3f(1.0f, 1.0f, 0.0f);
+	glVertex3f(0.0f, 1.0f, 0.0f);
+	glVertex3f(0.0f, 1.0f, 1.0f);
+
+	//east facing wall
+	glNormal3f(1.0f, 0.0f, 0.0f);
+	glVertex3f(1.0f, 1.0f, 0.0f);
+	glVertex3f(1.0f, 1.0f, 1.0f);
+	glVertex3f(1.0f, 0.0f, 1.0f);
+	glVertex3f(1.0f, 0.0f, 0.0f);
+	glEnd();
+	glEndList();
+
+	list[4] = glGenLists(1);
+	glNewList(list[4], GL_COMPILE);
+	glBegin(GL_QUADS);
+	//top facing wall
+	glNormal3f(0.0f, 0.0f, 1.0f);
+	glVertex3f(1, 1, 1.0);
+	glVertex3f(0, 1, 1.0);
+	glVertex3f(0, 0, 1.0);
+	glVertex3f(1, 0, 1.0);
+	glEnd();
+	glEndList();
+}
 
 
 void desenhaPoligono(GLfloat a[], GLfloat b[], GLfloat c[], GLfloat  d[], GLfloat cor[])
@@ -100,80 +144,58 @@ void desenhaPoligono(GLfloat a[], GLfloat b[], GLfloat c[], GLfloat  d[], GLfloa
 	glEnd();
 }
 
+void Board::drawWalls(void) {
+	glColor3f(0.2, 0.3, 0.4);
+	for (int i = 0; i < BOARD_X; i++)
+	{
+		for (int j = 0; j < BOARD_Y ; j++)
+		{
+			int call_this = 0;
+			glPushMatrix();
 
-
-void Board::desenhaCubo() {
-
-
-	GLfloat a = BOARD_WALL_SIZE/2;
-	GLfloat d = -a;
-
-	GLfloat v0[3] = { a,a,a };
-	GLfloat v1[3] = { d,a,a };
-	GLfloat v2[3] = { d,d,a };
-	GLfloat v3[3] = { a,d,a };
-	GLfloat v4[3] = { a,a,d };
-	GLfloat v5[3] = { d,a,d };
-	GLfloat v6[3] = { d,d,d };
-	GLfloat v7[3] = { a,d,d };
-
-
-	GLfloat cores[][3] = { { 0.30,0.75,0.75 },
-	{ 1.0,0.0,0.0 },
-	{ 1.0,1.0,0.0 },
-	{ 0.0,1.0,0.0 },
-	{ 1.0,0.0,1.0 },
-	{ 0.0,0.0,1.0 },
-	{ 1.0,1.0,1.0 } };
-
-
-	desenhaPoligono(v5, v6, v7, v4, cores[0]);
-	desenhaPoligono(v1, v2, v6, v5, cores[0]);
-	desenhaPoligono(v2, v3, v7, v6, cores[1]);
-	desenhaPoligono(v1, v5, v4, v0, cores[1]);
-	desenhaPoligono(v3, v0, v4, v7, cores[1]);
-
-}
-
-
-
-void Board::desenhaParedes() {
-	
-
-	int i, j;
-	glColor3f(0, 0, 1);
-	glPushMatrix();
-	{glRotatef(ang, 0, 0, 1);
-		glTranslatef(0, 0, 0);
-		
-			for (i = 0; i < X; i++) {
-				for (j = 0; j < Y ; j++) {
-					glPushMatrix();
-					{
-						glTranslatef(-(float)X / 2.0f, -(float)Y / 2.0f, 0);
-						//glTranslatef(j*BOARD_SCALE_DEFAULT, Y - i*BOARD_SCALE_DEFAULT, 0);
-
-						glTranslatef(i*BOARD_SCALE_DEFAULT*BOARD_WALL_SIZE, -j*BOARD_SCALE_DEFAULT*BOARD_WALL_SIZE, 0);
-						glPushMatrix(); {
-							glTranslatef(BOARD_SCALE_DEFAULT, 0.5*BOARD_SCALE_DEFAULT, 0);
-
-							switch (scaledWalls[j][i]) {
-							case 1:// Means there is a cube/wall there
-
-								glPushMatrix(); {
-									glScalef(BOARD_WALL_SIZE*BOARD_SCALE_DEFAULT, BOARD_WALL_SIZE*BOARD_SCALE_DEFAULT, BOARD_WALL_SIZE*BOARD_SCALE_DEFAULT);
-									Board::desenhaCubo();
-								}glPopMatrix();
-								break;
-							case 0:
-								break;
-							}
-						}glPopMatrix();
-					}glPopMatrix();
-				}
+			glTranslatef(-(float)BOARD_X / 2.0f, -(float)BOARD_Y / 2.0f, 0);
+			glTranslatef(j, BOARD_Y - i, 0);
+			glPushMatrix();
+			glTranslatef(0.5, 0.5, 0);
+			switch (board_walls[i][j])
+			{
+			case 4:
+				glRotatef(90.0, 0, 0, 1);
+			case 3:
+				glRotatef(90.0, 0, 0, 1);
+			case 2:
+				glRotatef(90.0, 0, 0, 1);
+			case 1:
+				call_this = 1;
+				break;
+			case 6:
+				glRotatef(90.0, 0, 0, 1);
+			case 5:
+				call_this = 2;
+				break;
+			case 10:
+				glRotatef(90.0, 0, 0, 1);
+			case 9:
+				glRotatef(90.0, 0, 0, 1);
+			case 8:
+				glRotatef(90.0, 0, 0, 1);
+			case 7:
+				call_this = 3;
+				break;
 			}
-
-	}glPopMatrix();
+			glScalef(1, 1, 0.5);
+			glTranslatef(-0.5, -0.5, 0);
+			glCallList(list[call_this]);
+			glPopMatrix();
+			//now put on the top of the cell
+			if (call_this != 0 || board_walls[i][j] == 11)
+			{
+				glTranslatef(0, 0, -0.5);
+				glCallList(list[4]);
+			}
+			glPopMatrix();
+		}
+	}
 }
 
 
@@ -181,7 +203,7 @@ void Board::desenhaParedes() {
 void Board::Draw(void) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
-	desenhaParedes();
+	drawWalls();
 
 	glFlush();
 }
@@ -192,8 +214,8 @@ void Board::Draw(void) {
 bool
 Board::IsOpen(int x, int y)
 {
-	if (DEBBUG)printf("[%d][%d]", x, y);
-	if (scaledWalls[x][y] > 0)
+	if (DEBBUG)printf("[%d][%d]", y, x);
+	if (board_walls[y][x] > 0)
 	{
 		return false;
 	}

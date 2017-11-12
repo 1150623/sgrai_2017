@@ -33,7 +33,7 @@ void RenderScene()
 	//labirinto Init (where to put objects for example)
 
 
-	//if (true /*Something happens like catching all keys*/)
+	//if (true /*Something happens like catching all keys OR killing certain monsters or something...*/)
 	//{
 	//	init();
 	//	//unlock something
@@ -46,7 +46,8 @@ void RenderScene()
 	if (!gameover)
 		myCharacter->Draw(); //go to stating place
 
-	/*	{
+	/*	{ //Example For Monster implementation
+
 			if (!gameover)			//Monsters not implemented
 				monster->Draw();
 
@@ -67,7 +68,7 @@ void RenderScene()
 void init(void)
 {
 	srand((unsigned)time(NULL));
-	start_timer = 140;
+	start_timer = 70;
 	myCharacter->Reinit();
 
 
@@ -82,7 +83,7 @@ void TimerFunction(int value)
 {
 
 
-	//switch views from 3D to 2D (top view)
+	//switch views from 3D to 2D (top view) - button-> 'V'
 	if (GetAsyncKeyState(0x56) && v_timer == 0)
 	{
 		view = (view + 1) % 2;
@@ -94,7 +95,7 @@ void TimerFunction(int value)
 
 	
 	//start a new game
-	if (GetAsyncKeyState(VK_RETURN) && gameover)
+	if (GetAsyncKeyState(VK_RETURN) && gameover) // GAMEOVER not implemented yet
 	{
 		myCharacter->lives = 5;
 		init();
@@ -113,34 +114,45 @@ void TimerFunction(int value)
 	{
 		// Get keyboard input
 		//move right
-		if (GetAsyncKeyState(VK_RIGHT) && !GetAsyncKeyState(VK_LEFT))
+		if (GetAsyncKeyState(VK_RIGHT) && !GetAsyncKeyState(VK_LEFT)
+			)
 		{
-			if (board->IsOpen((int)ceil(myCharacter->x + MOVE_RATIO), myCharacter->y)) {
+			if (board->IsOpen(round(myCharacter->x + MOVE_RATIO), round(myCharacter->y)))
+			{
 				myCharacter->x += MOVE_RATIO;
+				myCharacter->angle = 0;
 			}
 		}
 		else
 			//move left
-			if (GetAsyncKeyState(VK_LEFT) && !GetAsyncKeyState(VK_RIGHT))
+			if (GetAsyncKeyState(VK_LEFT) && !GetAsyncKeyState(VK_RIGHT)
+				)
 			{
-				if (board->IsOpen((int)ceil(myCharacter->x - MOVE_RATIO), myCharacter->y)) {
+				if (board->IsOpen(round(myCharacter->x - MOVE_RATIO), round(myCharacter->y)))
+				{
 					myCharacter->x -= MOVE_RATIO;
+					myCharacter->angle = 180;
 				}
 			}
 		//move up
-		if (GetAsyncKeyState(VK_UP) && !GetAsyncKeyState(VK_DOWN))
+		if (GetAsyncKeyState(VK_UP) && !GetAsyncKeyState(VK_DOWN)
+			)
 		{
-			if (board->IsOpen(myCharacter->x, (int)ceil(myCharacter->y - MOVE_RATIO))) {
+			if (board->IsOpen(round(myCharacter->x), round(myCharacter->y - MOVE_RATIO)))
+			{
 				myCharacter->y -= MOVE_RATIO;
+				myCharacter->angle = 270;
 			}
-			
 		}
 		else
 			//move down
-			if (GetAsyncKeyState(VK_DOWN) && !GetAsyncKeyState(VK_UP))
+			if (GetAsyncKeyState(VK_DOWN) && !GetAsyncKeyState(VK_UP)
+				)
 			{
-				if (board->IsOpen(myCharacter->x, (int)ceil(myCharacter->y + MOVE_RATIO))) {
+				if (board->IsOpen(round(myCharacter->x), round(myCharacter->y + MOVE_RATIO)))
+				{
 					myCharacter->y += MOVE_RATIO;
+					myCharacter->angle = 90;
 				}
 			}
 
@@ -188,7 +200,7 @@ void ChangeSize(GLsizei w, GLsizei h)
 	if (h == 0)
 		h = 1;
 
-	ratio = 1.0f * w / (h);
+	ratio = 1.0 * w / (h);
 	glViewport(0, 0, w, h);
 	int distance = 70;
 	camera = new Camera(ratio, distance);
@@ -220,7 +232,6 @@ int main(int argc, char **argv) {
 
 	//set up board
 	board = new Board();
-	int start_x[4] = { 11,12,15,16 }; //staring position
 	
 									  
 	//Inicialize character

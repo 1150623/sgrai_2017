@@ -56,9 +56,7 @@ Camera::Camera(float ratio, float distance)
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	// Position the light source. This has to happen after the viewing
-	// transformation is set up, so that the light stays fixed in world
-	// space. This is a directional light - note the 0 in the w component.
+	// Position the light source. -> Directional light
 	dir[0] = 0.2; dir[1] = 1.0; dir[2] = 1.0; dir[3] = 0.2;
 	glLightfv(GL_LIGHT0, GL_POSITION, dir);
 }
