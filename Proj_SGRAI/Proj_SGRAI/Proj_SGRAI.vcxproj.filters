@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\Tests">
+      <UniqueIdentifier>{9ba99d4c-8eda-442d-b383-baba6f478502}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\tests_headers">
+      <UniqueIdentifier>{7529d2f4-0c15-40f6-84a1-6a2b938e6046}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Board.h">
@@ -27,6 +33,12 @@
     <ClInclude Include="globalHeader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="BoardMatrixCalculations.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TestBoardMatrixCalculations.h">
+      <Filter>Header Files\tests_headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Board.cpp">
@@ -40,6 +52,12 @@
     </ClCompile>
     <ClCompile Include="Character.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BoardMatrixCalculations.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TestBoardMatrixCalculations.cpp">
+      <Filter>Source Files\Tests</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

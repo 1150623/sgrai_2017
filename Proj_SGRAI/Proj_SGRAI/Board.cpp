@@ -12,7 +12,7 @@ const int Board::BOARD_Y = 28;
 // Sujeito a alterações (seria mais eficiente se fosse desenhado por faces, para evitar que paredes tivessem mais faces do que o desejado)
 //		Para isso é necessário colocar mais numeros para além de 0 e 1
 int board_walls[Board::BOARD_X][Board::BOARD_Y] =
-{ { 8,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	1,	1,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	7 },	
+{ { 8,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	1,	1,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	7 },
 {	6,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	2,	4,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	6 },	
 {	6,	0,	8,	5,	1,	7,	0,	8,	1,	1,	1,	7,	0,	2,	4,	0,	8,	1,	1,	1,	7,	0,	8,	1,	1,	7,	0,	6 },	
 {	6,	0,	6,	0,	11,	4,	0,	2,	11,	11,	11,	4,	0,	2,	4,	0,	2,	11,	11,	11,	4,	0,	2,	11,	11,	4,	0,	6 },	
@@ -47,7 +47,7 @@ int board_walls[Board::BOARD_X][Board::BOARD_Y] =
 static const int X = BOARD_SCALE_DEFAULT * Board::BOARD_X;
 static const int Y = BOARD_SCALE_DEFAULT * Board::BOARD_Y;
 
-bool firstTime = false;
+bool firstTime = false;	
 
 
 Board::Board() {
@@ -61,22 +61,111 @@ Board::Board() {
 void Board::tp_restore(){}
 
 
-// Destructor
-Board::~Board(void) { //free(scaledWalls);
-}
-
-void Board::create_list_lib(void)
-{
-	// Draw poligons instead of cubes
-	list[1] = glGenLists(1);
-	glNewList(list[1], GL_COMPILE);
-	//north facing wall
-	glBegin(GL_QUADS);
+void Board::DRAW_WALLS_NORTH(void) {
 	glNormal3f(0.0f, 1.0f, 0.0f);
 	glVertex3f(1.0f, 1.0f, 1.0f);
 	glVertex3f(1.0f, 1.0f, 0.0f);
 	glVertex3f(0.0f, 1.0f, 0.0f);
 	glVertex3f(0.0f, 1.0f, 1.0f);
+}
+
+void Board::DRAW_WALLS_SOUTH(void) {
+	glNormal3f(0.0f, -1.0f, 0.0f);
+	glVertex3f(1.0f, 0.0f, 0.0f);
+	glVertex3f(1.0f, 0.0f, 1.0f);
+	glVertex3f(0.0f, 0.0f, 1.0f);
+	glVertex3f(0.0f, 0.0f, 0.0f);
+}
+
+void Board::DRAW_WALLS_EAST(void) {
+	glNormal3f(1.0f, 0.0f, 0.0f);
+	glVertex3f(1.0f, 1.0f, 0.0f);
+	glVertex3f(1.0f, 1.0f, 1.0f);
+	glVertex3f(1.0f, 0.0f, 1.0f);
+	glVertex3f(1.0f, 0.0f, 0.0f);
+}
+
+void Board::DRAW_WALLS_WEST(void) {
+	glNormal3f(1.0f, 0.0f, 0.0f);
+	glVertex3f(1.0f, 0.0f, 0.0f);
+	glVertex3f(1.0f, 0.0f, 1.0f);
+	glVertex3f(1.0f, 0.0f, 1.0f);
+	glVertex3f(1.0f, 0.0f, 0.0f);
+}
+
+void Board::DRAW_WALLS_BOTTOM(void) {
+	glNormal3f(0.0f, 0.0f, 1.0f);
+	glVertex3f(1, 1, 0.0);
+	glVertex3f(0, 1, 0.0);
+	glVertex3f(0, 0, 0.0);
+	glVertex3f(1, 0, 0.0);
+}
+
+void Board::DRAW_WALLS_TOP(void) {
+	glNormal3f(0.0f, 0.0f, 1.0f);
+	glVertex3f(1, 1, 1.0);
+	glVertex3f(0, 1, 1.0);
+	glVertex3f(0, 0, 1.0);
+	glVertex3f(1, 0, 1.0);
+}
+
+// Destructor
+Board::~Board(void) { //free(scaledWalls);
+}
+
+//	Walls:
+//	N - North; S - South; E - East; W -West; T - Top; B - Bottom
+//	Binary -> 0x00NSEWTB
+int list_Binary[0x00111111];
+
+#define WALLS_NORTH		64
+#define WALLS_SOUTH		32
+#define WALLS_EAST		16
+#define WALLS_WEST		4
+#define WALLS_TOP		2
+#define WALLS_BOTTOM	1
+#define WALLS_EMPTY		0
+#define NUM_WALLS 6
+void drawWall(int combinedWalls) {
+
+	
+	for (int i = 0; i < NUM_WALLS; i++) {
+		glBegin(GL_QUADS); {
+			if (combinedWalls & WALLS_NORTH) {
+			//	WALLS
+			}
+			if (combinedWalls & WALLS_SOUTH) {
+				//addSouth
+	 		}
+	 		if (combinedWalls & WALLS_EAST) {
+				//addEast
+	 		}
+	 		if (combinedWalls & WALLS_WEST) {
+				//addWest
+			}
+	 		if (combinedWalls & WALLS_TOP) {
+				//addTop
+			}
+				if (combinedWalls & WALLS_BOTTOM) {
+				//addbottom
+			}
+
+		}glEnd();
+	}
+}
+
+
+
+void Board::create_list_lib(void)
+{
+	// Draw poligons instead of cubes
+
+
+	list[1] = glGenLists(1);
+	glNewList(list[1], GL_COMPILE);
+	//north facing wall
+	glBegin(GL_QUADS);
+	DRAW_WALLS_NORTH();
 	glEnd();
 	glEndList();
 
@@ -84,37 +173,21 @@ void Board::create_list_lib(void)
 	glNewList(list[2], GL_COMPILE);
 	glBegin(GL_QUADS);
 	//north facing wall
-	glNormal3f(0.0f, 1.0f, 0.0f);
-	glVertex3f(1.0f, 1.0f, 1.0f);
-	glVertex3f(1.0f, 1.0f, 0.0f);
-	glVertex3f(0.0f, 1.0f, 0.0f);
-	glVertex3f(0.0f, 1.0f, 1.0f);
-
+	DRAW_WALLS_NORTH();
 	//south facing wall
-	glNormal3f(0.0f, -1.0f, 0.0f);
-	glVertex3f(1.0f, 0.0f, 0.0f);
-	glVertex3f(1.0f, 0.0f, 1.0f);
-	glVertex3f(0.0f, 0.0f, 1.0f);
-	glVertex3f(0.0f, 0.0f, 0.0f);
+	DRAW_WALLS_SOUTH();
 	glEnd();
 	glEndList();
+
 
 	list[3] = glGenLists(1);
 	glNewList(list[3], GL_COMPILE);
 	glBegin(GL_QUADS);
 	//north facing wall
-	glNormal3f(0.0f, 1.0f, 0.0f);
-	glVertex3f(1.0f, 1.0f, 1.0f);
-	glVertex3f(1.0f, 1.0f, 0.0f);
-	glVertex3f(0.0f, 1.0f, 0.0f);
-	glVertex3f(0.0f, 1.0f, 1.0f);
+	DRAW_WALLS_NORTH();
 
 	//east facing wall
-	glNormal3f(1.0f, 0.0f, 0.0f);
-	glVertex3f(1.0f, 1.0f, 0.0f);
-	glVertex3f(1.0f, 1.0f, 1.0f);
-	glVertex3f(1.0f, 0.0f, 1.0f);
-	glVertex3f(1.0f, 0.0f, 0.0f);
+	DRAW_WALLS_EAST();
 	glEnd();
 	glEndList();
 
@@ -122,27 +195,12 @@ void Board::create_list_lib(void)
 	glNewList(list[4], GL_COMPILE);
 	glBegin(GL_QUADS);
 	//top facing wall
-	glNormal3f(0.0f, 0.0f, 1.0f);
-	glVertex3f(1, 1, 1.0);
-	glVertex3f(0, 1, 1.0);
-	glVertex3f(0, 0, 1.0);
-	glVertex3f(1, 0, 1.0);
+	DRAW_WALLS_TOP();
 	glEnd();
 	glEndList();
 }
 
 
-void desenhaPoligono(GLfloat a[], GLfloat b[], GLfloat c[], GLfloat  d[], GLfloat cor[])
-{
-	glBegin(GL_QUADS);
-	glColor3fv(cor);
-	glNormal3f(0.0f, 1.0f, 0.0f);
-	glVertex3f(a[0], a[1], a[2]);
-	glVertex3f(b[0], b[1], b[2]);
-	glVertex3f(c[0], c[1], c[2]);
-	glVertex3f(d[0], d[1], d[2]);
-	glEnd();
-}
 
 void Board::drawWalls(void) {
 	glColor3f(0.2, 0.3, 0.4);
@@ -213,7 +271,7 @@ void Board::Draw(void) {
 //array is transpose of how actual labirinth appears on screen
 bool
 Board::IsOpen(int x, int y)
-{
+{	
 	if (DEBBUG)printf("[%d][%d]", y, x);
 	if (board_walls[y][x] > 0)
 	{

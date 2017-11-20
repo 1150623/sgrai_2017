@@ -97,7 +97,7 @@ void TimerFunction(int value)
 	//start a new game
 	if (GetAsyncKeyState(VK_RETURN) && gameover) // GAMEOVER not implemented yet
 	{
-		myCharacter->lives = 5;
+		myCharacter->lives = 3;
 		init();
 		//labirinto->tp_restore();
 		gameover = false;
@@ -173,12 +173,13 @@ void TimerFunction(int value)
 			camera->Set_position(myCharacter->x, myCharacter->y, view);
 		}
 
-		if (GetAsyncKeyState(VK_F3) && !GetAsyncKeyState(VK_F4)) {
-			board->ang++;
+		if (GetAsyncKeyState(VK_F3) && !GetAsyncKeyState(VK_F4)) { //Não atribuido
 		}
-		if (GetAsyncKeyState(VK_F4) && !GetAsyncKeyState(VK_F3)) {
-			board->ang--;
-
+		if (GetAsyncKeyState(VK_F4) && !GetAsyncKeyState(VK_F3)) { //Não atribuido
+		}
+		if (GetAsyncKeyState(VK_F5) && !GetAsyncKeyState(VK_F6)) { //Não atribuido
+		}
+		if (GetAsyncKeyState(VK_F6) && !GetAsyncKeyState(VK_F5)) { //Não atribuido
 		}
 	}
 

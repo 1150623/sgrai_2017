@@ -14,8 +14,15 @@ class Board {
 
 		void create_list_lib(void);
 		void drawWalls(void);
-	public:
 
+		void DRAW_WALLS_SOUTH(void);
+		void DRAW_WALLS_NORTH(void);
+		void DRAW_WALLS_WEST(void);
+		void DRAW_WALLS_EAST(void);
+		void DRAW_WALLS_BOTTOM(void);
+		void DRAW_WALLS_TOP(void);
+
+	public:
 		static const float BOARD_WALL_SIZE;
 		static const int BOARD_X;
 		static const int BOARD_Y;
