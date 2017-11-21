@@ -117,7 +117,7 @@ void TimerFunction(int value)
 		if (GetAsyncKeyState(VK_RIGHT) && !GetAsyncKeyState(VK_LEFT)
 			)
 		{
-			if (board->IsOpen(round(myCharacter->x + MOVE_RATIO), round(myCharacter->y)))
+			if (board->IsOpen(myCharacter->x + MOVE_RATIO, myCharacter->y))
 			{
 				myCharacter->x += MOVE_RATIO;
 				myCharacter->angle = 0;
@@ -128,7 +128,7 @@ void TimerFunction(int value)
 			if (GetAsyncKeyState(VK_LEFT) && !GetAsyncKeyState(VK_RIGHT)
 				)
 			{
-				if (board->IsOpen(round(myCharacter->x - MOVE_RATIO), round(myCharacter->y)))
+				if (board->IsOpen(myCharacter->x - MOVE_RATIO, myCharacter->y))
 				{
 					myCharacter->x -= MOVE_RATIO;
 					myCharacter->angle = 180;
@@ -138,7 +138,7 @@ void TimerFunction(int value)
 		if (GetAsyncKeyState(VK_UP) && !GetAsyncKeyState(VK_DOWN)
 			)
 		{
-			if (board->IsOpen(round(myCharacter->x), round(myCharacter->y - MOVE_RATIO)))
+			if (board->IsOpen(myCharacter->x, myCharacter->y - MOVE_RATIO))
 			{
 				myCharacter->y -= MOVE_RATIO;
 				myCharacter->angle = 270;
@@ -149,7 +149,7 @@ void TimerFunction(int value)
 			if (GetAsyncKeyState(VK_DOWN) && !GetAsyncKeyState(VK_UP)
 				)
 			{
-				if (board->IsOpen(round(myCharacter->x), round(myCharacter->y + MOVE_RATIO)))
+				if (board->IsOpen(myCharacter->x, myCharacter->y + MOVE_RATIO))
 				{
 					myCharacter->y += MOVE_RATIO;
 					myCharacter->angle = 90;
