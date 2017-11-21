@@ -54,8 +54,6 @@ bool firstTime = false;
 Board::Board() {
 	//scaleWalls();
 	ang = 0;
-	//create the different possible cells
-	create_list_lib();
 	//( tp_restore)
 }
 
@@ -63,116 +61,65 @@ void Board::tp_restore(){}
 
 
 void Board::DRAW_WALLS_NORTH(void) {
-	glNormal3f(0.0f, 1.0f, 0.0f);
-	glVertex3f(1.0f, 1.0f, 1.0f);
-	glVertex3f(1.0f, 1.0f, 0.0f);
-	glVertex3f(0.0f, 1.0f, 0.0f);
-	glVertex3f(0.0f, 1.0f, 1.0f);
-}
-
-void Board::DRAW_WALLS_SOUTH(void) {
+	glColor3f(0.2, 0.3, 0.4);
 	glNormal3f(0.0f, -1.0f, 0.0f);
+	glVertex3f(0.0f, 0.0f, 0.0f);
 	glVertex3f(1.0f, 0.0f, 0.0f);
 	glVertex3f(1.0f, 0.0f, 1.0f);
 	glVertex3f(0.0f, 0.0f, 1.0f);
-	glVertex3f(0.0f, 0.0f, 0.0f);
+	
+	
+}
+
+void Board::DRAW_WALLS_SOUTH(void) {
+	glColor3f(0.2, 0.3, 0.4);
+	glNormal3f(0.0f, 1.0f, 0.0f);
+	glVertex3f(1.0f, 1.0f, 0.0f);
+	glVertex3f(0.0f, 1.0f, 0.0f);
+	glVertex3f(0.0f, 1.0f, 1.0f);
+	glVertex3f(1.0f, 1.0f, 1.0f);
 }
 
 void Board::DRAW_WALLS_EAST(void) {
-	glNormal3f(1.0f, 0.0f, 0.0f);
-	glVertex3f(1.0f, 1.0f, 0.0f);
-	glVertex3f(1.0f, 1.0f, 1.0f);
-	glVertex3f(1.0f, 0.0f, 1.0f);
-	glVertex3f(1.0f, 0.0f, 0.0f);
+	glColor3f(0.2, 0.3, 0.4);
+	glNormal3f(0.0f, 1.0f, 0.0f);
+	glVertex3f(0.0, 0.0, 0.0);
+	glVertex3f(0.0, 0.0, 1.0);
+	glVertex3f(0.0, 1.0, 1.0);
+	glVertex3f(0.0, 1.0, 0.0);
 }
 
 void Board::DRAW_WALLS_WEST(void) {
-	glNormal3f(1.0f, 0.0f, 0.0f);
-	glVertex3f(1.0f, 0.0f, 0.0f);
-	glVertex3f(1.0f, 0.0f, 1.0f);
-	glVertex3f(1.0f, 0.0f, 1.0f);
-	glVertex3f(1.0f, 0.0f, 0.0f);
-}
-
-void Board::DRAW_WALLS_BOTTOM(void) {
-	glNormal3f(0.0f, 0.0f, 1.0f);
-	glVertex3f(1, 1, 0.0);
-	glVertex3f(0, 1, 0.0);
-	glVertex3f(0, 0, 0.0);
-	glVertex3f(1, 0, 0.0);
+	glColor3f(0.2, 0.3, 0.4);
+	glNormal3f(0.0f, -1.0f, 0.0f);
+	glVertex3f(1.0, 1.0, 0.0);
+	glVertex3f(1.0, 1.0, 1.0);
+	glVertex3f(1.0, 0.0, 1.0);
+	glVertex3f(1.0, 0.0, 0.0);
 }
 
 void Board::DRAW_WALLS_TOP(void) {
+	glColor3f(0.2, 0.3, 0.4);
 	glNormal3f(0.0f, 0.0f, 1.0f);
-	glVertex3f(1, 1, 1.0);
-	glVertex3f(0, 1, 1.0);
-	glVertex3f(0, 0, 1.0);
-	glVertex3f(1, 0, 1.0);
+	glVertex3f(1,0,1);
+	glVertex3f(1,1,1);
+	glVertex3f(0,1,1);
+	glVertex3f(0,0,1);
+}
+
+
+void Board::DRAW_WALLS_BOTTOM(void) {
+	glColor3f(0.2, 0.1, 0.1);
+	glNormal3f(0.0f, 0.0f, 1.0f);
+	glVertex3f(1, 0, 0);
+	glVertex3f(1, 1, 0);
+	glVertex3f(0, 1, 0);
+	glVertex3f(0, 0, 0);
 }
 
 // Destructor
-Board::~Board(void) { //free(scaledWalls);
+Board::~Board(void) {
 }
-
-//	Walls:
-//	N - North; S - South; E - East; W -West; T - Top; B - Bottom
-//	Binary -> 0x00NSEWTB
-int list_Binary[0x00111111];
-
-#define WALLS_NORTH		64
-#define WALLS_SOUTH		32
-#define WALLS_EAST		16
-#define WALLS_WEST		4
-#define WALLS_TOP		2
-#define WALLS_BOTTOM	1
-#define WALLS_EMPTY		0
-#define NUM_WALLS 6
-
-
-void Board::create_list_lib(void)
-{
-	// Draw poligons instead of cubes
-
-
-	list[1] = glGenLists(1);
-	glNewList(list[1], GL_COMPILE);
-	//north facing wall
-	glBegin(GL_QUADS);
-	DRAW_WALLS_NORTH();
-	glEnd();
-	glEndList();
-
-	list[2] = glGenLists(1);
-	glNewList(list[2], GL_COMPILE);
-	glBegin(GL_QUADS);
-	//north facing wall
-	DRAW_WALLS_NORTH();
-	//south facing wall
-	DRAW_WALLS_SOUTH();
-	glEnd();
-	glEndList();
-
-
-	list[3] = glGenLists(1);
-	glNewList(list[3], GL_COMPILE);
-	glBegin(GL_QUADS);
-	//north facing wall
-	DRAW_WALLS_NORTH();
-
-	//east facing wall
-	DRAW_WALLS_EAST();
-	glEnd();
-	glEndList();
-
-	list[4] = glGenLists(1);
-	glNewList(list[4], GL_COMPILE);
-	glBegin(GL_QUADS);
-	//top facing wall
-	DRAW_WALLS_TOP();
-	glEnd();
-	glEndList();
-}
-
 
 
 void Board::drawWalls(void) {
@@ -181,7 +128,7 @@ void Board::drawWalls(void) {
 	{
 		for (int j = 0; j < BOARD_Y ; j++)
 		{
-			int aux = WALLS_BOTTOM+WALLS_TOP;
+			int aux = WALLS_BOTTOM;
 			glPushMatrix();
 
 			glTranslatef(-(float)BOARD_X / 2.0f, -(float)BOARD_Y / 2.0f, 0);
@@ -190,17 +137,19 @@ void Board::drawWalls(void) {
 
 			if (board_walls[i][j] == 1)
 			{
-				if (i - 1 >= 0) if (board_walls[i - 1][j] == 0) { aux += WALLS_NORTH; }
-				if (i + 1 < BOARD_X) if (board_walls[i + 1][j] == 0) { aux += WALLS_SOUTH; }
-				if (j + 1 < BOARD_Y) if (board_walls[i][j + 1] == 0) { aux += WALLS_EAST; }
-				if (j - 1 >= 0) if (board_walls[i][j - 1] == 0) { aux += WALLS_WEST; }
+				aux += WALLS_TOP;
+				aux -= WALLS_BOTTOM;
+				if (i - 1 >= 0) if (board_walls[i - 1][j] == 0) { aux += WALLS_SOUTH; }
+				if (i + 1 < BOARD_X) if (board_walls[i + 1][j] == 0) { aux += WALLS_NORTH; }
+				if (j + 1 < BOARD_Y) if (board_walls[i][j + 1] == 0) { aux += WALLS_WEST; }
+				if (j - 1 >= 0) if (board_walls[i][j - 1] == 0) { aux += WALLS_EAST; }
 
-				if (i == 0) if (board_walls[i][j] == 1) { aux += WALLS_NORTH; }
-				if (i == BOARD_X-1) if (board_walls[i][j] == 1) { aux += WALLS_SOUTH; }
-				if (j == BOARD_Y-1) if (board_walls[i][j] == 1) { aux += WALLS_EAST; }
-				if (j == 0) if (board_walls[i][j] == 1) { aux += WALLS_WEST; }
+				if (!(aux & WALLS_SOUTH) && i == 0 ) if (board_walls[i][j] == 1) { aux += WALLS_SOUTH; }
+				if (!(aux & WALLS_NORTH) && i == BOARD_X-1) if (board_walls[i][j] == 1) { aux += WALLS_NORTH; }
+				if (!(aux & WALLS_WEST) && j == BOARD_Y-1) if (board_walls[i][j] == 1) { aux += WALLS_WEST; }
+				if (!(aux & WALLS_EAST) && j == 0) if (board_walls[i][j] == 1) { aux += WALLS_EAST; }
 
-
+			}
 				glBegin(GL_QUADS);
 				{
 					if (aux & WALLS_NORTH) {
@@ -210,6 +159,7 @@ void Board::drawWalls(void) {
 						Board::DRAW_WALLS_SOUTH();
 					}
 					if (aux & WALLS_EAST) {
+						//if (DEBBUG) printf("DRAW WEST  at [%d][%d] \n", i, j);
 						Board::DRAW_WALLS_EAST();
 					}
 					if (aux & WALLS_WEST) {
@@ -223,7 +173,7 @@ void Board::drawWalls(void) {
 					}
 				}
 				glEnd();
-			}
+			
 			
 			glPopMatrix();
 			
