@@ -3,6 +3,7 @@
 #define _BOARD_H_
 
 #include "globalHeader.h"
+
 class Board {
 
 	
@@ -16,7 +17,11 @@ class Board {
 		void DRAW_WALLS_EAST(void);
 		void DRAW_WALLS_BOTTOM(void);
 		void DRAW_WALLS_TOP(void);
+		void loadTextures(void);
+		void MYcube(void);
+		void face(int, int, int, int);
 
+		byte DRAW_DOOR = 128;	// 10000000
 		byte WALLS_NORTH = 64;	// 01000000
 		byte WALLS_SOUTH = 32;	// 00100000
 		byte WALLS_EAST = 16;	// 00010000
@@ -29,8 +34,8 @@ class Board {
 		#define NUM_WALLS		6
 
 		static const float BOARD_WALL_SIZE;
-		static const int BOARD_X;
-		static const int BOARD_Y;
+		static const int BOARD_X = 31;
+		static const int BOARD_Y = 28;
 
 		float ang;
 
@@ -42,6 +47,12 @@ class Board {
 
 		//this function returns whether or not a location is open or is a wall
 		bool IsOpen(int, int);
+
+		//this function returns whether or not a location is a Door or not
+		bool IsDoor(int, int);
+
+		//this function returns whether or not a location is a Door or not
+		void OpenDoor(int, int);
 
 		//Restores objects to lab (not implemented yet -> for example, restores keys to open a door (when board is reloaded for example))
 		void tp_restore(void);

@@ -42,6 +42,7 @@ void RenderScene()
 	//}
 	
 	board->Draw();
+
 	
 	if (!gameover)
 		myCharacter->Draw(); //go to stating place
@@ -70,12 +71,6 @@ void init(void)
 	srand((unsigned)time(NULL));
 	start_timer = 70;
 	myCharacter->Reinit();
-
-
-	glEnable(GL_POINT_SMOOTH);
-	glEnable(GL_LINE_SMOOTH);
-	glEnable(GL_POLYGON_SMOOTH);
-	glEnable(GL_DEPTH_TEST);
 
 }
 
@@ -122,6 +117,14 @@ void TimerFunction(int value)
 				myCharacter->x += MOVE_RATIO;
 				myCharacter->angle = 0;
 			}
+			else {
+				if (GetAsyncKeyState(0x51) && myCharacter->dynamiteFound == DYNAMITE_NEEDED) {
+					if (board->IsDoor(myCharacter->x + MOVE_RATIO, myCharacter->y))
+					{
+						board->OpenDoor(myCharacter->x + MOVE_RATIO, myCharacter->y);
+					}
+				}
+			}
 		}
 		else
 			//move left
@@ -133,6 +136,14 @@ void TimerFunction(int value)
 					myCharacter->x -= MOVE_RATIO;
 					myCharacter->angle = 180;
 				}
+				else {
+					if (GetAsyncKeyState(0x51) && myCharacter->dynamiteFound == DYNAMITE_NEEDED) {
+						if (board->IsDoor(myCharacter->x - MOVE_RATIO, myCharacter->y))
+						{
+							board->OpenDoor(myCharacter->x - MOVE_RATIO, myCharacter->y);
+						}
+					}
+				}
 			}
 		//move up
 		if (GetAsyncKeyState(VK_UP) && !GetAsyncKeyState(VK_DOWN)
@@ -142,6 +153,14 @@ void TimerFunction(int value)
 			{
 				myCharacter->y -= MOVE_RATIO;
 				myCharacter->angle = 270;
+			}
+			else {
+				if (GetAsyncKeyState(0x51) && myCharacter->dynamiteFound == DYNAMITE_NEEDED) {
+					if (board->IsDoor(myCharacter->x, myCharacter->y - MOVE_RATIO))
+					{
+						board->OpenDoor(myCharacter->x, myCharacter->y - MOVE_RATIO);
+					}
+				}
 			}
 		}
 		else
@@ -153,6 +172,14 @@ void TimerFunction(int value)
 				{
 					myCharacter->y += MOVE_RATIO;
 					myCharacter->angle = 90;
+				}
+				else {
+					if (GetAsyncKeyState(0x51) && myCharacter->dynamiteFound == DYNAMITE_NEEDED) {
+						if (board->IsDoor(myCharacter->x, myCharacter->y + MOVE_RATIO))
+						{
+							board->OpenDoor(myCharacter->x, myCharacter->y + MOVE_RATIO);
+						}
+					}
 				}
 			}
 
@@ -213,14 +240,17 @@ int main(int argc, char **argv) {
 	glutInitWindowPosition(0, 0);
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
 
-	//windowed mode
-	glutInitWindowSize(1080, 820);
-	if (glutCreateWindow("Labirinto 3D") == GL_FALSE)
-		exit(1);
-
-	//fullscreen mode
-	//glutGameModeString("800x600:16@60");
-	//glutEnterGameMode();
+	if (!FULLSCREEN) {
+		//windowed mode
+		glutInitWindowSize(1080, 820);
+		if (glutCreateWindow("Labirinto 3D") == GL_FALSE)
+			exit(1);
+	}
+	else {
+		//fullscreen mode
+		glutGameModeString("800x600:16@60");
+		glutEnterGameMode();
+	}
 
 	//make mouse disappear
 	glutSetCursor(GLUT_CURSOR_NONE);

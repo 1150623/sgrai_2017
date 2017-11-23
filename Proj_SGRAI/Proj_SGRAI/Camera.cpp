@@ -60,7 +60,6 @@ Camera::Camera(float ratio, float distance)
 	dir[0] = 0.2; dir[1] = 1.0; dir[2] = 1.0; dir[3] = 0.2;
 	glLightfv(GL_LIGHT0, GL_POSITION, dir);
 }
-
 void
 Camera::Set_position(float x_at, float y_at, int view)
 {
@@ -70,10 +69,21 @@ Camera::Set_position(float x_at, float y_at, int view)
 	//glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	if (view == 1)
-		gluLookAt(-1.5, 0, 40, -1.5, 0, 0, 0.0f, 1.0f, 0.0f);
-	else
-		gluLookAt(.8f*(float)(x_at - Board::BOARD_X / 2) - 0.3, -y_at + Board::BOARD_Y / 4 - 10, 20,
-			x_at - Board::BOARD_X / 2, -y_at + Board::BOARD_Y / 2, 1, 0.0f, 0.0f, 1.0f);
+	if (view == 1) {
+		
+		gluLookAt(	-1.5f, 0.0f, 40.0f,					// eye
+					-1.5f, 0.0f, 0.0f,					// center
+					0.0f, 1.0f, 0.0f);					// up
 
+	}
+	else if(view == 0) {
+		
+		gluLookAt(.8f*(float)(	x_at - Board::BOARD_X / 2) - 0.3, -y_at + Board::BOARD_Y / 4 - 10, 20,						// eye
+								x_at - Board::BOARD_X / 2, -y_at + Board::BOARD_Y / 2, 1,									// center
+								0.0f, 0.0f, 1.0f);																			// up (x, y, x)
+	}
+	else { 
+			//VISTA PRIMEIRA PESSOA
+	}
+	
 }

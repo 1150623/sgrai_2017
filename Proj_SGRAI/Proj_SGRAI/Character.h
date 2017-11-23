@@ -26,6 +26,7 @@ public:
 	double x, y;
 	bool animate;
 	float size;
+	int dynamiteFound = DEBBUG ? DYNAMITE_NEEDED : 0;
 
 	Character(double, double, float);
 
