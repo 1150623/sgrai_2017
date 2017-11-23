@@ -1,15 +1,15 @@
 #include "Character.h"
-#include "Board.h"
 #include <stdio.h>
 #include <GL/glut.h>
 #include <Math.h>
 
 // Destructor
 Character::~Character(void) {}
-
+Board board;
 //Constructor (inicializa)
-Character::Character(double tx, double ty, float size)
+Character::Character(double tx, double ty, float size, Board b)
 {
+	board = b;
 	Character::size = size;
 	lives = NUM_LIVES;
 	x = tx;
@@ -30,15 +30,19 @@ Character::Reinit(void)
 }
 
 void
-Character::Move()
+Character::MoveTo(int xF, int yF)
 {
-	x += speed*cos(M_PI / 180 * angle);
-	y += speed*sin(M_PI / 180 * angle);
+	char* a = board.getPath(x, y, xF, yF);
+	if (a == NULL) {
+		printf("NOTHING\n");
+	}
+	printf("---------------------------------\n%s\n---------------------------------------\n", a);
 }
 
 void
 Character::Draw(void)
 {
+
 	//draw current Character
 	glColor3f(1.0, 0.25, 0.25);	
 	glPushMatrix();

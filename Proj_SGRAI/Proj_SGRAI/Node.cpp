@@ -1,4 +1,4 @@
-#include "Node.h"
+#include "Board.h"
 
 static const int dir = 8; // number of possible directions to go at any position
 

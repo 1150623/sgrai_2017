@@ -1,9 +1,5 @@
-
 #include "Camera.h"
-#include "Board.h"
-#include <stdio.h>
-#include <GL/glut.h>
-#include <Math.h>
+
 
 
 // Destructor

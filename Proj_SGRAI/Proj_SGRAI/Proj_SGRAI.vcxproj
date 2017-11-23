@@ -115,7 +115,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="A star_Algorithm.cpp" />
+    <ClCompile Include="A-star_Algorithm.cpp" />
     <ClCompile Include="Board.cpp" />
     <ClCompile Include="BoardMatrixCalculations.cpp" />
     <ClCompile Include="Camera.cpp" />
@@ -125,13 +125,11 @@
     <ClCompile Include="TestBoardMatrixCalculations.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="A star_Algorithm.h" />
     <ClInclude Include="Board.h" />
     <ClInclude Include="BoardMatrixCalculations.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Character.h" />
     <ClInclude Include="globalHeader.h" />
-    <ClInclude Include="Node.h" />
     <ClInclude Include="TestBoardMatrixCalculations.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

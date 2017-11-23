@@ -1,5 +1,4 @@
 #include "globalHeader.h"
-#include "Board.h"
 #include "Character.h"
 #include "Camera.h"
 
@@ -211,10 +210,10 @@ void TimerFunction(int value)
 	}
 
 
-
 	//quit
 	if (GetAsyncKeyState(VK_ESCAPE))
 	{
+
 		board->~Board();
 		exit(0);
 	}
@@ -266,11 +265,10 @@ int main(int argc, char **argv) {
 	
 									  
 	//Inicialize character
-	myCharacter = new Character(CHARACTER_STARTLOCATION_X, CHARACTER_STARTLOCATION_Y, CHARACTER_SIZE);
-
+	myCharacter = new Character(CHARACTER_STARTLOCATION_X, CHARACTER_STARTLOCATION_Y, CHARACTER_SIZE, *board);
+	myCharacter->MoveTo(1, 17);
 
 	init();
-
 	//initial view is the "3D" view
 	view = 0;
 	v_timer = 0;
@@ -278,5 +276,5 @@ int main(int argc, char **argv) {
 	glutTimerFunc(15, TimerFunction, 1);
 	glutMainLoop();
 
-	return 0;
+	return 0;\
 }

@@ -39,12 +39,6 @@
     <ClInclude Include="TestBoardMatrixCalculations.h">
       <Filter>Header Files\tests_headers</Filter>
     </ClInclude>
-    <ClInclude Include="Node.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="A star_Algorithm.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Board.cpp">
@@ -65,10 +59,10 @@
     <ClCompile Include="TestBoardMatrixCalculations.cpp">
       <Filter>Source Files\Tests</Filter>
     </ClCompile>
-    <ClCompile Include="A star_Algorithm.cpp">
+    <ClCompile Include="Node.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Node.cpp">
+    <ClCompile Include="A-star_Algorithm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

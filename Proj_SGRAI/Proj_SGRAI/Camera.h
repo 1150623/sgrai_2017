@@ -5,6 +5,7 @@
 #define _CAMERA_H_
 
 #include "globalHeader.h"
+#include "Board.h"
 
 class Camera {
 private:

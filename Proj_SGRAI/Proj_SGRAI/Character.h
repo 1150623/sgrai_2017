@@ -1,5 +1,5 @@
 #pragma once
-#pragma once
+
 #ifndef _Character_H_
 #define _Character_H_
 
@@ -8,7 +8,7 @@
 #endif
 
 #include "globalHeader.h"
-
+#include "Board.h"
 #define NUM_LIVES 3
 #define CHAR_ANGLE 30
 #define CHAR_SPEED 0.1
@@ -28,14 +28,14 @@ public:
 	float size;
 	int dynamiteFound = DEBBUG ? DYNAMITE_NEEDED : 0;
 
-	Character(double, double, float);
+	Character(double, double, float, Board);
 
 	~Character(void);
 
-	void Move();		//move the Character
+	void MoveTo(int, int);		//move the Character
 
-	void Reinit();		//reinitialize everything
-					
-	void Draw(void);	//draw character
+	void Reinit();				//reinitialize everything
+
+	void Draw(void);			//draw character
 };
 #endif
