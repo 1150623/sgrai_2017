@@ -1,174 +1,208 @@
 #include "Board.h"
-#include <cstdlib> 
-#include <cstdio>
-#include <stdio.h>
-#include <stdlib.h>
 
-int map[Board::BOARD_X][Board::BOARD_Y];
-int closed_nodes_map[Board::BOARD_X][Board::BOARD_Y]; // map of closed (tried-out) nodes
-int open_nodes_map[Board::BOARD_X][Board::BOARD_Y]; // map of open (not-yet-tried) nodes
-int dir_map[Board::BOARD_X][Board::BOARD_Y]; // map of directions
+#include <algorithm>
+
+using namespace std::placeholders;
+
+bool AStar::Vec2i::operator == (const Vec2i& coordinates_)
+{
+	return (x == coordinates_.x && y == coordinates_.y);
+}
 
 
-static const int dir = 8; // number of possible directions to go at any position
-// if dir==4
-//static int dx[dir]={1,  0,  -1,   0};
-//static int dy[dir]={0,  1,   0,  -1};
-// if dir==8
 
-//			    R     R_UP    UP    L_UP     L   L_DOWN    DOWN   R_DOWN 
-int dx[dir] = { 1,     1,     0,    -1,	    -1,	   -1,       0,     1 };
-int dy[dir] = { 0,     1,     1,     1,      0,    -1,      -1,	   -1 };
+AStar::Vec2i operator + (const AStar::Vec2i& left_, const AStar::Vec2i& right_)
+{
+	return{ left_.x + right_.x, left_.y + right_.y };
+}
 
-bool first = true;
-Astar_Algorithm::Astar_Algorithm(int** board) {
-	
 
-	for (int i = 0; i < Board::BOARD_X; i++) {
-		for (int j = 0; j < Board::BOARD_Y; j++) {
-			map[i][j] = board[i][j];
-		}
-	}
-	if (first) {
-		first = false;
-		for (int i = 0; i < Board::BOARD_X; i++) {
-			for (int j = 0; j < Board::BOARD_Y; j++) {
-				printf("%d", board[i][j]);
-			}
-			printf("\n");
-		}
+
+AStar::Node::Node(Vec2i coordinates_, Node *parent_)
+{
+	parent = parent_;
+	coords = coordinates_;
+	G = H = 0;
+}
+
+
+
+AStar::uint AStar::Node::getScore()
+{
+	return G + H;
+}
+
+
+
+AStar::Generator::Generator()
+{
+	setDiagonalMovement(false);
+	setHeuristic(&Heuristic::manhattan);
+	direction = {
+		{ 0, 1 }	,{ 1, 0 }	,{ 0, -1 }	,{ -1, 0 },
+		{ -1, -1 }	,{ 1, 1 }	,{ -1, 1 }	,{ 1, -1 }
+	};
+}
+
+void AStar::Generator::setWorldSize(Vec2i worldSize_)
+{
+	worldSize = worldSize_;
+}
+
+
+void AStar::Generator::setDiagonalMovement(bool enable_)
+{
+	directions = (enable_ ? 8 : 4);
+}
+
+
+void AStar::Generator::setHeuristic(HeuristicFunc heuristic_)
+{
+	heuristic = std::bind(heuristic_, _1, _2); //{}
+}
+
+void AStar::Generator::addCollision(Vec2i coordinates_)
+{
+	walls.push_back(coordinates_);
+}
+
+
+void AStar::Generator::removeCollision(Vec2i coordinates_)
+{
+	auto it = std::find(walls.begin(), walls.end(), coordinates_);
+	if (it != walls.end()) {
+		walls.erase(it);
 	}
 }
 
-// Determine priority (in the priority queue)
-bool operator<(const Node & a, const Node & b)
+
+void AStar::Generator::clearCollisions()
 {
-	return a.getPriority() > b.getPriority();
+	walls.clear();
 }
 
-// A-star algorithm.
-// The route returned is a string of direction digits.
-char* Astar_Algorithm::pathFind(const int & xStart, const int & yStart,
-	const int & xFinish, const int & yFinish)
+
+AStar::CoordList AStar::Generator::findPath(Vec2i start, Vec2i finish)
 {
-	static std::priority_queue<Node> pq[2]; // list of open (not-yet-tried) nodes
-	static int pqi; // pq index
-	static Node* x0;
-	static Node* y0;
-	static int i, j, x, y, xdx, ydy;
-	static char c;
-	pqi = 0;
+	Node *thisNode = nullptr;
+	NodeSet openSet, closedSet;
+	openSet.insert(new Node(start));
 
-	// reset the node maps
-	for (y = 0; y<Board::BOARD_Y; y++)
-	{
-		for (x = 0; x<Board::BOARD_X; x++)
-		{
-			closed_nodes_map[x][y] = 0;
-			open_nodes_map[x][y] = 0;
+	while (!openSet.empty()) {
+		thisNode = *openSet.begin();
+		for (Node* node : openSet) {
+			if (node->getScore() <= thisNode->getScore()) {
+				thisNode = node;
+			}
+		}
+
+		if (thisNode->coords == finish) {
+			break;
+		}
+
+
+		closedSet.insert(thisNode);
+		openSet.erase(std::find(openSet.begin(), openSet.end(), thisNode));
+
+		for (uint i = 0; i < directions; ++i) {
+			Vec2i newCoordinates(thisNode->coords + direction[i]);
+			if (detectCollision(newCoordinates) ||
+				findNodeOnList(closedSet, newCoordinates)) {
+				continue;
+			}
+
+			uint totalCost = thisNode->G + ((i < 4) ? 10 : 14);
+
+			Node *next = findNodeOnList(openSet, newCoordinates);
+			if (next == nullptr) {
+				next = new Node(newCoordinates, thisNode);
+				next->G = totalCost;
+				next->H = heuristic(next->coords, finish);
+				openSet.insert(next);
+			}
+			else if (totalCost < next->G) {
+				next->parent = thisNode;
+				next->G = totalCost;
+			}
 		}
 	}
 
-	// create the start node and push into list of open nodes
-	x0 = new Node(xStart, yStart, 0, 0);
-	x0->updatePriority(xFinish, yFinish);
-	pq[pqi].push(*x0);
-	open_nodes_map[x][y] = x0->getPriority(); // mark it on the open nodes map
-	delete x0;
-											  // A* search
-	while (!pq[pqi].empty())
-	{
-		// get the current node w/ the highest priority
-		// from the list of open nodes
-		x0 = new Node(pq[pqi].top().getxPos(), pq[pqi].top().getyPos(),
-			pq[pqi].top().getLevel(), pq[pqi].top().getPriority());
 
-		x = x0->getxPos(); y = x0->getyPos();
-
-		pq[pqi].pop(); // remove the node from the open list
-		open_nodes_map[x][y] = 0;
-		// mark it on the closed nodes map
-		closed_nodes_map[x][y] = 1;
-
-		// quit searching when the goal state is reached
-		//if((*n0).estimate(xFinish, yFinish) == 0)
-		if (x == xFinish && y == yFinish)
-		{
-			// generate the path from finish to start
-			// by following the directions
-			char* path = "";
-			while (!(x == xStart && y == yStart))
-			{
-				j = dir_map[x][y];
-				c = '0' + (j + dir / 2) % dir;
-				path = c + path;
-				x += dx[j];
-				y += dy[j];
-			}
-
-			// garbage collection
-			delete x0;
-			// empty the leftover nodes
-			while (!pq[pqi].empty()) pq[pqi].pop();
-			return path;
-		}
-
-		// generate moves (child nodes) in all possible directions
-		for (i = 0; i<dir; i++)
-		{
-			xdx = x + dx[i]; ydy = y + dy[i];
-
-			if (!(xdx<0 || xdx>Board::BOARD_X - 1 || ydy<0 || ydy>Board::BOARD_Y - 1 || map[xdx][ydy] == 1
-				|| closed_nodes_map[xdx][ydy] == 1))
-			{
-				// generate a child node
-				y0 = new Node(xdx, ydy, x0->getLevel(),
-					x0->getPriority());
-				y0->nextLevel(i);
-				y0->updatePriority(xFinish, yFinish);
-
-				// if it is not in the open list then add into that
-				if (open_nodes_map[xdx][ydy] == 0)
-				{
-					open_nodes_map[xdx][ydy] = y0->getPriority();
-					pq[pqi].push(*y0);
-					// mark its parent node direction
-					dir_map[xdx][ydy] = (i + dir / 2) % dir;
-					delete y0;
-				}
-				else if (open_nodes_map[xdx][ydy]>y0->getPriority())
-				{
-					// update the priority info
-					open_nodes_map[xdx][ydy] = y0->getPriority();
-					// update the parent direction info
-					dir_map[xdx][ydy] = (i + dir / 2) % dir;
-
-					// replace the node
-					// by emptying one pq to the other one
-					// except the node to be replaced will be ignored
-					// and the new node will be pushed in instead
-					while (!(pq[pqi].top().getxPos() == xdx &&
-						pq[pqi].top().getyPos() == ydy))
-					{
-						pq[1 - pqi].push(pq[pqi].top());
-						pq[pqi].pop();
-					}
-					pq[pqi].pop(); // remove the wanted node
-
-								   // empty the larger size pq to the smaller one
-					if (pq[pqi].size()>pq[1 - pqi].size()) pqi = 1 - pqi;
-					while (!pq[pqi].empty())
-					{
-						pq[1 - pqi].push(pq[pqi].top());
-						pq[pqi].pop();
-					}
-					pqi = 1 - pqi;
-					pq[pqi].push(*y0); // add the better node instead
-				}
-				else delete y0; // garbage collection
-			}
-		}
-		delete x0; // garbage collection
+	CoordList path;
+	while (thisNode != nullptr) {
+		path.push_back(thisNode->coords);
+		thisNode = thisNode->parent;
 	}
-	return ""; // no route found
+
+	releaseNodes(openSet);
+	releaseNodes(closedSet);
+
+	return path;
+}
+
+
+
+AStar::Node* AStar::Generator::findNodeOnList(NodeSet& nodes_, Vec2i coordinates_)
+{
+	for (auto node : nodes_) {
+		if (node->coords == coordinates_) {
+			return node;
+		}
+	}
+
+	return nullptr;
+}
+
+
+
+void AStar::Generator::releaseNodes(NodeSet& nodes_)
+{
+	for (auto it = nodes_.begin(); it != nodes_.end();) {
+		delete *it;
+		it = nodes_.erase(it);
+	}
+}
+
+bool
+hasWalls(int x, int y) {
+	return board_walls[x][y] == 1 || board_walls[x][y] == 5;
+}
+
+bool AStar::Generator::detectCollision(Vec2i coordinates_)
+{
+	if (coordinates_.x < 0 || coordinates_.x >= worldSize.x ||
+		coordinates_.y < 0 || coordinates_.y >= worldSize.y ||
+		hasWalls(coordinates_.x, coordinates_.y)) {
+		return true;
+	}
+	return false;
+}
+
+AStar::Vec2i AStar::Heuristic::getDelta(Vec2i source_, Vec2i target_)
+{
+	return{ abs(source_.x - target_.x),  abs(source_.y - target_.y) };
+}
+
+
+
+AStar::uint AStar::Heuristic::manhattan(Vec2i source_, Vec2i target_)
+{
+	auto delta = std::move(getDelta(source_, target_));
+	return static_cast<uint>(10 * (delta.x + delta.y));
+}
+
+
+
+AStar::uint AStar::Heuristic::euclidean(Vec2i source_, Vec2i target_)
+{
+	auto delta = std::move(getDelta(source_, target_));
+	return static_cast<uint>(10 * sqrt(pow(delta.x, 2) + pow(delta.y, 2)));
+}
+
+
+
+AStar::uint AStar::Heuristic::octagonal(Vec2i source_, Vec2i target_)
+{
+	auto delta = std::move(getDelta(source_, target_));
+	return 10 * (delta.x + delta.y) + (-6) * delta.x < delta.y ? delta.x: delta.y;
 }

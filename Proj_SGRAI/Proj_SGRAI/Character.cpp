@@ -23,10 +23,10 @@ Character::Character(double tx, double ty, float size, Board b)
 void
 Character::Reinit(void)
 {
-	x = CHARACTER_STARTLOCATION_X;
-	y = CHARACTER_STARTLOCATION_Y;
-	angle = CHAR_ANGLE;
-	animate = false;
+	//x = CHARACTER_STARTLOCATION_X;
+	//y = CHARACTER_STARTLOCATION_Y;
+	//angle = CHAR_ANGLE;
+	//animate = false;
 }
 
 void
@@ -49,7 +49,7 @@ Character::Draw(void)
 	{
 		glTranslatef(Character::x, -Character::y, 0);
 		glTranslatef(size/2, size +0.1, 0);
-		glTranslatef((float)Board::BOARD_X*BOARD_SCALE_DEFAULT / -2.0, (float)Board::BOARD_Y*BOARD_SCALE_DEFAULT / 2.0, 0.5);
+		glTranslatef((float)Board::BOARD_X / -2.0, (float)Board::BOARD_Y / 2.0, 0.5);
 		glutSolidSphere(size/2, 10, 10);
 	}
 	glPopMatrix();

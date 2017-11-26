@@ -64,9 +64,44 @@ void RenderScene()
 }
 
 
+
+GLuint* textName;
+
 //SET UP THE GAME
 void init(void)
 {
+
+	if (TEXTURE_ON) {
+		printf("MALLOCING!!\n");
+
+		textName = (GLuint*) malloc(NUM_TEXTURES*sizeof(GLuint));
+		if (textName == nullptr) {
+			printf("HELP!!\n");
+		}
+		// 1 -activar texturas 
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+		glEnable(GL_TEXTURE_2D);
+		// 2 –configurar aspectos gerais de texturas
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+		glDepthFunc(GL_LESS);
+		// 3 -criar objecto textura
+		glGenTextures(1, &textName[0]);
+		//glGenTextures(2, &textName[1]);
+
+		// 5 -configurar textura 
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+		board->loadTextures();
+
+	}
+	glEnable(GL_POINT_SMOOTH);
+	glEnable(GL_LINE_SMOOTH);
+	glEnable(GL_POLYGON_SMOOTH);
+	glEnable(GL_DEPTH_TEST);
+
 	srand((unsigned)time(NULL));
 	start_timer = 70;
 	myCharacter->Reinit();
@@ -116,7 +151,7 @@ void TimerFunction(int value)
 				myCharacter->x += MOVE_RATIO;
 				myCharacter->angle = 0;
 			}
-			else {
+			else {//Open doors wih 3 dynamites (pressing 'Q')
 				if (GetAsyncKeyState(0x51) && myCharacter->dynamiteFound == DYNAMITE_NEEDED) {
 					if (board->IsDoor(myCharacter->x + MOVE_RATIO, myCharacter->y))
 					{
@@ -135,7 +170,7 @@ void TimerFunction(int value)
 					myCharacter->x -= MOVE_RATIO;
 					myCharacter->angle = 180;
 				}
-				else {
+				else {//Open doors wih 3 dynamites (pressing 'Q')
 					if (GetAsyncKeyState(0x51) && myCharacter->dynamiteFound == DYNAMITE_NEEDED) {
 						if (board->IsDoor(myCharacter->x - MOVE_RATIO, myCharacter->y))
 						{
@@ -153,7 +188,7 @@ void TimerFunction(int value)
 				myCharacter->y -= MOVE_RATIO;
 				myCharacter->angle = 270;
 			}
-			else {
+			else {//Open doors wih 3 dynamites (pressing 'Q')
 				if (GetAsyncKeyState(0x51) && myCharacter->dynamiteFound == DYNAMITE_NEEDED) {
 					if (board->IsDoor(myCharacter->x, myCharacter->y - MOVE_RATIO))
 					{
@@ -172,7 +207,7 @@ void TimerFunction(int value)
 					myCharacter->y += MOVE_RATIO;
 					myCharacter->angle = 90;
 				}
-				else {
+				else {//Open doors wih 3 dynamites (pressing 'Q')
 					if (GetAsyncKeyState(0x51) && myCharacter->dynamiteFound == DYNAMITE_NEEDED) {
 						if (board->IsDoor(myCharacter->x, myCharacter->y + MOVE_RATIO))
 						{
@@ -235,6 +270,8 @@ void ChangeSize(GLsizei w, GLsizei h)
 }
 
 int main(int argc, char **argv) {
+
+	info();
 	glutInit(&argc, argv);
 	glutInitWindowPosition(0, 0);
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
@@ -260,6 +297,8 @@ int main(int argc, char **argv) {
 	//draw the level/floor...
 	glClearColor(.3, .3, .3, 1.0);
 
+	init();
+
 	//set up board
 	board = new Board();
 	
@@ -268,7 +307,7 @@ int main(int argc, char **argv) {
 	myCharacter = new Character(CHARACTER_STARTLOCATION_X, CHARACTER_STARTLOCATION_Y, CHARACTER_SIZE, *board);
 	myCharacter->MoveTo(1, 17);
 
-	init();
+
 	//initial view is the "3D" view
 	view = 0;
 	v_timer = 0;

@@ -1,5 +1,5 @@
 #include "Board.h"
-
+/*
 static const int dir = 8; // number of possible directions to go at any position
 
 Node::Node(int xp, int yp, int d, int p)
@@ -17,3 +17,4 @@ void Node::nextLevel(const int & i) // i: direction
 {
 	level += (dir == 8 ? (i % 2 == 0 ? 10 : 14) : 10);
 }
+*/

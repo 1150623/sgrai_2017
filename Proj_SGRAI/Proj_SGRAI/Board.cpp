@@ -1,54 +1,17 @@
 #include "Board.h"
+#include<Glaux.h>
+#pragma comment (lib, "lib/glaux.lib") 
+#define GL_GLEXT_PROTOTYPES
+
 
 //Inicializar Dimensões do Board/(Labirinto)
 const float Board::BOARD_WALL_SIZE = 1.0;
 
 
-Astar_Algorithm *astar;
-
 GLbyte image[2][2][2];
 GLuint imageWidth = 1, imageHeight = 1;
 
 bool firstTime = false;	
-
-//0 -> wall
-//1 -> path
-// Sujeito a alterações (seria mais eficiente se fosse desenhado por faces, para evitar que paredes tivessem mais faces do que o desejado)
-//		Para isso é necessário colocar mais numeros para além de 0 e 1
-static int board_walls[Board::BOARD_X][Board::BOARD_Y] =
-{
-	{ 1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1 },
-	{ 5,	0,	0,	0,	0,	0,	0,	1,	0,	0,	0,	1,	1,	1,	1,	1,	1,	0,	0,	0,	0,	1,	1,	1,	0,	1,	1,	1 },
-	{ 1,	0,	1,	0,	1,	1,	0,	1,	0,	1,	0,	0,	0,	0,	1,	1,	1,	0,	1,	1,	0,	1,	0,	0,	0,	0,	1,	1 },
-	{ 1,	1,	1,	0,	1,	1,	0,	1,	0,	0,	1,	1,	1,	0,	1,	1,	1,	0,	1,	0,	0,	1,	1,	1,	1,	0,	1,	1 },
-	{ 1,	1,	1,	0,	1,	1,	0,	1,	1,	0,	1,	1,	1,	0,	1,	1,	1,	0,	1,	0,	0,	0,	0,	0,	0,	0,	1,	1 },
-	{ 1,	1,	1,	0,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	1,	0,	1,	0,	1,	0,	1,	1,	0,	1,	1,	0,	0,	1 },
-	{ 1,	1,	1,	0,	1,	1,	0,	1,	0,	1,	1,	1,	1,	1,	1,	0,	1,	0,	1,	0,	0,	1,	0,	0,	1,	1,	1,	1 },
-	{ 1,	0,	1,	0,	0,	1,	0,	1,	0,	1,	1,	0,	0,	0,	0,	0,	1,	1,	1,	1,	0,	1,	1,	1,	0,	0,	0,	1 },
-	{ 1,	0,	1,	1,	0,	1,	0,	1,	0,	1,	1,	0,	1,	1,	1,	1,	1,	0,	1,	1,	0,	0,	0,	0,	0,	1,	0,	1 },
-	{ 1,	0,	1,	1,	0,	1,	0,	1,	0,	0,	0,	0,	1,	0,	0,	0,	1,	0,	1,	1,	1,	1,	1,	1,	1,	1,	0,	1 },
-	{ 1,	0,	0,	0,	0,	1,	0,	1,	0,	1,	1,	0,	1,	0,	1,	1,	1,	0,	1,	0,	0,	0,	0,	0,	0,	1,	0,	1 },
-	{ 1,	1,	0,	1,	0,	0,	0,	1,	0,	1,	1,	0,	1,	0,	0,	1,	1,	0,	1,	0,	1,	1,	1,	1,	1,	1,	0,	1 },
-	{ 1,	1,	0,	1,	1,	1,	0,	1,	1,	1,	1,	0,	1,	1,	0,	1,	1,	0,	1,	0,	0,	0,	1,	0,	0,	0,	0,	1 },
-	{ 1,	1,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0,	0,	1,	1,	1,	0,	1,	0,	1,	1,	1,	1 },
-	{ 1,	1,	1,	0,	0,	1,	0,	1,	0,	1,	1,	1,	1,	1,	0,	1,	1,	0,	0,	0,	0,	0,	1,	0,	0,	0,	1,	1 },
-	{ 1,	0,	1,	1,	0,	1,	0,	1,	0,	0,	1,	1,	0,	0,	0,	1,	1,	1,	1,	1,	1,	0,	0,	0,	1,	0,	1,	1 },
-	{ 1,	0,	1,	1,	0,	1,	0,	1,	1,	0,	1,	1,	0,	1,	1,	1,	0,	0,	0,	0,	0,	1,	1,	1,	1,	0,	1,	1 },
-	{ 1,	0,	0,	1,	0,	0,	0,	0,	1,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	0,	1,	1,	1,	1,	0,	1,	1 },
-	{ 1,	1,	0,	1,	1,	1,	1,	0,	1,	1,	1,	0,	1,	1,	1,	1,	1,	1,	1,	1,	0,	1,	1,	0,	0,	0,	1,	1 },
-	{ 1,	0,	0,	0,	0,	0,	1,	1,	1,	0,	1,	0,	1,	1,	0,	0,	0,	0,	0,	1,	0,	1,	1,	0,	1,	0,	1,	1 },
-	{ 1,	0,	1,	1,	1,	0,	1,	0,	1,	0,	1,	0,	1,	1,	0,	1,	1,	1,	0,	1,	0,	1,	1,	0,	1,	0,	1,	1 },
-	{ 1,	0,	1,	1,	1,	0,	1,	0,	1,	0,	1,	0,	0,	0,	0,	1,	1,	0,	0,	1,	0,	1,	1,	0,	1,	0,	1,	1 },
-	{ 1,	0,	0,	0,	1,	0,	0,	0,	1,	0,	1,	1,	1,	1,	0,	1,	1,	0,	1,	1,	0,	1,	1,	0,	1,	0,	1,	1 },
-	{ 1,	0,	1,	0,	1,	1,	1,	0,	1,	0,	1,	1,	1,	1,	0,	1,	1,	0,	0,	0,	0,	1,	1,	0,	1,	0,	1,	1 },
-	{ 1,	0,	1,	0,	1,	1,	1,	0,	1,	0,	0,	0,	0,	0,	0,	1,	1,	1,	0,	1,	1,	1,	1,	0,	1,	0,	1,	1 },
-	{ 1,	0,	1,	0,	1,	1,	1,	0,	1,	1,	1,	1,	1,	0,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0,	1,	0,	1,	1 },
-	{ 1,	0,	0,	0,	0,	1,	1,	0,	1,	1,	1,	1,	1,	0,	1,	1,	1,	1,	1,	0,	1,	0,	1,	1,	1,	0,	1,	1 },
-	{ 1,	1,	0,	1,	0,	1,	1,	0,	0,	0,	0,	0,	1,	0,	0,	0,	0,	0,	1,	0,	0,	0,	1,	0,	0,	0,	1,	1 },
-	{ 1,	1,	0,	1,	0,	0,	1,	1,	0,	1,	1,	1,	1,	1,	0,	1,	1,	0,	1,	1,	0,	1,	1,	0,	1,	1,	1,	1 },
-	{ 1,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	0,	1,	1,	0,	0,	0,	0,	0,	0,	0,	1 },
-	{ 1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	5,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1 }
-};
 
 typedef float vertex[3];
 
@@ -100,17 +63,9 @@ void Board::MYcube(void)
 	face(8, 9, 10, 11);
 }
 
-
-
-
-
-
-
-
 Board::Board() {
 	//scaleWalls();
 	ang = 0;
-	loadTextures();
 	int** m;
 	m = (int**)calloc(BOARD_X, (sizeof(int)));
 	for (int i = 0; i < BOARD_X; i++) {
@@ -123,42 +78,41 @@ Board::Board() {
 		}
 	}
 
-	astar = new Astar_Algorithm(m);
+	//astar = new Astar_Algorithm(m);
 	//( tp_restore)
 }
 
+
 void Board::tp_restore(){}
-	GLuint textName;
+
+
 void Board::loadTextures(void) {
+ 
 	if (TEXTURE_ON) {
-		// 1 -activar texturas 
-		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-		glEnable(GL_TEXTURE_2D);
-		// 2 –configurar aspectos gerais de texturas
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
-		// 3 -criar objecto textura
+		
+		int w, h;
+		unsigned char* image = SAIL_load_image("./Texturas/WALL_128_128.ppm", &w, &h);
+		if (image == nullptr) {
+			printf("No image loaded\n");
+		}
 
-		glGenTextures(1, &textName);
-		// 4 -activar textura 
-		glBindTexture(GL_TEXTURE_2D, textName);
-		// 5 -configurar textura 
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glGenTextures(1, &textName[0]);
+		glBindTexture(GL_TEXTURE_2D, textName[0]);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 128, 128, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+		free(image); // the GPU already has the image
+
 
 	}
-	glEnable(GL_POINT_SMOOTH);
-	glEnable(GL_LINE_SMOOTH);
-	glEnable(GL_POLYGON_SMOOTH);
-	glEnable(GL_DEPTH_TEST);
-
 }
 
 void Board::DRAW_WALLS_NORTH(void) {
-	glColor3f(0.2, 0.3, 0.4);
+	if (!TEXTURE_ON) {
+		glColor3f(0.2, 0.3, 0.4);
+	}
+	else {
+		glColor3f(1.0f, 1.0f, 1.0f);
+	}
 	glNormal3f(0.0f, -1.0f, 0.0f);
 	if (TEXTURE_ON)glTexCoord2f(0.0, 0.0);
 	glVertex3f(0.0f, 0.0f, 0.0f);
@@ -173,7 +127,12 @@ void Board::DRAW_WALLS_NORTH(void) {
 }
 
 void Board::DRAW_WALLS_SOUTH(void) {
-	glColor3f(0.2, 0.3, 0.4);
+	if (!TEXTURE_ON) {
+		glColor3f(0.2, 0.3, 0.4);
+	}
+	else {
+		glColor3f(1.0f, 1.0f, 1.0f);
+	}
 	glNormal3f(0.0f, 1.0f, 0.0f);
 	if (TEXTURE_ON)glTexCoord2f(0.0, 0.0);
 	glVertex3f(1.0f, 1.0f, 0.0f);
@@ -186,7 +145,12 @@ void Board::DRAW_WALLS_SOUTH(void) {
 }
 
 void Board::DRAW_WALLS_EAST(void) {
-	glColor3f(0.2, 0.3, 0.4);
+	if (!TEXTURE_ON) {
+		glColor3f(0.2, 0.3, 0.4);
+	}
+	else {
+		glColor3f(1.0f, 1.0f, 1.0f);
+	}
 	glNormal3f(0.0f, 1.0f, 0.0f);
 	if (TEXTURE_ON)glTexCoord2f(0.0, 0.0);
 	glVertex3f(0.0, 0.0, 0.0);
@@ -199,7 +163,12 @@ void Board::DRAW_WALLS_EAST(void) {
 }
 
 void Board::DRAW_WALLS_WEST(void) {
-	glColor3f(0.2, 0.3, 0.4);
+	if (!TEXTURE_ON) {
+		glColor3f(0.2, 0.3, 0.4);
+	}
+	else {
+		glColor3f(1.0f, 1.0f, 1.0f);
+	}
 	glNormal3f(0.0f, -1.0f, 0.0f);
 	if (TEXTURE_ON)glTexCoord2f(0.0, 0.0);
 	glVertex3f(1.0, 1.0, 0.0);
@@ -212,7 +181,13 @@ void Board::DRAW_WALLS_WEST(void) {
 }
 
 void Board::DRAW_WALLS_TOP(void) {
-	glColor3f(0.2, 0.3, 0.4);
+	if (!TEXTURE_ON) {
+		glColor3f(0.2, 0.3, 0.4);
+	}
+	else {
+		glColor3f(1.0f, 1.0f, 1.0f);
+	}
+	
 	glNormal3f(0.0f, 0.0f, 1.0f);
 	if (TEXTURE_ON)glTexCoord2f(0.0, 0.0);
 	glVertex3f(1,0,1);
@@ -227,7 +202,12 @@ void Board::DRAW_WALLS_TOP(void) {
 
 void Board::DRAW_WALLS_BOTTOM(void) {
 
-	glColor3f(0.2, 0.1, 0.1);
+	if (!TEXTURE_ON) {
+		glColor3f(0.2, 0.1, 0.1);
+	}
+	else {
+		glColor3f(1.0f, 1.0f, 1.0f);
+	}
 	glNormal3f(0.0f, 0.0f, 1.0f);
 	if (TEXTURE_ON)glTexCoord2f(0.0, 0.0);
 	glVertex3f(1, 0, 0);
@@ -237,84 +217,84 @@ void Board::DRAW_WALLS_BOTTOM(void) {
 	glVertex3f(0, 1, 0);
 	if (TEXTURE_ON)glTexCoord2f(1.0, 0.0);
 	glVertex3f(0, 0, 0);
-}
+} 
 
 // Destructor
-Board::~Board(void) {
-}
+Board::~Board(void) {}
 
 
 void Board::drawWalls(void) {
-	glColor3f(0.2, 0.3, 0.4);
+
+	
+	
 	for (int i = 0; i < BOARD_X; i++)
 	{
 		for (int j = 0; j < BOARD_Y ; j++)
 		{
 			int aux = WALLS_BOTTOM;
-			glPushMatrix();
-
-			glTranslatef(-(float)BOARD_X / 2.0f, -(float)BOARD_Y / 2.0f, 0);
-			glTranslatef(j, BOARD_Y - i, 0);
-			glPushMatrix();
-
-			if (board_walls[i][j] == 1)
+			glPushMatrix(); 
 			{
-				aux += WALLS_TOP;
-				aux -= WALLS_BOTTOM;
-				if (i - 1 >= 0) if (board_walls[i - 1][j] == 0 || board_walls[i - 1][j] == 5) { aux += WALLS_SOUTH; }
-				if (i + 1 < BOARD_X) if (board_walls[i + 1][j] == 0 || board_walls[i + 1][j] == 5) { aux += WALLS_NORTH; }
-				if (j + 1 < BOARD_Y) if (board_walls[i][j + 1] == 0 || board_walls[i][j + 1] == 5) { aux += WALLS_WEST; }
-				if (j - 1 >= 0) if (board_walls[i][j - 1] == 0 || board_walls[i][j - 1] == 5) { aux += WALLS_EAST; }
 
-				if (!(aux & WALLS_SOUTH) && i == 0 ) if (board_walls[i][j] == 1) { aux += WALLS_SOUTH; }
-				if (!(aux & WALLS_NORTH) && i == BOARD_X-1) if (board_walls[i][j] == 1) { aux += WALLS_NORTH; }
-				if (!(aux & WALLS_WEST) && j == BOARD_Y-1) if (board_walls[i][j] == 1) { aux += WALLS_WEST; }
-				if (!(aux & WALLS_EAST) && j == 0) if (board_walls[i][j] == 1) { aux += WALLS_EAST; }
-				
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 64, 64, 0, GL_RGB, GL_UNSIGNED_BYTE, &image[0][0][0]);
-				
-			}
-			else {
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 64, 64, 0, GL_RGB, GL_UNSIGNED_BYTE, &image[1][1][1]);
-			}
-
-			if (board_walls[i][j] == 5) {
-				aux += Board::DRAW_DOOR;
-			}
-
-
-			// activar textura 
-			if(TEXTURE_ON)glBindTexture(GL_TEXTURE_2D, textName);
-				glBegin(GL_QUADS);
+				glTranslatef(-(float)BOARD_X / 2.0f, -(float)BOARD_Y / 2.0f, 0);
+				glTranslatef(j, BOARD_Y - i, 0);
+				glPushMatrix(); 
 				{
-					if (aux & WALLS_NORTH) {
-						Board::DRAW_WALLS_NORTH();
+
+					if (board_walls[i][j] == 1)
+					{
+						aux += WALLS_TOP;
+						aux -= WALLS_BOTTOM;
+						if (i - 1 >= 0) if (board_walls[i - 1][j] == 0 || board_walls[i - 1][j] == 5) { aux += WALLS_SOUTH; }
+						if (i + 1 < BOARD_X) if (board_walls[i + 1][j] == 0 || board_walls[i + 1][j] == 5) { aux += WALLS_NORTH; }
+						if (j + 1 < BOARD_Y) if (board_walls[i][j + 1] == 0 || board_walls[i][j + 1] == 5) { aux += WALLS_WEST; }
+						if (j - 1 >= 0) if (board_walls[i][j - 1] == 0 || board_walls[i][j - 1] == 5) { aux += WALLS_EAST; }
+
+						if (!(aux & WALLS_SOUTH) && i == 0) if (board_walls[i][j] == 1) { aux += WALLS_SOUTH; }
+						if (!(aux & WALLS_NORTH) && i == BOARD_X - 1) if (board_walls[i][j] == 1) { aux += WALLS_NORTH; }
+						if (!(aux & WALLS_WEST) && j == BOARD_Y - 1) if (board_walls[i][j] == 1) { aux += WALLS_WEST; }
+						if (!(aux & WALLS_EAST) && j == 0) if (board_walls[i][j] == 1) { aux += WALLS_EAST; }
+						if (TEXTURE_ON) glBindTexture(GL_TEXTURE_2D, textName[0]);
 					}
-					if (aux & WALLS_SOUTH) {
-						Board::DRAW_WALLS_SOUTH();
+					else {
+						//if(TEXTURE_ON) glBindTexture(GL_TEXTURE_2D, textName[1]);
 					}
-					if (aux & WALLS_EAST) {
-						//if (DEBBUG) printf("DRAW WEST  at [%d][%d] \n", i, j);
-						Board::DRAW_WALLS_EAST();
+
+					if (board_walls[i][j] == 5) {
+						aux += Board::DRAW_DOOR;
 					}
-					if (aux & WALLS_WEST) {
-						Board::DRAW_WALLS_WEST();
+
+
+					glBegin(GL_QUADS);
+					{
+						if (aux & WALLS_NORTH) {
+							Board::DRAW_WALLS_NORTH();
+						}
+						if (aux & WALLS_SOUTH) {
+							Board::DRAW_WALLS_SOUTH();
+						}
+						if (aux & WALLS_EAST) {
+							Board::DRAW_WALLS_EAST();
+						}
+						if (aux & WALLS_WEST) {
+							Board::DRAW_WALLS_WEST();
+						}
+						if (aux & WALLS_TOP) {
+							Board::DRAW_WALLS_TOP();
+						}
+						if (aux & WALLS_BOTTOM) {
+							Board::DRAW_WALLS_BOTTOM();
+						}
+						if (aux & DRAW_DOOR) {
+							Board::MYcube();
+						}
 					}
-					if (aux & WALLS_TOP) {
-						Board::DRAW_WALLS_TOP();
-					}
-					if (aux & WALLS_BOTTOM) {
-						Board::DRAW_WALLS_BOTTOM();
-					}
-					if (aux & DRAW_DOOR) {
-						Board::MYcube();
-					}
+					glEnd();
+
+
 				}
-				glEnd();
-			
-			
-			glPopMatrix();
-			
+				glPopMatrix();
+
+			}
 			glPopMatrix();
 		}
 	}
@@ -358,5 +338,6 @@ Board::OpenDoor(int x, int y)
 }
 
 char* Board::getPath(int x, int y, int xF, int yF) {
-	return astar->pathFind(x, y, xF, yF);
+	char c = 'x';
+	return &c;//astar->pathFind(x, y, xF, yF);
 }

@@ -13,6 +13,7 @@
 #include <stdio.h>
 #include <stdlib.h> 
 #include <gl/glut.h>
+#include <GL/gl.h>
 
 
 
@@ -23,12 +24,12 @@
 
 
 //MAIN GLOBAL INFO
-#define TEXTURE_ON 0
+#define TEXTURE_ON 1
 #define FULLSCREEN 0
 #define DEBBUG 1
-#define BOARD_SCALE_DEFAULT 1
 #define MOVE_RATIO 0.25
 #define DYNAMITE_NEEDED 3
+#define NUM_TEXTURES 2
 
 //CHARACTER
 #define NUM_LIVES 3
@@ -37,5 +38,18 @@
 #define CHARACTER_SIZE 0.25
 #define CHARACTER_STARTLOCATION_X 1
 #define CHARACTER_STARTLOCATION_Y 17
+
+extern GLuint* textName;
+
+
+static void info() {
+	printf("+---------------------------------+\n");
+	printf("|          GLOBAL INFO            |\n");
+	printf("+---------------------------------+\n");
+	printf("| TEXTURES	[	%s	] |\n", TEXTURE_ON?"ON":"OFF");
+	printf("| FULLSCREEN	[	%s	] |\n", FULLSCREEN ? "ON" : "OFF");
+	printf("| DEBBUG	[	%s	] |\n", DEBBUG ? "ON" : "OFF");
+	printf("+---------------------------------+\n");
+}
 
 #endif

@@ -3,6 +3,50 @@
 #define _BOARD_H_
 
 #include "globalHeader.h"
+#include "image_loader.h"
+#include <vector>
+#include <functional>
+#include <set>
+
+//0 -> wall
+//1 -> path
+// Sujeito a alterações (seria mais eficiente se fosse desenhado por faces, para evitar que paredes tivessem mais faces do que o desejado)
+//		Para isso é necessário colocar mais numeros para além de 0 e 1
+static int board_walls[31][28] =
+{
+	{	 1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1 },
+	{ 5,	0,	0,	0,	0,	0,	0,	1,	0,	0,	0,	1,	1,	1,	1,	1,	1,	0,	0,	0,	0,	1,	1,	1,	0,	1,	1,	1 },
+	{ 1,	0,	1,	0,	1,	1,	0,	1,	0,	1,	0,	0,	0,	0,	1,	1,	1,	0,	1,	1,	0,	1,	0,	0,	0,	0,	1,	1 },
+	{ 1,	1,	1,	0,	1,	1,	0,	1,	0,	0,	1,	1,	1,	0,	1,	1,	1,	0,	1,	0,	0,	1,	1,	1,	1,	0,	1,	1 },
+	{ 1,	1,	1,	0,	1,	1,	0,	1,	1,	0,	1,	1,	1,	0,	1,	1,	1,	0,	1,	0,	0,	0,	0,	0,	0,	0,	1,	1 },
+	{ 1,	1,	1,	0,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	1,	0,	1,	0,	1,	0,	1,	1,	0,	1,	1,	0,	0,	1 },
+	{ 1,	1,	1,	0,	1,	1,	0,	1,	0,	1,	1,	1,	1,	1,	1,	0,	1,	0,	1,	0,	0,	1,	0,	0,	1,	1,	1,	1 },
+	{ 1,	0,	1,	0,	0,	1,	0,	1,	0,	1,	1,	0,	0,	0,	0,	0,	1,	1,	1,	1,	0,	1,	1,	1,	0,	0,	0,	1 },
+	{ 1,	0,	1,	1,	0,	1,	0,	1,	0,	1,	1,	0,	1,	1,	1,	1,	1,	0,	1,	1,	0,	0,	0,	0,	0,	1,	0,	1 },
+	{ 1,	0,	1,	1,	0,	1,	0,	1,	0,	0,	0,	0,	1,	0,	0,	0,	1,	0,	1,	1,	1,	1,	1,	1,	1,	1,	0,	1 },
+	{ 1,	0,	0,	0,	0,	1,	0,	1,	0,	1,	1,	0,	1,	0,	1,	1,	1,	0,	1,	0,	0,	0,	0,	0,	0,	1,	0,	1 },
+	{ 1,	1,	0,	1,	0,	0,	0,	1,	0,	1,	1,	0,	1,	0,	0,	1,	1,	0,	1,	0,	1,	1,	1,	1,	1,	1,	0,	1 },
+	{ 1,	1,	0,	1,	1,	1,	0,	1,	1,	1,	1,	0,	1,	1,	0,	1,	1,	0,	1,	0,	0,	0,	1,	0,	0,	0,	0,	1 },
+	{ 1,	1,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0,	0,	1,	1,	1,	0,	1,	0,	1,	1,	1,	1 },
+	{ 1,	1,	1,	0,	0,	1,	0,	1,	0,	1,	1,	1,	1,	1,	0,	1,	1,	0,	0,	0,	0,	0,	1,	0,	0,	0,	1,	1 },
+	{ 1,	0,	1,	1,	0,	1,	0,	1,	0,	0,	1,	1,	0,	0,	0,	1,	1,	1,	1,	1,	1,	0,	0,	0,	1,	0,	1,	1 },
+	{ 1,	0,	1,	1,	0,	1,	0,	1,	1,	0,	1,	1,	0,	1,	1,	1,	0,	0,	0,	0,	0,	1,	1,	1,	1,	0,	1,	1 },
+	{ 1,	0,	0,	1,	0,	0,	0,	0,	1,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	0,	1,	1,	1,	1,	0,	1,	1 },
+	{ 1,	1,	0,	1,	1,	1,	1,	0,	1,	1,	1,	0,	1,	1,	1,	1,	1,	1,	1,	1,	0,	1,	1,	0,	0,	0,	1,	1 },
+	{ 1,	0,	0,	0,	0,	0,	1,	1,	1,	0,	1,	0,	1,	1,	0,	0,	0,	0,	0,	1,	0,	1,	1,	0,	1,	0,	1,	1 },
+	{ 1,	0,	1,	1,	1,	0,	1,	0,	1,	0,	1,	0,	1,	1,	0,	1,	1,	1,	0,	1,	0,	1,	1,	0,	1,	0,	1,	1 },
+	{ 1,	0,	1,	1,	1,	0,	1,	0,	1,	0,	1,	0,	0,	0,	0,	1,	1,	0,	0,	1,	0,	1,	1,	0,	1,	0,	1,	1 },
+	{ 1,	0,	0,	0,	1,	0,	0,	0,	1,	0,	1,	1,	1,	1,	0,	1,	1,	0,	1,	1,	0,	1,	1,	0,	1,	0,	1,	1 },
+	{ 1,	0,	1,	0,	1,	1,	1,	0,	1,	0,	1,	1,	1,	1,	0,	1,	1,	0,	0,	0,	0,	1,	1,	0,	1,	0,	1,	1 },
+	{ 1,	0,	1,	0,	1,	1,	1,	0,	1,	0,	0,	0,	0,	0,	0,	1,	1,	1,	0,	1,	1,	1,	1,	0,	1,	0,	1,	1 },
+	{ 1,	0,	1,	0,	1,	1,	1,	0,	1,	1,	1,	1,	1,	0,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0,	1,	0,	1,	1 },
+	{ 1,	0,	0,	0,	0,	1,	1,	0,	1,	1,	1,	1,	1,	0,	1,	1,	1,	1,	1,	0,	1,	0,	1,	1,	1,	0,	1,	1 },
+	{ 1,	1,	0,	1,	0,	1,	1,	0,	0,	0,	0,	0,	1,	0,	0,	0,	0,	0,	1,	0,	0,	0,	1,	0,	0,	0,	1,	1 },
+	{ 1,	1,	0,	1,	0,	0,	1,	1,	0,	1,	1,	1,	1,	1,	0,	1,	1,	0,	1,	1,	0,	1,	1,	0,	1,	1,	1,	1 },
+	{ 1,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	0,	1,	1,	0,	0,	0,	0,	0,	0,	0,	1 },
+	{ 1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	5,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1 }
+};
+
 
 class Board {
 
@@ -17,7 +61,7 @@ class Board {
 		void DRAW_WALLS_EAST(void);
 		void DRAW_WALLS_BOTTOM(void);
 		void DRAW_WALLS_TOP(void);
-		void loadTextures(void);
+
 		void MYcube(void);
 		void face(int, int, int, int);
 
@@ -31,7 +75,7 @@ class Board {
 		byte WALLS_EMPTY = 0;	// 00000001
 
 	public:
-		
+				void loadTextures(void);
 		#define NUM_WALLS		6
 
 		static const float BOARD_WALL_SIZE;
@@ -64,60 +108,79 @@ class Board {
 
 };
 
-#include "Node.h"
-class Astar_Algorithm
+
+namespace AStar
 {
-
-public:
-
-	Astar_Algorithm(int**);
-
-	// A-star algorithm.
-	// The route returned is a string of direction digits.
-	char* pathFind(const int &, const int &, const int &, const int &);
-
-};
-
-
-class Node
-{
-
-private:
-	// current position
-	int xPos;
-	int yPos;
-	// total distance already travelled to reach the node
-	int level;
-	// priority=level+remaining distance estimate
-	int priority;  // smaller -> higher priority
-
-public:
-
-
-	Node(int, int, int, int);
-
-	int getxPos() const { return xPos; }
-	int getyPos() const { return yPos; }
-	int getLevel() const { return level; }
-	int getPriority() const { return priority; }
-
-	void updatePriority(const int & xDest, const int & yDest);
-
-	// give better priority to going strait instead of diagonally
-	void nextLevel(const int & i); // i-> direction
-
-								   // Estimation function for the remaining distance to the goal.
-	const int & estimate(const int & xDest, const int & yDest) const
+	struct Vec2i
 	{
-		static int xd, yd, d;
-		xd = xDest - xPos;
-		yd = yDest - yPos;
+		int x, y;
+		bool operator == (const Vec2i& coordinates_);
+	};
 
-		// Euclidian Distance
-		d = static_cast<int>(sqrt(xd*xd + yd*yd));
-		return(d);
-	}
-};
+	using uint = unsigned int;
+	using HeuristicFunc = std::function<uint(Vec2i, Vec2i)>;
+	using CoordList = std::vector<Vec2i>;
+
+	struct Node
+	{
+		uint G, H;
+		Vec2i coords;
+		Node *parent;
+		Node(Vec2i coord_, Node *parent_ = nullptr);
+		uint getScore();
+	};
+
+	using NodeSet = std::set<Node*>;
+
+	class Generator
+
+	{
+
+		bool detectCollision(Vec2i coordinates_);
+		Node* findNodeOnList(NodeSet& nodes_, Vec2i coordinates_);
+		void releaseNodes(NodeSet& nodes_);
+
+
+
+	public:
+
+		Generator();
+		void setWorldSize(Vec2i worldSize_);
+		void setDiagonalMovement(bool enable_);
+		void setHeuristic(HeuristicFunc heuristic_);
+		CoordList findPath(Vec2i source_, Vec2i target_);
+		void addCollision(Vec2i coordinates_);
+		void removeCollision(Vec2i coordinates_);
+		void clearCollisions();
+
+	private:
+
+		HeuristicFunc heuristic;
+		CoordList direction, walls;
+		Vec2i worldSize;
+		uint directions;
+	};
+
+
+
+	class Heuristic
+	{
+		static Vec2i getDelta(Vec2i source_, Vec2i target_);
+
+
+	public:
+
+		static uint manhattan(Vec2i source_, Vec2i target_);
+		static uint euclidean(Vec2i source_, Vec2i target_);
+		static uint octagonal(Vec2i source_, Vec2i target_);
+	};
+
+} //end of namespace 'AStar'
+
+
+
+
+
 #endif
 
 
