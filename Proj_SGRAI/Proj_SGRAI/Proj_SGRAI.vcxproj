@@ -122,7 +122,6 @@
     <ClCompile Include="Character.cpp" />
     <ClCompile Include="image_loader.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Node.cpp" />
     <ClCompile Include="TestBoardMatrixCalculations.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -130,7 +129,6 @@
     <ClInclude Include="BoardMatrixCalculations.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Character.h" />
-    <ClInclude Include="GLAux.h" />
     <ClInclude Include="globalHeader.h" />
     <ClInclude Include="image_loader.h" />
     <ClInclude Include="TestBoardMatrixCalculations.h" />

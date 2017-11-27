@@ -42,9 +42,6 @@
     <ClInclude Include="image_loader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GLAux.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Board.cpp">
@@ -64,9 +61,6 @@
     </ClCompile>
     <ClCompile Include="TestBoardMatrixCalculations.cpp">
       <Filter>Source Files\Tests</Filter>
-    </ClCompile>
-    <ClCompile Include="Node.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="A-star_Algorithm.cpp">
       <Filter>Source Files</Filter>

@@ -72,14 +72,13 @@ void init(void)
 {
 
 	if (TEXTURE_ON) {
-
-		printf("LOADING TEXTUE CONFS\n");
+				
 		//activar texturas 
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 		glEnable(GL_TEXTURE_2D);
 		
 		//configurar aspectos gerais de texturas
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 		glDepthFunc(GL_LESS);
 		
 		//criar objecto textura
@@ -100,8 +99,6 @@ void init(void)
 
 void TimerFunction(int value)
 {
-
-
 	//switch views from 3D to 2D (top view) - button-> 'V'
 	if (GetAsyncKeyState(0x56) && v_timer == 0)
 	{
@@ -224,13 +221,13 @@ void TimerFunction(int value)
 			camera->Set_position(myCharacter->x, myCharacter->y, view);
 		}
 
-		if (GetAsyncKeyState(VK_F3) && !GetAsyncKeyState(VK_F4)) { //Não atribuido
+		if (GetAsyncKeyState(VK_F3) && !GetAsyncKeyState(VK_F4)) { //F3 - Não atribuido
 		}
-		if (GetAsyncKeyState(VK_F4) && !GetAsyncKeyState(VK_F3)) { //Não atribuido
+		if (GetAsyncKeyState(VK_F4) && !GetAsyncKeyState(VK_F3)) { //F4 - Não atribuido
 		}
-		if (GetAsyncKeyState(VK_F5) && !GetAsyncKeyState(VK_F6)) { //Não atribuido
+		if (GetAsyncKeyState(VK_F5) && !GetAsyncKeyState(VK_F6)) { //F5 - Não atribuido
 		}
-		if (GetAsyncKeyState(VK_F6) && !GetAsyncKeyState(VK_F5)) { //Não atribuido
+		if (GetAsyncKeyState(VK_F6) && !GetAsyncKeyState(VK_F5)) { //F6 - Não atribuido
 		}
 	}
 
@@ -277,6 +274,8 @@ int main(int argc, char **argv) {
 		glutEnterGameMode();
 	}
 
+	
+	
 	//make mouse disappear
 	glutSetCursor(GLUT_CURSOR_NONE);
 	glutDisplayFunc(RenderScene);
@@ -285,22 +284,26 @@ int main(int argc, char **argv) {
 
 	//draw the level/floor...
 	glClearColor(.3, .3, .3, 1.0);
-
-	init();
-
+	
+	
 	//set up board
 	board = new Board();
 	
-									  
 	//Inicialize character
 	myCharacter = new Character(CHARACTER_STARTLOCATION_X, CHARACTER_STARTLOCATION_Y, CHARACTER_SIZE, *board);
-	myCharacter->MoveTo(1, 17);
-
+	myCharacter->MoveTo(20, 20);
+	
+	
+	init();
 
 	//initial view is the "3D" view
 	view = 0;
 	v_timer = 0;
-
+	// Specify a global ambient
+	GLfloat globalAmbient[] = { 0.2, 0.2, 0.2, 1.0 };
+	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, globalAmbient);
+	glEnable(GL_LIGHTING);
+	
 	glutTimerFunc(15, TimerFunction, 1);
 	glutMainLoop();
 

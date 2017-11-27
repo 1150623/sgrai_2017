@@ -33,8 +33,8 @@
 
 //TEXTURES INFO
 #define NUM_TEXTURES 2
-#define TEXTURE_FLOOR "Texturas/FLOOR2_128_128.ppm"
-#define TEXTURE_WALL "Texturas/WALL_128_128.ppm"
+#define TEXTURE_FLOOR "Texturas/FLOOR4_128_128.ppm" //FLOOR{Nr_IMAGE}_128_128.ppm
+#define TEXTURE_WALL "Texturas/WALL1_128_128.ppm"	//WALL{Nr_IMAGE}_128_128.ppm
 
 
 //CHARACTER

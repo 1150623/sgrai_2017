@@ -1,7 +1,4 @@
 #include "Board.h"
-#include<Glaux.h>
-#pragma comment (lib, "lib/glaux.lib") 
-#define GL_GLEXT_PROTOTYPES
 
 
 //Inicializar Dimensões do Board/(Labirinto)
@@ -151,7 +148,7 @@ void Board::DRAW_WALLS_NORTH(void) {
 	else {
 		glColor3f(1.0f, 1.0f, 1.0f);
 	}
-	glNormal3f(0.0f, -1.0f, 0.0f);
+	glNormal3f(-1.0f, 0.0f, 0.0f);
 	if (TEXTURE_ON)glTexCoord2f(0.0, 0.0);
 	glVertex3f(0.0f, 0.0f, 0.0f);
 	if (TEXTURE_ON)glTexCoord2f(0.0, 1.0);
@@ -171,7 +168,7 @@ void Board::DRAW_WALLS_SOUTH(void) {
 	else {
 		glColor3f(1.0f, 1.0f, 1.0f);
 	}
-	glNormal3f(0.0f, 1.0f, 0.0f);
+	glNormal3f(1.0f, 0.0f, 0.0f);
 	if (TEXTURE_ON)glTexCoord2f(0.0, 0.0);
 	glVertex3f(1.0f, 1.0f, 0.0f);
 	if (TEXTURE_ON)glTexCoord2f(0.0, 1.0);
@@ -189,7 +186,7 @@ void Board::DRAW_WALLS_EAST(void) {
 	else {
 		glColor3f(1.0f, 1.0f, 1.0f);
 	}
-	glNormal3f(0.0f, 1.0f, 0.0f);
+	glNormal3f(0.0f, -1.0f, 0.0f);
 	if (TEXTURE_ON)glTexCoord2f(0.0, 0.0);
 	glVertex3f(0.0, 0.0, 0.0);
 	if (TEXTURE_ON)glTexCoord2f(0.0, 1.0);
@@ -207,7 +204,7 @@ void Board::DRAW_WALLS_WEST(void) {
 	else {
 		glColor3f(1.0f, 1.0f, 1.0f);
 	}
-	glNormal3f(0.0f, -1.0f, 0.0f);
+	glNormal3f(0.0f, 1.0f, 0.0f);
 	if (TEXTURE_ON)glTexCoord2f(0.0, 0.0);
 	glVertex3f(1.0, 1.0, 0.0);
 	if (TEXTURE_ON)glTexCoord2f(0.0, 1.0);
@@ -226,7 +223,7 @@ void Board::DRAW_WALLS_TOP(void) {
 		glColor3f(1.0f, 1.0f, 1.0f);
 	}
 	
-	glNormal3f(0.0f, 0.0f, 1.0f);
+	glNormal3f(0.0f, 0.0f, 1.0);
 	if (TEXTURE_ON)glTexCoord2f(0.0, 0.0);
 	glVertex3f(1,0,1);
 	if (TEXTURE_ON)glTexCoord2f(0.0, 1.0);
