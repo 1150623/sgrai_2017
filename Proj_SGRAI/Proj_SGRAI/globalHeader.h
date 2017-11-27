@@ -25,7 +25,7 @@
 
 //MAIN GLOBAL INFO
 #define TEXTURE_ON 1
-#define FULLSCREEN 0
+#define FULLSCREEN 1
 #define DEBBUG 1
 #define MOVE_RATIO 0.25
 #define DYNAMITE_NEEDED 3

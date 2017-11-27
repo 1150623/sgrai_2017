@@ -74,26 +74,18 @@ void init(void)
 	if (TEXTURE_ON) {
 
 		printf("LOADING TEXTUE CONFS\n");
-		// 1 -activar texturas 
+		//activar texturas 
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 		glEnable(GL_TEXTURE_2D);
 		
-
-		// 2 –configurar aspectos gerais de texturas
+		//configurar aspectos gerais de texturas
 		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-		//glDepthFunc(GL_LESS);
-		// 3 -criar objecto textura
+		glDepthFunc(GL_LESS);
+		
+		//criar objecto textura
 		glGenTextures(NUM_TEXTURES, textName);
 		board->loadTextures();
-
-		//// 5 -configurar textura 
-		//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-		//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-		//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-		//
-
+		
 	}
 	glEnable(GL_POINT_SMOOTH);
 	glEnable(GL_LINE_SMOOTH);
