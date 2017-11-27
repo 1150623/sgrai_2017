@@ -29,7 +29,13 @@
 #define DEBBUG 1
 #define MOVE_RATIO 0.25
 #define DYNAMITE_NEEDED 3
+
+
+//TEXTURES INFO
 #define NUM_TEXTURES 2
+#define TEXTURE_FLOOR "Texturas/FLOOR2_128_128.ppm"
+#define TEXTURE_WALL "Texturas/WALL_128_128.ppm"
+
 
 //CHARACTER
 #define NUM_LIVES 3
@@ -39,7 +45,7 @@
 #define CHARACTER_STARTLOCATION_X 1
 #define CHARACTER_STARTLOCATION_Y 17
 
-extern GLuint* textName;
+extern GLuint textName[];
 
 
 static void info() {

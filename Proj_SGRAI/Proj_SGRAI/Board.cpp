@@ -85,24 +85,62 @@ Board::Board() {
 
 void Board::tp_restore(){}
 
+typedef struct {
+	int sizeX, sizeY;
+	char *data;
+} PPMImage;
+
+extern "C" PPMImage *LoadPPM(char * path) {
+	PPMImage* result = new PPMImage;
+	result->sizeX = 128;
+	result->sizeY = 128;
+	result->data = SAIL_load_image(path, &result->sizeX, &result->sizeY);
+
+	return result;
+};
 
 void Board::loadTextures(void) {
  
 	if (TEXTURE_ON) {
 
 		
-		int w, h;
-		unsigned char* image = SAIL_load_image("./Texturas/WALL_128_128.ppm", &w, &h);
-		if (image == nullptr) {
-			printf("No image loaded\n");
+		//LOAD FLOOR TEXTURE
+		// START
+		{
+			PPMImage *imagemPPM;
+			imagemPPM = LoadPPM(TEXTURE_WALL);
+			glBindTexture(GL_TEXTURE_2D, textName[0]);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imagemPPM->sizeX, imagemPPM->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, imagemPPM->data);
+			free(imagemPPM); // the GPU already has the image
+
+			//glBindTexture(GL_TEXTURE_2D, textName[0]);
+
+
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		}
+		// END
+		
+		//LOAD FLOOR TEXTURE
+		// START
+		{
+			PPMImage *imagemPPM2;
+			imagemPPM2 = LoadPPM(TEXTURE_FLOOR);
+			glBindTexture(GL_TEXTURE_2D, textName[1]);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imagemPPM2->sizeX, imagemPPM2->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, imagemPPM2->data);
+			free(imagemPPM2); // the GPU already has the image
 
-		glGenTextures(1, &textName[0]);
-		glBindTexture(GL_TEXTURE_2D, textName[0]);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 128, 128, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
-		free(image); // the GPU already has the image
+			//glBindTexture(GL_TEXTURE_2D, textName[1]);
 
 
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		}
+		// END
 	}
 }
 
@@ -256,7 +294,7 @@ void Board::drawWalls(void) {
 						if (TEXTURE_ON) glBindTexture(GL_TEXTURE_2D, textName[0]);
 					}
 					else {
-						//if(TEXTURE_ON) glBindTexture(GL_TEXTURE_2D, textName[1]);
+						if (TEXTURE_ON) glBindTexture(GL_TEXTURE_2D, textName[1]);
 					}
 
 					if (board_walls[i][j] == 5) {
@@ -264,6 +302,7 @@ void Board::drawWalls(void) {
 					}
 
 
+					
 					glBegin(GL_QUADS);
 					{
 						if (aux & WALLS_NORTH) {
@@ -285,11 +324,13 @@ void Board::drawWalls(void) {
 							Board::DRAW_WALLS_BOTTOM();
 						}
 						if (aux & DRAW_DOOR) {
+							glBindTexture(GL_TEXTURE_2D, 0);
 							Board::MYcube();
 						}
 					}
 					glEnd();
 
+					glBindTexture(GL_TEXTURE_2D, 0);
 
 				}
 				glPopMatrix();

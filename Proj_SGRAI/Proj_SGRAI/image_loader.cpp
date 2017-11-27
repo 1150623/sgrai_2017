@@ -5,7 +5,7 @@
 int read_number(FILE *input);
 
 
-unsigned char*
+char*
 SAIL_load_image(const char *file_path, int *width, int *height) {
 
 	FILE* input;
@@ -14,13 +14,13 @@ SAIL_load_image(const char *file_path, int *width, int *height) {
 		fprintf(stderr, "Could not open \"%s\"\n", file_path);
 		return NULL;
 	}
-	unsigned char *result = SAIL_load_image_file(input, width, height);
+	char *result = SAIL_load_image_file(input, width, height);
 	fclose(input);
 	fprintf(stderr, "Image \"%s\" loaded.\n", file_path);
 	return result;
 }
 
-unsigned char*
+char*
 SAIL_load_image_file(FILE* input, int *width, int *height) {
 	char buffer[2];
 	int rbytes = fread(buffer, 2, 1, input);
@@ -37,7 +37,7 @@ SAIL_load_image_file(FILE* input, int *width, int *height) {
 		return NULL;
 	}
 	int num_pixels = t_width * t_height * 3;
-	unsigned char *result = (unsigned char*)malloc(sizeof(char) * num_pixels);
+	char *result = (char*)malloc(sizeof(char) * num_pixels);
 	if (result == NULL) {
 		fprintf(stderr, "Could not allocate %u bytes of memory.\n", num_pixels);
 	}

@@ -65,36 +65,34 @@ void RenderScene()
 
 
 
-GLuint* textName;
+GLuint textName[NUM_TEXTURES];
 
 //SET UP THE GAME
 void init(void)
 {
 
 	if (TEXTURE_ON) {
-		printf("MALLOCING!!\n");
 
-		textName = (GLuint*) malloc(NUM_TEXTURES*sizeof(GLuint));
-		if (textName == nullptr) {
-			printf("HELP!!\n");
-		}
+		printf("LOADING TEXTUE CONFS\n");
 		// 1 -activar texturas 
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 		glEnable(GL_TEXTURE_2D);
+		
+
 		// 2 –configurar aspectos gerais de texturas
 		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-		glDepthFunc(GL_LESS);
+		//glDepthFunc(GL_LESS);
 		// 3 -criar objecto textura
-		glGenTextures(1, &textName[0]);
-		//glGenTextures(2, &textName[1]);
-
-		// 5 -configurar textura 
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
+		glGenTextures(NUM_TEXTURES, textName);
 		board->loadTextures();
+
+		//// 5 -configurar textura 
+		//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+		//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+		//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+		//
 
 	}
 	glEnable(GL_POINT_SMOOTH);
@@ -248,7 +246,6 @@ void TimerFunction(int value)
 	//quit
 	if (GetAsyncKeyState(VK_ESCAPE))
 	{
-
 		board->~Board();
 		exit(0);
 	}

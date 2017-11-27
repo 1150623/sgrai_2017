@@ -6,9 +6,9 @@
 #include <stdio.h>
 
 
-unsigned char* SAIL_load_image(const char *file_path, int *width, int *height);
+char* SAIL_load_image(const char *file_path, int *width, int *height);
 
-unsigned char* SAIL_load_image_file(FILE* input, int *width, int *height);
+char* SAIL_load_image_file(FILE* input, int *width, int *height);
 
 #endif  // IMAGE_LOADER_HPP_
 

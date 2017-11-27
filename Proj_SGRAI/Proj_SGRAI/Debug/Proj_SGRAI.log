@@ -1,3 +1,22 @@
-﻿  A-star_Algorithm.cpp
+﻿  Board.cpp
+  Generating Code...
+c:\users\guima\desktop\isep\sgrai\repo_sgrai\sgrai_2017\proj_sgrai\proj_sgrai\board.cpp(383): warning C4172: returning address of local variable or temporary: c
+  Compiling...
+  main.cpp
+c:\users\guima\desktop\isep\sgrai\repo_sgrai\sgrai_2017\proj_sgrai\proj_sgrai\character.h(13): warning C4005: 'CHAR_ANGLE': macro redefinition
+  c:\users\guima\desktop\isep\sgrai\repo_sgrai\sgrai_2017\proj_sgrai\proj_sgrai\globalheader.h(42): note: see previous definition of 'CHAR_ANGLE'
+c:\users\guima\desktop\isep\sgrai\repo_sgrai\sgrai_2017\proj_sgrai\proj_sgrai\character.h(14): warning C4005: 'CHAR_SPEED': macro redefinition
+  c:\users\guima\desktop\isep\sgrai\repo_sgrai\sgrai_2017\proj_sgrai\proj_sgrai\globalheader.h(43): note: see previous definition of 'CHAR_SPEED'
+  TestBoardMatrixCalculations.cpp
+  Node.cpp
+  Character.cpp
+c:\users\guima\desktop\isep\sgrai\repo_sgrai\sgrai_2017\proj_sgrai\proj_sgrai\character.h(13): warning C4005: 'CHAR_ANGLE': macro redefinition
+  c:\users\guima\desktop\isep\sgrai\repo_sgrai\sgrai_2017\proj_sgrai\proj_sgrai\globalheader.h(42): note: see previous definition of 'CHAR_ANGLE'
+c:\users\guima\desktop\isep\sgrai\repo_sgrai\sgrai_2017\proj_sgrai\proj_sgrai\character.h(14): warning C4005: 'CHAR_SPEED': macro redefinition
+  c:\users\guima\desktop\isep\sgrai\repo_sgrai\sgrai_2017\proj_sgrai\proj_sgrai\globalheader.h(43): note: see previous definition of 'CHAR_SPEED'
+  Camera.cpp
+  BoardMatrixCalculations.cpp
+  A-star_Algorithm.cpp
+  Generating Code...
   Proj_SGRAI.vcxproj -> C:\Users\guima\Desktop\ISEP\SGRAI\repo_SGRAI\sgrai_2017\Proj_SGRAI\Debug\Proj_SGRAI.exe
   Proj_SGRAI.vcxproj -> C:\Users\guima\Desktop\ISEP\SGRAI\repo_SGRAI\sgrai_2017\Proj_SGRAI\Debug\Proj_SGRAI.pdb (Partial PDB)
