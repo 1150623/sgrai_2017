@@ -9,9 +9,12 @@ Nenhuma ainda....
 ## O que está no código:
 
 + O código está estruturado em várias classes .cpp e .h .
-> XXX.h   -> declaram a classe XXX e tem atributos dessa classe também declarados  
-> XXX.cpp -> têm a implementação das funções inicializadas no XXX.h  
+> XXX.h   -> constroem a classe YYY e têm os atributos e funções dessa classe declarados  
+> YYY.cpp -> têm a implementação das funções inicializadas no XXX.h  
 
+### GlobalHeader.h
+  Inclui bibliotecas gerais.
+  Declara varáveis globais
 
 ### Camera.h e Camera.cpp
 
@@ -28,16 +31,10 @@ Nenhuma ainda....
   
 ### Board.h e Board.cpp
 
-  Constroem o labirinto com base numa matriz.... ainda não funciona direito :/
-  não está a colocar todas as faces do cubo nem a desenhar tooodos os cubos... não sei porquê... deve-me faltar alguma flag.
+  Constroem o labirinto com base numa matriz de 0 e 1, podendo (objetos diferentes de paredes) ter numeros diferentes.
+  Board.h implementa o namespace Astar que contempla o algoritmo de melhor caminho A*.
   
 ### main.cpp
 
-  Basicamente é o Controller do jogo, inicia-o, corre-o e fecha-o. Tem um objeto de cada tipo (Character, Board e Camera) caso venha a haver monstros,
-  é preciso adicionar o objeto ao main.cpp... Já escrevi uns exemplos de codigo para monstros, mas precisava de ter a classe criada para ver se faz sentido/funciona
-  
-  
-# Em caso de dúvia
-
-  perguntem :p não é dificil o que já está feito
+  Basicamente é o Controller do jogo, inicia-o, corre-o e fecha-o. Tem um objeto de cada tipo (Character, Board e Camera) caso venha a haver monstros, é preciso adicionar o objeto ao main.cpp... Já escrevi uns exemplos de codigo para monstros, mas precisava de ter a classe criada para ver se faz sentido/funciona
   
