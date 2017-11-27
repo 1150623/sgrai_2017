@@ -98,6 +98,9 @@ class Board {
 		//this function returns whether or not a location is a Door or not
 		void OpenDoor(int, int);
 
+		//this function returns whether or not a location is a Door or not
+		void makeWall(int, int);
+
 		//Restores objects to lab (not implemented yet -> for example, restores keys to open a door (when board is reloaded for example))
 		void tp_restore(void);
 

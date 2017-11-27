@@ -32,8 +32,9 @@ void RenderScene()
 	//labirinto Init (where to put objects for example)
 
 
-	//if (true /*Something happens like catching all keys OR killing certain monsters or something...*/)
+	//if (/*Something happens like catching all keys OR killing certain monsters or something...*/)
 	//{
+	//restart all
 	//	init();
 	//	//unlock something
 	//	//or, for testing:
@@ -46,7 +47,9 @@ void RenderScene()
 	if (!gameover)
 		myCharacter->Draw(); //go to stating place
 
-	/*	{ //Example For Monster implementation
+	/*	
+		{ 
+			//Example For Monster implementation
 
 			if (!gameover)			//Monsters not implemented
 				monster->Draw();
@@ -78,7 +81,7 @@ void init(void)
 		glEnable(GL_TEXTURE_2D);
 		
 		//configurar aspectos gerais de texturas
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE); // GL_MODULATE - So that light can take effect on textures 
 		glDepthFunc(GL_LESS);
 		
 		//criar objecto textura
@@ -293,7 +296,7 @@ int main(int argc, char **argv) {
 	myCharacter = new Character(CHARACTER_STARTLOCATION_X, CHARACTER_STARTLOCATION_Y, CHARACTER_SIZE, *board);
 	myCharacter->MoveTo(20, 20);
 	
-	
+
 	init();
 
 	//initial view is the "3D" view

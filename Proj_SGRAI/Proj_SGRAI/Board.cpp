@@ -379,3 +379,10 @@ char* Board::getPath(int x, int y, int xF, int yF) {
 	char c = 'x';
 	return &c;//astar->pathFind(x, y, xF, yF);
 }
+
+
+void Board::makeWall(int x, int y) {
+
+	board_walls[y][x] = 1;
+
+}
