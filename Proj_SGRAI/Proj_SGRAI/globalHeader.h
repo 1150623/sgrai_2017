@@ -29,12 +29,16 @@
 #define DEBBUG 1
 #define MOVE_RATIO 0.25
 #define DYNAMITE_NEEDED 3
+#define HIDE_MOUSE 1
 
 
 //TEXTURES INFO
 #define NUM_TEXTURES 2
-#define TEXTURE_FLOOR "Texturas/FLOOR4_128_128.ppm" //FLOOR{Nr_IMAGE}_128_128.ppm
-#define TEXTURE_WALL "Texturas/WALL1_128_128.ppm"	//WALL{Nr_IMAGE}_128_128.ppm
+#define TEXTURE_FLOOR_1 "Texturas/FLOOR4_128_128.ppm" //FLOOR{Nr_IMAGE}_128_128.ppm
+#define TEXTURE_FLOOR_2 "Texturas/FLOOR4_128_128.ppm" //FLOOR{Nr_IMAGE}_128_128.ppm
+#define TEXTURE_FLOOR_3 "Texturas/FLOOR4_128_128.ppm" //FLOOR{Nr_IMAGE}_128_128.ppm
+#define TEXTURE_FLOOR_4 "Texturas/FLOOR4_128_128.ppm" //FLOOR{Nr_IMAGE}_128_128.ppm
+#define TEXTURE_WALL_1 "Texturas/WALL1_128_128.ppm"	//WALL{Nr_IMAGE}_128_128.ppm
 
 
 //CHARACTER
@@ -46,7 +50,8 @@
 #define CHARACTER_STARTLOCATION_Y 17
 
 extern GLuint textName[];
-
+extern char* textureFloor;
+extern char* textureWall;
 
 static void info() {
 	printf("+---------------------------------+\n");
@@ -56,6 +61,14 @@ static void info() {
 	printf("| FULLSCREEN	[	%s	] |\n", FULLSCREEN ? "ON" : "OFF");
 	printf("| DEBBUG	[	%s	] |\n", DEBBUG ? "ON" : "OFF");
 	printf("+---------------------------------+\n");
+	printf("+-----------------------------------------------+\n");
+	printf("|					TEXTURE INFO		        |\n");
+	printf("+-----------------------------------------------+\n");
+	printf("| TEXTURE_WALL	[	%s	] |\n", textureWall);
+	printf("| TEXTURE_Floor	[	%s	] |\n", textureFloor);
+	printf("+-----------------------------------------------+\n");
+
+
 }
 
 #endif
