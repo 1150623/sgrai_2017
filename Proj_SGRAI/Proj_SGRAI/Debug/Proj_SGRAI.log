@@ -1,8 +1,6 @@
-﻿  main.cpp
-c:\users\guima\desktop\isep\sgrai\repo_sgrai\sgrai_2017\proj_sgrai\proj_sgrai\character.h(13): warning C4005: 'CHAR_ANGLE': macro redefinition
-  c:\users\guima\desktop\isep\sgrai\repo_sgrai\sgrai_2017\proj_sgrai\proj_sgrai\globalheader.h(42): note: see previous definition of 'CHAR_ANGLE'
-c:\users\guima\desktop\isep\sgrai\repo_sgrai\sgrai_2017\proj_sgrai\proj_sgrai\character.h(14): warning C4005: 'CHAR_SPEED': macro redefinition
-  c:\users\guima\desktop\isep\sgrai\repo_sgrai\sgrai_2017\proj_sgrai\proj_sgrai\globalheader.h(43): note: see previous definition of 'CHAR_SPEED'
-c:\users\guima\desktop\isep\sgrai\repo_sgrai\sgrai_2017\proj_sgrai\proj_sgrai\main.cpp(303): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
-  Proj_SGRAI.vcxproj -> C:\Users\guima\Desktop\ISEP\SGRAI\repo_SGRAI\sgrai_2017\Proj_SGRAI\Debug\Proj_SGRAI.exe
-  Proj_SGRAI.vcxproj -> C:\Users\guima\Desktop\ISEP\SGRAI\repo_SGRAI\sgrai_2017\Proj_SGRAI\Debug\Proj_SGRAI.pdb (Partial PDB)
+﻿  Character.cpp
+c:\users\vitor\desktop\sgrai_maze\proj_sgrai\proj_sgrai\character.h(13): warning C4005: 'CHAR_ANGLE': macro redefinition
+  c:\users\vitor\desktop\sgrai_maze\proj_sgrai\proj_sgrai\globalheader.h(47): note: see previous definition of 'CHAR_ANGLE'
+c:\users\vitor\desktop\sgrai_maze\proj_sgrai\proj_sgrai\character.h(14): warning C4005: 'CHAR_SPEED': macro redefinition
+  c:\users\vitor\desktop\sgrai_maze\proj_sgrai\proj_sgrai\globalheader.h(48): note: see previous definition of 'CHAR_SPEED'
+  Proj_SGRAI.vcxproj -> C:\Users\vitor\Desktop\SGRAI_MAZE\Proj_SGRAI\Debug\Proj_SGRAI.exe

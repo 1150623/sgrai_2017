@@ -3,12 +3,12 @@
 #ifndef _Character_H_
 #define _Character_H_
 
-#ifndef M_PI
-#define M_PI 3.1415926535897932384626433832795
-#endif
-
 #include "globalHeader.h"
 #include "Board.h"
+#include "mdlviewer.h"
+
+
+
 #define NUM_LIVES 3
 #define CHAR_ANGLE 30
 #define CHAR_SPEED 0.1
@@ -27,6 +27,7 @@ public:
 	bool animate;
 	float size;
 	int dynamiteFound = DEBBUG ? DYNAMITE_NEEDED : 0;
+	StudioModel weapon;
 
 	Character(double, double, float, Board);
 
@@ -36,6 +37,7 @@ public:
 
 	void Reinit();				//reinitialize everything
 
-	void Draw(void);			//draw character
+	void Draw(float pitch, float yaw);			//draw character
+	void Draw();
 };
 #endif

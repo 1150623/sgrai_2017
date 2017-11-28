@@ -3,6 +3,7 @@
 #include "Camera.h"
 
 
+
 //delays in game
 int start_timer;
 
@@ -29,6 +30,7 @@ void RenderScene()
   //camera update
 	camera->Set_position(myCharacter->x, myCharacter->y, view);
 
+
 	//labirinto Init (where to put objects for example)
 
 
@@ -45,7 +47,7 @@ void RenderScene()
 
 	
 	if (!gameover)
-		myCharacter->Draw(); //go to stating place
+		myCharacter->Draw(camera->pitch,camera->yaw); //go to stating place
 
 	/*	
 		{ 
@@ -253,9 +255,38 @@ void ChangeSize(GLsizei w, GLsizei h)
 
 	ratio = 1.0 * w / (h);
 	glViewport(0, 0, w, h);
-	int distance = 70;
+	int distance = 60;
 	camera = new Camera(ratio, distance);
 
+}
+
+void MouseMotion(int x, int y)
+{
+	// This variable is hack to stop glutWarpPointer from triggering an event callback to Mouse(...)
+	// This avoids it being called recursively and hanging up the event loop
+	static bool just_warped = false;
+
+	if (just_warped) {
+		just_warped = false;
+		return;
+	}
+
+
+		int dx = x - glutGet(GLUT_WINDOW_WIDTH) / 2;
+		int dy = y - glutGet(GLUT_WINDOW_HEIGHT) / 2;
+
+		if (dx) {
+			camera->RotateYaw(VELOCIDADE_ROTACAO*dx);
+		}
+
+		if (dy) {
+			camera->RotatePitch(VELOCIDADE_ROTACAO*dy);
+		}
+
+		glutWarpPointer(glutGet(GLUT_WINDOW_WIDTH) / 2, glutGet(GLUT_WINDOW_HEIGHT) / 2);
+		just_warped = true;
+		myCharacter->angle = camera->yaw;
+	
 }
 
 int main(int argc, char **argv) {
@@ -277,12 +308,12 @@ int main(int argc, char **argv) {
 		glutEnterGameMode();
 	}
 
-	
-	
 	//make mouse disappear
 	glutSetCursor(GLUT_CURSOR_NONE);
 	glutDisplayFunc(RenderScene);
 	glutReshapeFunc(ChangeSize);
+	glutMotionFunc(MouseMotion);
+	glutPassiveMotionFunc(MouseMotion);
 	
 
 	//draw the level/floor...
@@ -295,12 +326,11 @@ int main(int argc, char **argv) {
 	//Inicialize character
 	myCharacter = new Character(CHARACTER_STARTLOCATION_X, CHARACTER_STARTLOCATION_Y, CHARACTER_SIZE, *board);
 	myCharacter->MoveTo(20, 20);
-	
 
 	init();
 
 	//initial view is the "3D" view
-	view = 0;
+	view = 3;
 	v_timer = 0;
 	// Specify a global ambient
 	GLfloat globalAmbient[] = { 0.2, 0.2, 0.2, 1.0 };
