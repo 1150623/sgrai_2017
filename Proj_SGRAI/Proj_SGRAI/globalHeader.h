@@ -14,7 +14,9 @@
 #include <stdlib.h> 
 #include <gl/glut.h>
 #include <GL/gl.h>
-
+#include "mathlib.h"
+#include "studio.h"
+#include "mathlib.h"
 
 
 
@@ -22,12 +24,15 @@
 #define M_PI 3.1415926535897932384626433832795
 #endif
 
+#define RAD(x)          (M_PI*(x)/180)
+#define GRAUS(x)        (180*(x)/M_PI)
+
 
 //MAIN GLOBAL INFO
 #define TEXTURE_ON 1
-#define FULLSCREEN 1
+#define FULLSCREEN 0
 #define DEBBUG 1
-#define MOVE_RATIO 0.25
+#define MOVE_RATIO 0.01
 #define DYNAMITE_NEEDED 3
 #define HIDE_MOUSE 1
 
@@ -48,6 +53,12 @@
 #define CHARACTER_SIZE 0.25
 #define CHARACTER_STARTLOCATION_X 1
 #define CHARACTER_STARTLOCATION_Y 17
+#define SCALE_PLAYER         0.005
+
+//Camera
+#define VELOCIDADE_ROTACAO	0.01
+
+extern "C" int read_JPEG_file(char *, char **, int *, int *, int *);
 
 extern GLuint textName[];
 extern char* textureFloor;
