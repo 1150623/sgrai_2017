@@ -20,6 +20,10 @@ private:
 
 public:
 
+	struct {
+		int x, y;
+	} direction;
+
 	int lives; // will it be needed??
 
 	double angle;
