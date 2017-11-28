@@ -218,12 +218,12 @@ void TimerFunction(int value)
 		if (GetAsyncKeyState(VK_F1) && !GetAsyncKeyState(VK_F2))
 		{
 			d = camera->distance += 0.5;
-			camera = new Camera(camera->ratio,d);
+			camera->Reshape(camera->ratio, d);
 			camera->Set_position(myCharacter->x, myCharacter->y, view);
 		}
-		if(GetAsyncKeyState(VK_F2) && !GetAsyncKeyState(VK_F1)) {
-			d = camera->distance-=0.5;
-			camera = new Camera(camera->ratio, d);
+		if (GetAsyncKeyState(VK_F2) && !GetAsyncKeyState(VK_F1)) {
+			d = camera->distance -= 0.5;
+			camera->Reshape(camera->ratio, d);
 			camera->Set_position(myCharacter->x, myCharacter->y, view);
 		}
 
@@ -257,7 +257,7 @@ void ChangeSize(GLsizei w, GLsizei h)
 	ratio = 1.0 * w / (h);
 	glViewport(0, 0, w, h);
 	int distance = 60;
-	camera = new Camera(ratio, distance);
+	camera->Reshape(ratio, distance);
 
 }
 
@@ -308,6 +308,8 @@ int main(int argc, char **argv) {
 		glutGameModeString("800x600:16@60");
 		glutEnterGameMode();
 	}
+
+	camera = new Camera();
 
 	//make mouse disappear
 	glutSetCursor(GLUT_CURSOR_NONE);

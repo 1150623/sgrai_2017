@@ -19,10 +19,12 @@ public:
 	float yaw, pitch; // Various rotation angles
 
 	// Constructor.
-	Camera(float, float);
+	void Reshape(float, int);
 
 	// Destructor.
 	~Camera(void);
+
+	Camera(void);
 
 	void Set_position(float, float, int);
 

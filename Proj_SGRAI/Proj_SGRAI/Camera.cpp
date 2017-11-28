@@ -5,13 +5,16 @@
 // Destructor
 Camera::~Camera(void) {}
 
-//Constructor
-Camera::Camera(float ratio, float distance)
+Camera::Camera() {
+	yaw = 0.0;
+	pitch = 0.0;
+}
+
+void
+Camera::Reshape(float ratio, int distance)
 {
 	Camera::ratio = ratio;
 	Camera::distance = distance;
-	yaw = 0.0;
-	pitch = 0.0;
 
 	//Cull back faces
 	//glEnable(GL_CULL_FACE);
@@ -31,6 +34,7 @@ Camera::Camera(float ratio, float distance)
 	glLoadIdentity();
 
 }
+
 void
 Camera::Set_position(float x_at, float y_at, int view)
 {

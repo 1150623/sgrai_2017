@@ -70,6 +70,74 @@ Character::Draw(void)
 void
 Character::Draw(float pitch,float yaw)
 {
+
+
+	glPushMatrix();
+
+
+
+	glLineWidth(1);
+
+	float radius = 0.125;
+	float aimSize = 0.010;
+
+	float centerX;
+	float centerY;
+	float centerZ;
+
+	centerX = radius * cos(pitch);
+	centerZ = 0.2 + (radius * sin(pitch));
+	centerY = 0;
+
+	float beta = RAD(90.0f - GRAUS(pitch));
+
+	float posX11 = centerX + ((aimSize / 8) * -cos(beta));
+	float posY11 = centerZ + ((aimSize / 8) * sin(beta));
+
+	float posX1 = centerX + ((aimSize / 4) * -cos(beta));
+	float posY1 = centerZ + ((aimSize / 4) * sin(beta));
+
+
+	float posX21 = centerX + ((aimSize / 8) * cos(beta));
+	float posY21 = centerZ + ((aimSize / 8) * -sin(beta));
+
+	float posX2 = centerX + ((aimSize / 4) * cos(beta));
+	float posY2 = centerZ + ((aimSize / 4) * -sin(beta));
+
+
+	// Eixo dos y - mira 1
+	glBegin(GL_LINES);
+	glColor3f(0.11, 0.56, 1.0);
+	glVertex3f(posX1, posY1, 0);
+	glVertex3f(posX11, posY11, 0);
+	glEnd();
+
+	// Eixo dos y - mira 2
+	glBegin(GL_LINES);
+	glColor3f(1.0, 0.7, 0.0);
+	glVertex3f(posX21, posY21, 0);
+	glVertex3f(posX2, posY2, 0);
+	glEnd();
+
+	// Eixo dos z - mira 1
+	glBegin(GL_LINES);
+	glColor3f(1.0, 0.7, 0.0);
+	glVertex3f(centerX,  (aimSize / 8),centerZ);
+	glVertex3f(centerX, (aimSize / 4), centerZ);
+	glEnd();
+
+
+	// Eixo dos z - mira 2
+	glBegin(GL_LINES);
+	glColor3f(0.11, 0.56, 1.0);
+	glVertex3f(centerX, -(aimSize / 8), centerZ);
+	glVertex3f(centerX, -(aimSize / 4), centerZ);;
+	glEnd();
+
+
+	glPopMatrix();
+
+
 	//draw Weapon
 	//glPushMatrix(); {
 	//	
@@ -86,6 +154,8 @@ Character::Draw(float pitch,float yaw)
 			mdlviewer_display(weapon);
 		}glPopMatrix();
 		glDisable(GL_CULL_FACE);
+
+
 	//}glPopMatrix();
 
 	/*draw spheare*/
