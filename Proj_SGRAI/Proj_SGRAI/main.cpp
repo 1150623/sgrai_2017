@@ -16,6 +16,9 @@ Board *board;
 Character *myCharacter;
 Camera *camera;
 
+char* textureFloor = TEXTURE_FLOOR_4;
+char* textureWall = TEXTURE_WALL_1;
+
 //viewing position (not implemented yet)
 int view;
 //stops key repeats
