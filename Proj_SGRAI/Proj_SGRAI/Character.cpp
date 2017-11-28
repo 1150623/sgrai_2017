@@ -83,7 +83,7 @@ Character::Draw(float pitch,float yaw)
 			glRotatef(GRAUS(pitch), 0, 1, 0);
 			glRotatef(GRAUS(yaw), 0, 0, 1);
 			glScalef(SCALE_PLAYER + 0.01, SCALE_PLAYER + 0.01, SCALE_PLAYER + 0.01);
-			mdlviewer_display(weapon);
+			mdlviewer_display(weapon,x, y, z);
 		}glPopMatrix();
 	}glPopMatrix();
 
