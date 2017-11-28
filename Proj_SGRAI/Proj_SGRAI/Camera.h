@@ -29,7 +29,7 @@ public:
 	void RotateYaw(float angle);
 	void RotatePitch(float angle);
 
-	void set_light();
+	void set_light(float, float, float);
 };
 
 

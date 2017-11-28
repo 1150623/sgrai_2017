@@ -14,34 +14,10 @@ Camera::Camera(float ratio, float distance)
 	pitch = 0.0;
 
 	//Cull back faces
-	glEnable(GL_CULL_FACE);
-	
-	//double  eye[3];
-	float   color[4], dir[4];
-
-	// Enable lighting with one light.
-	glEnable(GL_LIGHT0);
-	glEnable(GL_LIGHTING);
-
-	
-	glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
-	glEnable(GL_COLOR_MATERIAL);
+	//glEnable(GL_CULL_FACE);
 
 	// Turn on normal vector normalization. 
 	glEnable(GL_NORMALIZE);
-
-	
-	color[0] = 1.0f; 
-	color[1] = 1.0f;
-	color[2] = 1.0f;
-	color[3] = 1.0f;
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, color);
-	color[0] = 0.0f; 
-	color[1] = 0.0f; 
-	color[2] = 0.0f; 
-	color[3] = 1.0f;
-	glLightfv(GL_LIGHT0, GL_SPECULAR, color);
-
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -54,9 +30,6 @@ Camera::Camera(float ratio, float distance)
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	// Position the light source. -> Directional light
-	dir[0] = 0.1; dir[1] = 0.3; dir[2] = 1.0; dir[3] = 0.2;
-	glLightfv(GL_LIGHT0, GL_POSITION, dir);
 }
 void
 Camera::Set_position(float x_at, float y_at, int view)
@@ -116,34 +89,40 @@ void Camera::RotatePitch(float angle)
 
 }
 
-void
-Camera::set_light() {
-	// Set lighting intensity and color
-	GLfloat ambientLight[] = { 0.1, 0.1, 0.1, 1.0 };
-	GLfloat diffuseLight[] = { 1, 1, 1, 1.0 };
-	GLfloat specularLight[] = { 1.0, 1.0, 1.0, 1.0 };
-	GLfloat emitLight[] = { 0.9, 0.9, 0.9, 0.01 };
+void Camera::set_light(float x_c, float y_c, float z_c) {
 
-	// Light source position
-	GLfloat lightPosition[] = { 0, 0, 2, 1 };
-	GLfloat lightDirection[] = { 1, 1, 1, 0 };
-	GLfloat dirVector0[] = { 0.2, 1.0, 1.0, 0.2 };
+	glPushMatrix(); {
+		// Set lighting intensity and color
+		glTranslatef(x_c-5, -y_c + z_c * 2, -z_c);
+		glTranslatef(z_c / 2, z_c + 0.1, 0);
+		glTranslatef((float)Board::BOARD_X / -1.996, (float)Board::BOARD_Y / 2.0, 0.715);
+		GLfloat ambientLight[] = { 0.1, 0.1, 0.1, 1.0 };
+		GLfloat diffuseLight[] = { 1, 1, 1, 1.0 };
+		GLfloat specularLight[] = { 1.0, 1.0, 1.0, 1.0 };
 
-	// Enable lighting
-	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);
+		// Light source position
+		GLfloat lightPosition[] = { 5,0,5, 1 };
+		GLfloat vector0[] = { 0, 0, -1 };
 
-	//// Set lighting intensity and color
-	/*glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);*/
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
-	glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
-	glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
-	////////////////////////////////////////////
+		// Enable lighting
+		glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+		glEnable(GL_COLOR_MATERIAL);
 
+		//// Set lighting intensity and color
+		//glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
+		//glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
+		glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
+		//glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
 
+		//glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
 
-	glLightfv(GL_LIGHT0, GL_SPECULAR, dirVector0);
-
+		glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 30);// set cutoff angle
+		glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, vector0);
+		/*
+												glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 1.5);
+												glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, -0.5);
+												glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0.00000005);*/
+	}glPopMatrix();
 }
 
 

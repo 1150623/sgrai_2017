@@ -71,9 +71,9 @@ void
 Character::Draw(float pitch,float yaw)
 {
 	//draw Weapon
-	glPushMatrix(); {
-		
-		//Codigo para a mira Aqui
+	//glPushMatrix(); {
+	//	
+	//	//Codigo para a mira Aqui
 		glPushMatrix(); {
 			glTranslatef(Character::x, -Character::y + size * 2, -size);
 			glTranslatef(size / 2, size + 0.1, 0);
@@ -83,11 +83,12 @@ Character::Draw(float pitch,float yaw)
 			glRotatef(GRAUS(pitch), 0, 1, 0);
 			glRotatef(GRAUS(yaw), 0, 0, 1);
 			glScalef(SCALE_PLAYER + 0.01, SCALE_PLAYER + 0.01, SCALE_PLAYER + 0.01);
-			mdlviewer_display(weapon,x, y, z);
+			mdlviewer_display(weapon);
 		}glPopMatrix();
-	}glPopMatrix();
+		glDisable(GL_CULL_FACE);
+	//}glPopMatrix();
 
-	//draw spheare
+	/*draw spheare*/
 	//glColor3f(1.0, 0.25, 0.25);	
 	//glPushMatrix();
 	//{

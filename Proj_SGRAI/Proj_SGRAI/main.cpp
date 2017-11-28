@@ -30,6 +30,7 @@ void RenderScene()
   //camera update
 	camera->Set_position(myCharacter->x, myCharacter->y, view);
 
+	camera->set_light(myCharacter->x, myCharacter->y, myCharacter->size);
 
 	//labirinto Init (where to put objects for example)
 
@@ -332,10 +333,10 @@ int main(int argc, char **argv) {
 	//initial view is the "3D" view
 	view = 3;
 	v_timer = 0;
-	// Specify a global ambient
-	GLfloat globalAmbient[] = { 0.2, 0.2, 0.2, 1.0 };
-	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, globalAmbient);
+	
+
 	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
 	
 	glutTimerFunc(15, TimerFunction, 1);
 	glutMainLoop();

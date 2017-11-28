@@ -1,6 +1,3 @@
-﻿  Character.cpp
-c:\users\vitor\desktop\sgrai_maze\proj_sgrai\proj_sgrai\character.h(13): warning C4005: 'CHAR_ANGLE': macro redefinition
-  c:\users\vitor\desktop\sgrai_maze\proj_sgrai\proj_sgrai\globalheader.h(47): note: see previous definition of 'CHAR_ANGLE'
-c:\users\vitor\desktop\sgrai_maze\proj_sgrai\proj_sgrai\character.h(14): warning C4005: 'CHAR_SPEED': macro redefinition
-  c:\users\vitor\desktop\sgrai_maze\proj_sgrai\proj_sgrai\globalheader.h(48): note: see previous definition of 'CHAR_SPEED'
-  Proj_SGRAI.vcxproj -> C:\Users\vitor\Desktop\SGRAI_MAZE\Proj_SGRAI\Debug\Proj_SGRAI.exe
+﻿  Camera.cpp
+c:\users\ricardo\desktop\sgrai_maze\proj_sgrai\proj_sgrai\camera.cpp(99): warning C4838: a conversão de 'double' em 'GLfloat' requer uma conversão de restrição
+  Proj_SGRAI.vcxproj -> C:\Users\Ricardo\Desktop\SGRAI_MAZE\Proj_SGRAI\Debug\Proj_SGRAI.exe
