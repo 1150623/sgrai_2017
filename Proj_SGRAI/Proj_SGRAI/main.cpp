@@ -54,7 +54,7 @@ void DrawAim() {
 	std::string s;
 	glColor3f(0, 1, 0);
 
-	s = "o";
+	s = "+";
 	glRasterPos2d(w / 2, h / 2);
 	textSize = s.length();
 
@@ -117,8 +117,6 @@ void RenderScene()
 	glutSwapBuffers();
 }
 
-
-
 GLuint textName[NUM_TEXTURES];
 
 //SET UP THE GAME
@@ -159,7 +157,6 @@ void TimerFunction(int value)
 		view = (view == VIEW_FIRST_PERSON) ? VIEW_THIRD_PERSON : (view == VIEW_THIRD_PERSON) ? VIEW_MAP : (view == VIEW_MAP) ? VIEW_THIRD_PERSON : view;
 		if (view == VIEW_MAP && !DEBBUG) {
 			view = VIEW_THIRD_PERSON;
-
 		}
 
 		if (view == VIEW_MAP) camera->Reshape(ratio, 60);

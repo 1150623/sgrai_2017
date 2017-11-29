@@ -247,9 +247,8 @@ void Board::DRAW_WALLS_BOTTOM(void) {
 Board::~Board(void) {}
 
 
-void Board::drawWalls(void) {
 
-	
+void Board::drawWalls(void) {
 	
 	for (int i = 0; i < BOARD_X; i++)
 	{
@@ -328,25 +327,6 @@ void Board::drawWalls(void) {
 	}
 }
 
-void eixo(GLfloat x, GLfloat y, GLfloat z, GLfloat cor[])
-{
-	glBegin(GL_LINES);
-	glColor3fv(cor);
-	glVertex3f(0.0, 0.0, 0.0);
-	glVertex3f(x, y, z);
-	glEnd();
-}
-
-void eixos()
-{
-	GLfloat colors[][3] = { { 1.0,0.0,0.0 },
-	{ 0.0,1.0,0.0 },
-	{ 0.0,0.0,1.0 } };
-
-	eixo(1, 0, 0, colors[0]);
-	eixo(0, 1, 0, colors[1]);
-	eixo(0, 0, 1, colors[2]);
-}
 
 
 //Desenha Labirinto
@@ -358,14 +338,33 @@ void Board::Draw(void) {
 	glFlush();
 }
 
+struct Coord
+{
+	int x, y;
+};
 
 //returns whether or not the labirinth is open at the given coords
 //array is transpose of how actual labirinth appears on screen
 bool
-Board::IsOpen(int x, int y)
+Board::IsOpen(float x, float y)
 {	
+	Coord charcacter = {x, y};
+
+	Coord parede;
+	for (int i = x-10; i > x+10 ; i++) {
+		if (i >= 0 && i < BOARD_Y)
+		for (int j = y-10; j < y+10; j++) {
+			if(j >= 0 && j < BOARD_X)
+			if (board_walls[j][i] == 1) {
+				//parede = Board::getCoordOfWall(j,i);
+				//parede = { j,i };
+
+			}
+		}
+	}
+
 	//if (DEBBUG)printf("[%d][%d]", y, x);
-	if (board_walls[y][x] > 0)
+	if (board_walls[(int)y][(int)x] > 0)
 	{
 		return false;
 	}

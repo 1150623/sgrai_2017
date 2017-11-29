@@ -166,7 +166,7 @@ class Board {
 		~Board();
 
 		//this function returns whether or not a location is open or is a wall
-		bool IsOpen(int, int);
+		bool IsOpen(float, float);
 
 		//this function returns whether or not a location is a Door or not
 		bool IsDoor(int, int);
