@@ -3,6 +3,16 @@
 #include "Camera.h"
 
 
+#define TECLA_S 0x53
+#define TECLA_W 0x57
+#define TECLA_A 0x41
+#define TECLA_D 0x44
+
+#define TECLA_UP VK_UP
+#define TECLA_LEFT VK_LEFT
+#define TECLA_RIGHT VK_RIGHT
+#define TECLA_DOWN VK_DOWN
+
 
 //delays in game
 int start_timer;
@@ -16,6 +26,9 @@ int h, w;
 Board *board;
 Character *myCharacter;
 Camera *camera;
+
+char* textureFloor = TEXTURE_FLOOR_4;
+char* textureWall = TEXTURE_WALL_1;
 
 //viewing position (not implemented yet)
 int view;
@@ -136,7 +149,7 @@ void TimerFunction(int value)
 	{
 		// Get keyboard input
 		//move right
-		if (GetAsyncKeyState(VK_RIGHT) && !GetAsyncKeyState(VK_LEFT)
+		if (GetAsyncKeyState(TECLA_D) && !GetAsyncKeyState(TECLA_A)
 			)
 		{
 			if (board->IsOpen(myCharacter->x + MOVE_RATIO, myCharacter->y))
@@ -155,7 +168,7 @@ void TimerFunction(int value)
 		}
 		else
 			//move left
-			if (GetAsyncKeyState(VK_LEFT) && !GetAsyncKeyState(VK_RIGHT)
+			if (GetAsyncKeyState(TECLA_A) && !GetAsyncKeyState(TECLA_D)
 				)
 			{
 				if (board->IsOpen(myCharacter->x - MOVE_RATIO, myCharacter->y))
@@ -173,7 +186,7 @@ void TimerFunction(int value)
 				}
 			}
 		//move up
-		if (GetAsyncKeyState(VK_UP) && !GetAsyncKeyState(VK_DOWN)
+		if (GetAsyncKeyState(TECLA_W) && !GetAsyncKeyState(TECLA_S)
 			)
 		{
 			if (board->IsOpen(myCharacter->x, myCharacter->y - MOVE_RATIO))
@@ -192,7 +205,7 @@ void TimerFunction(int value)
 		}
 		else
 			//move down
-			if (GetAsyncKeyState(VK_DOWN) && !GetAsyncKeyState(VK_UP)
+			if (GetAsyncKeyState(TECLA_S) && !GetAsyncKeyState(TECLA_W)
 				)
 			{
 				if (board->IsOpen(myCharacter->x, myCharacter->y + MOVE_RATIO))

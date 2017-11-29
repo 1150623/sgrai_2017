@@ -30,11 +30,8 @@ Character::Reinit(void)
 void
 Character::MoveTo(int xF, int yF)
 {
-	char* a = board.getPath(x, y, xF, yF);
-	if (a == NULL) {
-		printf("NOTHING\n");
-	}
-	printf("---------------------------------\n%s\n---------------------------------------\n", a);
+	AStar::CoordList coords = board.getPath(x, y, xF, yF);
+	
 }
 
 void

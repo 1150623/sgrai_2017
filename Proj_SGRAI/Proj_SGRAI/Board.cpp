@@ -60,23 +60,22 @@ void Board::MYcube(void)
 	face(8, 9, 10, 11);
 }
 
+using namespace AStar;
+Generator generator;
+
 Board::Board() {
-	//scaleWalls();
-	ang = 0;
-	int** m;
-	m = (int**)calloc(BOARD_X, (sizeof(int)));
-	for (int i = 0; i < BOARD_X; i++) {
-		m[i] = (int*)calloc(BOARD_Y, (sizeof(int)));
-	}
+	
+	initAStarGenerator();
+	
 
-	for (int i = 0; i < BOARD_X; i++) {
-		for (int j = 0; j < BOARD_Y; j++) {
-			m[i][j] = board_walls[i][j];
-		}
-	}
+}
 
-	//astar = new Astar_Algorithm(m);
-	//( tp_restore)
+void Board::initAStarGenerator() {
+
+	generator.setWorldSize({ BOARD_X, BOARD_Y });
+	generator.setHeuristic(AStar::Heuristic::manhattan);
+	generator.setDiagonalMovement(false);
+
 }
 
 
@@ -101,11 +100,11 @@ void Board::loadTextures(void) {
 	if (TEXTURE_ON) {
 
 		
-		//LOAD FLOOR TEXTURE
+		//LOAD WALL TEXTURE
 		// START
 		{
 			PPMImage *imagemPPM;
-			imagemPPM = LoadPPM(TEXTURE_WALL);
+			imagemPPM = LoadPPM(textureWall);
 			glBindTexture(GL_TEXTURE_2D, textName[0]);
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imagemPPM->sizeX, imagemPPM->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, imagemPPM->data);
 			free(imagemPPM); // the GPU already has the image
@@ -124,7 +123,7 @@ void Board::loadTextures(void) {
 		// START
 		{
 			PPMImage *imagemPPM2;
-			imagemPPM2 = LoadPPM(TEXTURE_FLOOR);
+			imagemPPM2 = LoadPPM(textureFloor);
 			glBindTexture(GL_TEXTURE_2D, textName[1]);
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imagemPPM2->sizeX, imagemPPM2->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, imagemPPM2->data);
 			free(imagemPPM2); // the GPU already has the image
@@ -272,6 +271,7 @@ void Board::drawWalls(void) {
 
 				glTranslatef(-(float)BOARD_X / 2.0f, -(float)BOARD_Y / 2.0f, 0);
 				glTranslatef(j, BOARD_Y - i, 0);
+				
 				glPushMatrix(); 
 				{
 
@@ -338,11 +338,31 @@ void Board::drawWalls(void) {
 	}
 }
 
+void eixo(GLfloat x, GLfloat y, GLfloat z, GLfloat cor[])
+{
+	glBegin(GL_LINES);
+	glColor3fv(cor);
+	glVertex3f(0.0, 0.0, 0.0);
+	glVertex3f(x, y, z);
+	glEnd();
+}
+
+void eixos()
+{
+	GLfloat colors[][3] = { { 1.0,0.0,0.0 },
+	{ 0.0,1.0,0.0 },
+	{ 0.0,0.0,1.0 } };
+
+	eixo(1, 0, 0, colors[0]);
+	eixo(0, 1, 0, colors[1]);
+	eixo(0, 0, 1, colors[2]);
+}
+
 
 //Desenha Labirinto
 void Board::Draw(void) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
+
 	drawWalls();
 
 	glFlush();
@@ -375,9 +395,8 @@ Board::OpenDoor(int x, int y)
 	board_walls[y][x] = 0;
 }
 
-char* Board::getPath(int x, int y, int xF, int yF) {
-	char c = 'x';
-	return &c;//astar->pathFind(x, y, xF, yF);
+AStar::CoordList Board::getPath(int x, int y, int xF, int yF) {
+	return generator.findPath({ x, y }, { xF, yF });
 }
 
 
