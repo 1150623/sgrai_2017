@@ -1,24 +1,20 @@
 #pragma once
 
-#ifndef _Monster_H_
-#define _Monster_H_
+#ifndef  _MONSTER_H_
+#define _MONSTER_H_
 
 #ifndef M_PI
 #define M_PI 3.1415926535897932384626433832795
 #endif
 
 #include "globalHeader.h"
+#ifndef _BOARD_H_
 #include "Board.h"
+#endif
 #define MONSTER_NUM_LIVES 3
 #define MONSTER_ANGLE 30
 #define MONSTER_SPEED 0.1
 
-static struct savePositionMonsters
-{
-	int x, y;
-};
-
-static std::vector<savePositionMonsters> VecPositionMonsters;
 
 class Monster {
 private:
@@ -43,7 +39,6 @@ public:
 
 	void Reinit();				//reinitialize everything
 
-	void GenerateRandoMonsters(Board); // generate randm monster 
 
 	void Draw(void);			//draw character
 };

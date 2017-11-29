@@ -1,6 +1,7 @@
 #include "globalHeader.h"
 #include "Character.h"
 #include "Camera.h"
+#include "Monster.h"
 
 
 #define TECLA_S 0x53
@@ -27,7 +28,9 @@ Board *board;
 Character *myCharacter;
 Camera *camera;
 
-char* textureFloor = TEXTURE_FLOOR_4;
+Monster *monstros[NUM_MONSTROS_RANDOM];
+
+char* textureFloor = TEXTURE_FLOOR_2;
 char* textureWall = TEXTURE_WALL_1;
 
 //viewing position (not implemented yet)
@@ -63,12 +66,16 @@ void RenderScene()
 	if (!gameover)
 		myCharacter->Draw(camera->pitch,camera->yaw); //go to stating place
 
+	for (int i = 0; i <NUM_MONSTROS_RANDOM; i++) {
+		monstros[i]->Draw();
+	}
+
 	/*	
 		{ 
 			//Example For Monster implementation
 
 			if (!gameover)			//Monsters not implemented
-				monster->Draw();
+				monster[x]->Draw();
 
 			if (!gameover)			//Monsters not implemented
 				monster[x]->Move();
@@ -342,6 +349,22 @@ int main(int argc, char **argv) {
 	//Inicialize character
 	myCharacter = new Character(CHARACTER_STARTLOCATION_X, CHARACTER_STARTLOCATION_Y, CHARACTER_SIZE, *board);
 	myCharacter->MoveTo(20, 20);
+	// gerar labirinto aleatorio
+	board->GenerateRandoMonstersPositions();
+	
+	for (int  i = 0; i < board->VecPositionMonsters.size(); i++)
+	{
+		printf("%d\n", board->VecPositionMonsters[i].x);
+
+	}
+
+
+	for (int i = 0; i <NUM_MONSTROS_RANDOM; i++){
+		monstros[i] = new Monster(board->VecPositionMonsters[i].x, board->VecPositionMonsters[i].y, CHARACTER_SIZE, *board);
+	}
+
+
+
 
 	init();
 

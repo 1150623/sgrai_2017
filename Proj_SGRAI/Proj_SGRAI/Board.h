@@ -118,7 +118,6 @@ static int board_walls[31][28] =
 	{ 1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	5,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1 }
 };
 
-
 class Board {
 
 	
@@ -154,6 +153,12 @@ class Board {
 		static const int BOARD_Y = 28;
 		float ang;
 
+		struct savePositionMonsters
+		{
+			int x, y;
+		};
+		std::vector<savePositionMonsters> VecPositionMonsters;
+
 		//Construtor
 		Board();
 
@@ -181,6 +186,9 @@ class Board {
 
 		//Retorna uma lista de coordenadas do mapa por onde se deve passar desde {x,y} até {xf, yf}
 		AStar::CoordList getPath(int x, int y, int xF, int yF);
+
+		// Gera monstros aleatorios no mapa
+		void GenerateRandoMonstersPositions(void);
 
 };
 

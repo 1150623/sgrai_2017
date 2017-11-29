@@ -1,15 +1,5 @@
 #include "Board.h"
 
-
-//Inicializar Dimensões do Board/(Labirinto)
-const float Board::BOARD_WALL_SIZE = 1.0;
-
-
-GLbyte image[2][2][2];
-GLuint imageWidth = 1, imageHeight = 1;
-
-bool firstTime = false;	
-
 typedef float vertex[3];
 
 vertex vertices[] = {
@@ -279,10 +269,10 @@ void Board::drawWalls(void) {
 					{
 						aux += WALLS_TOP;
 						aux -= WALLS_BOTTOM;
-						if (i - 1 >= 0) if (board_walls[i - 1][j] == 0 || board_walls[i - 1][j] == 5) { aux += WALLS_SOUTH; }
-						if (i + 1 < BOARD_X) if (board_walls[i + 1][j] == 0 || board_walls[i + 1][j] == 5) { aux += WALLS_NORTH; }
-						if (j + 1 < BOARD_Y) if (board_walls[i][j + 1] == 0 || board_walls[i][j + 1] == 5) { aux += WALLS_WEST; }
-						if (j - 1 >= 0) if (board_walls[i][j - 1] == 0 || board_walls[i][j - 1] == 5) { aux += WALLS_EAST; }
+						if (i - 1 >= 0) if (board_walls[i - 1][j] == 0 || board_walls[i - 1][j] >= BASE_INDEX_MONSTERS || board_walls[i - 1][j] == 5) { aux += WALLS_SOUTH; }
+						if (i + 1 < BOARD_X) if (board_walls[i + 1][j] == 0 || board_walls[i + 1][j] >= BASE_INDEX_MONSTERS || board_walls[i + 1][j] == 5) { aux += WALLS_NORTH; }
+						if (j + 1 < BOARD_Y) if (board_walls[i][j + 1] == 0 || board_walls[i][j + 1] >= BASE_INDEX_MONSTERS || board_walls[i][j + 1] == 5) { aux += WALLS_WEST; }
+						if (j - 1 >= 0) if (board_walls[i][j - 1] == 0 || board_walls[i][j - 1] >= BASE_INDEX_MONSTERS || board_walls[i][j - 1] == 5) { aux += WALLS_EAST; }
 
 						if (!(aux & WALLS_SOUTH) && i == 0) if (board_walls[i][j] == 1) { aux += WALLS_SOUTH; }
 						if (!(aux & WALLS_NORTH) && i == BOARD_X - 1) if (board_walls[i][j] == 1) { aux += WALLS_NORTH; }
@@ -404,4 +394,163 @@ void Board::makeWall(int x, int y) {
 
 	board_walls[y][x] = 1;
 
+}
+
+// Gera monstros aleatorios no mapa
+void Board::GenerateRandoMonstersPositions(void)
+{
+	struct Vec2ii
+	{
+		int x, y;
+	};
+
+	//Conta o numero de possiçoes onde e possivel adicionar monstro
+	int numeroPosPossivelCriarMonstro = 0;
+	int i;
+	int j;
+	for (i = 0; i <Board::BOARD_X; i++) {
+		for (j = 0; j < Board::BOARD_Y; j++) {
+			if (board_walls[i][j] == 0) {
+				numeroPosPossivelCriarMonstro++;
+			}
+		}
+	}
+
+	//Adiciona as coordenadas onde e possivel adicionar monstros a um vector
+	std::vector<Vec2ii> vectorTeste;
+	for (int i = 0; i < Board::BOARD_X; i++)
+	{
+		for (int j = 0; j < Board::BOARD_Y; j++)
+		{
+			if (board_walls[i][j] == 0) {
+				Vec2ii v = { i,j };
+				vectorTeste.insert(vectorTeste.begin(), v);
+			}
+		}
+	}
+
+	for (i = 0; i < Board::BOARD_X; i++) {
+		for (j = 0; j < Board::BOARD_Y; j++) {
+			printf(" %2d ", board_walls[i][j]);
+		}
+		printf("\n");
+	}
+
+	printf("-------------------------------------------------------------------------------------------------------\n");
+
+	//Gera um numero Random que vai selecionar a possicao onde vai nascer os monstros
+	srand(time(NULL));
+	for (int k = 0; k < NUM_MONSTROS_RANDOM; k++)
+	{
+		int x = rand() % vectorTeste.size();
+
+		// Valor na matriz para a existencia de monstros
+		VecPositionMonsters.push_back(savePositionMonsters());
+		VecPositionMonsters[k].x = vectorTeste[x].x;
+		VecPositionMonsters[k].y = vectorTeste[x].y;
+
+		int maisX = 0;
+		int menosX = 0;
+		int maisY = 0;
+		int menosY = 0;
+
+		// maisX
+		int aumentaX = vectorTeste[x].x;
+		while(board_walls[aumentaX][vectorTeste[x].y] ==0){
+			maisX++;
+			aumentaX++;
+		}
+		// menosX
+		int diminuiX = vectorTeste[x].x;
+		while (board_walls[diminuiX][vectorTeste[x].y] == 0) {
+			menosX++;
+			diminuiX--;
+		}
+
+		// maisY
+		int aumentaY = vectorTeste[x].y;
+		while (board_walls[vectorTeste[x].x][aumentaY] == 0){
+			maisY++;
+			aumentaY++;
+		}
+		// menosY
+		int diminuiY = vectorTeste[x].y;
+		while (board_walls[vectorTeste[x].x][diminuiY] == 0) {
+			menosY++;
+			diminuiY--;
+		}
+
+
+		//X
+		if ((maisX + menosX) >= (maisY + menosY)){
+			aumentaX = vectorTeste[x].x+1;
+			while (board_walls[aumentaX][vectorTeste[x].y] == 0) {
+				board_walls[aumentaX][vectorTeste[x].y] = k + BASE_INDEX_MONSTERS;
+				for (int i = 0; i < vectorTeste.size(); i++){
+					if (vectorTeste[x].x == vectorTeste[aumentaX].x && vectorTeste[x].y == vectorTeste[i].y) {
+						vectorTeste.erase(vectorTeste.begin() + i);
+						goto foraMaisX;
+					}
+				}
+			foraMaisX:
+				aumentaX++;
+			}
+			// menosX
+			diminuiX = vectorTeste[x].x-1;
+			while (board_walls[diminuiX][vectorTeste[x].y] == 0) {
+				board_walls[diminuiX][vectorTeste[x].y] = k + BASE_INDEX_MONSTERS;
+				for (int i = 0; i < vectorTeste.size(); i++) {
+					if (vectorTeste[x].x == vectorTeste[diminuiX].x && vectorTeste[x].y == vectorTeste[i].y) {
+						vectorTeste.erase(vectorTeste.begin() + i);
+						goto foraMenosX;
+					}
+				}
+			foraMenosX:
+				diminuiX--;
+			}
+		}
+		//Y
+		else {
+
+			// maisY
+			aumentaY = vectorTeste[x].y+1;
+			while (board_walls[vectorTeste[x].x][aumentaY] == 0) {
+				board_walls[vectorTeste[x].x][aumentaY] = k + BASE_INDEX_MONSTERS;
+				for (int i = 0; i < vectorTeste.size(); i++) {
+					if (vectorTeste[x].x == vectorTeste[i].x && vectorTeste[x].y == vectorTeste[aumentaY].y) {
+						vectorTeste.erase(vectorTeste.begin() + i);
+						goto foraMaisY;
+					}
+				}
+			foraMaisY:
+				aumentaY++;
+			}
+			// menosY
+			diminuiY = vectorTeste[x].y-1;
+			while (board_walls[vectorTeste[x].x][diminuiY] == 0) {
+				board_walls[vectorTeste[x].x][diminuiY] = k + BASE_INDEX_MONSTERS;
+				for (int i = 0; i < vectorTeste.size(); i++) {
+					if (vectorTeste[x].x == vectorTeste[i].x && vectorTeste[x].y == vectorTeste[diminuiY].y) {
+						vectorTeste.erase(vectorTeste.begin() + i);
+						goto foraMenosY;
+					}
+				}
+			foraMenosY:
+				diminuiY--;
+			}
+		}
+
+		board_walls[vectorTeste[x].x][vectorTeste[x].y] = k + BASE_INDEX_MONSTERS;
+
+
+		vectorTeste.erase(vectorTeste.begin() + x);
+
+	}
+
+	for (i = 0; i < Board::BOARD_X; i++) {
+		for (j = 0; j < Board::BOARD_Y; j++) {
+			printf(" %2d ", board_walls[i][j]);
+		}
+		printf("\n");
+	}
 }
