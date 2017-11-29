@@ -33,7 +33,7 @@
 #define TEXTURE_ON 1
 #define FULLSCREEN 0
 #define DEBBUG 1
-#define MOVE_RATIO 0.01
+#define MOVE_RATIO 0.02
 #define DYNAMITE_NEEDED 3
 #define HIDE_MOUSE 1
 
@@ -62,6 +62,9 @@
 
 //Camera
 #define VELOCIDADE_ROTACAO	0.01
+#define VIEW_FIRST_PERSON	3
+#define VIEW_THIRD_PERSON	0
+#define VIEW_MAP	1
 
 extern "C" int read_JPEG_file(char *, char **, int *, int *, int *);
 

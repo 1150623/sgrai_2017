@@ -40,6 +40,32 @@ int v_timer;
 
 bool gameover = false;	// used to tell if the game has ended  (not implemented yet - no onjective defined)
 
+void DrawAim() {
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	gluOrtho2D(0, w, h, 0);
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+
+	int textSize;
+
+	std::string s;
+	glColor3f(0, 1, 0);
+
+	s = "o";
+	glRasterPos2d(w / 2, h / 2);
+	textSize = s.length();
+
+	glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, s[0]);
+
+	glPopMatrix();
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+}
+
 void RenderScene()
 { //Draw Scene
 	
@@ -64,7 +90,7 @@ void RenderScene()
 
 	
 	if (!gameover)
-		myCharacter->Draw(camera->pitch,camera->yaw); //go to stating place
+		myCharacter->Draw(camera->pitch,camera->yaw,view); //go to stating place
 
 	for (int i = 0; i <NUM_MONSTROS_RANDOM; i++) {
 		monstros[i]->Draw();
@@ -84,6 +110,8 @@ void RenderScene()
 				...
 		}
 	*/
+	if (view == VIEW_FIRST_PERSON)
+		DrawAim();
 
 
 	glutSwapBuffers();
@@ -128,14 +156,25 @@ void TimerFunction(int value)
 	//switch views from 3D to 2D (top view) - button-> 'V'
 	if (GetAsyncKeyState(0x56) && v_timer == 0)
 	{
-		view = (view + 1) % 2;
+		view = (view == VIEW_FIRST_PERSON) ? VIEW_THIRD_PERSON : (view == VIEW_THIRD_PERSON) ? VIEW_MAP : (view == VIEW_MAP) ? VIEW_THIRD_PERSON : view;
+		if (view == VIEW_MAP && !DEBBUG) {
+			view = VIEW_THIRD_PERSON;
+
+		}
+
+		if (view == VIEW_MAP) camera->Reshape(ratio, 60);
+		if (view == VIEW_THIRD_PERSON) camera->Reshape(ratio, 10);
 		v_timer = 10;
 	}
 	if (v_timer > 0)
 		v_timer--;
 
+	if (GetAsyncKeyState(0x45) && !GetAsyncKeyState(0x56))
+	{
+		view = VIEW_FIRST_PERSON;
+		camera->Reshape(ratio, 60);
+	}
 
-	
 	//start a new game
 	if (GetAsyncKeyState(VK_RETURN) && gameover) // GAMEOVER not implemented yet
 	{
@@ -151,7 +190,7 @@ void TimerFunction(int value)
 		start_timer--;
 
 	//make sure game is in play
-	
+
 	if (!gameover && start_timer == 0)
 	{
 		// Get keyboard input
@@ -161,8 +200,13 @@ void TimerFunction(int value)
 		{
 			if (board->IsOpen(myCharacter->x + MOVE_RATIO, myCharacter->y))
 			{
-				myCharacter->x += MOVE_RATIO;
-				myCharacter->angle = 0;
+				if (view == VIEW_FIRST_PERSON) {
+					myCharacter->x += -MOVE_RATIO * cos(myCharacter->angle + RAD(90));
+					myCharacter->y -= -MOVE_RATIO * sin(myCharacter->angle + RAD(90));
+				}
+				else {
+					myCharacter->x += MOVE_RATIO;
+				}
 			}
 			else {//Open doors wih 3 dynamites (pressing 'Q')
 				if (GetAsyncKeyState(0x51) && myCharacter->dynamiteFound == DYNAMITE_NEEDED) {
@@ -180,8 +224,13 @@ void TimerFunction(int value)
 			{
 				if (board->IsOpen(myCharacter->x - MOVE_RATIO, myCharacter->y))
 				{
-					myCharacter->x -= MOVE_RATIO;
-					myCharacter->angle = 180;
+					if (view == VIEW_FIRST_PERSON) {
+						myCharacter->x += MOVE_RATIO * cos(myCharacter->angle + RAD(90));
+						myCharacter->y -= MOVE_RATIO * sin(myCharacter->angle + RAD(90));
+					}
+					else {
+						myCharacter->x -= MOVE_RATIO;
+					}
 				}
 				else {//Open doors wih 3 dynamites (pressing 'Q')
 					if (GetAsyncKeyState(0x51) && myCharacter->dynamiteFound == DYNAMITE_NEEDED) {
@@ -198,8 +247,13 @@ void TimerFunction(int value)
 		{
 			if (board->IsOpen(myCharacter->x, myCharacter->y - MOVE_RATIO))
 			{
-				myCharacter->y -= MOVE_RATIO;
-				myCharacter->angle = 270;
+				if (view == VIEW_FIRST_PERSON) {
+					myCharacter->x += MOVE_RATIO * cos(myCharacter->angle);
+					myCharacter->y -= MOVE_RATIO * sin(myCharacter->angle);
+				}
+				else {
+					myCharacter->y -= MOVE_RATIO;
+				}
 			}
 			else {//Open doors wih 3 dynamites (pressing 'Q')
 				if (GetAsyncKeyState(0x51) && myCharacter->dynamiteFound == DYNAMITE_NEEDED) {
@@ -217,8 +271,13 @@ void TimerFunction(int value)
 			{
 				if (board->IsOpen(myCharacter->x, myCharacter->y + MOVE_RATIO))
 				{
-					myCharacter->y += MOVE_RATIO;
-					myCharacter->angle = 90;
+					if (view == VIEW_FIRST_PERSON) {
+						myCharacter->x += -MOVE_RATIO * cos(myCharacter->angle);
+						myCharacter->y -= -MOVE_RATIO * sin(myCharacter->angle);
+					}
+					else {
+						myCharacter->y += MOVE_RATIO;
+					}
 				}
 				else {//Open doors wih 3 dynamites (pressing 'Q')
 					if (GetAsyncKeyState(0x51) && myCharacter->dynamiteFound == DYNAMITE_NEEDED) {
@@ -276,9 +335,16 @@ void ChangeSize(GLsizei w, GLsizei h)
 
 	ratio = 1.0 * w / (h);
 	glViewport(0, 0, w, h);
-	int distance = 60;
-	camera->Reshape(ratio, distance);
 
+	int distance = 0;
+	if (view == VIEW_FIRST_PERSON || view == VIEW_MAP) {
+		distance = 60;
+	}
+	else {
+		distance = 10;
+	}
+
+	camera->Reshape(ratio, distance);
 }
 
 void MouseMotion(int x, int y)
@@ -369,7 +435,7 @@ int main(int argc, char **argv) {
 	init();
 
 	//initial view is the "3D" view
-	view = 3;
+	view = VIEW_FIRST_PERSON;
 	v_timer = 0;
 	
 

@@ -44,8 +44,8 @@ Camera::Set_position(float x_at, float y_at, int view)
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	x = x_at - Board::BOARD_X / 2-0.40;
-	y = -y_at + Board::BOARD_Y / 2+0.87;
+	x = x_at - Board::BOARD_X / 2 - 0.40;
+	y = -y_at + Board::BOARD_Y / 2 + 0.87;
 	z = 0.5;
 
 	centerX = cos(yaw) * cos(pitch);
@@ -53,25 +53,23 @@ Camera::Set_position(float x_at, float y_at, int view)
 	centerZ = sin(-pitch);
 
 
-	if (view == 1) {
-		
-		gluLookAt(	-1.5f, 0.0f, 40.0f,					// eye
-					-1.5f, 0.0f, 0.0f,					// center
-					0.0f, 1.0f, 0.0f);					// up
+	if (view == VIEW_MAP) {
+
+		gluLookAt(-1.5f, 0.0f, 40.0f,					// eye
+			-1.5f, 0.0f, 0.0f,					// center
+			0.0f, 1.0f, 0.0f);					// up
 
 	}
-	else if(view == 0) {
-		
-		gluLookAt(.8f*(float)(	x_at - Board::BOARD_X / 2) - 0.3, -y_at + Board::BOARD_Y / 4 - 10, 20,						// eye
-								x_at - Board::BOARD_X / 2, -y_at + Board::BOARD_Y / 2, 1,									// center
-								0.0f, 0.0f, 1.0f);																			// up (x, y, x)
+	else if (view == VIEW_THIRD_PERSON) {
+
+		gluLookAt(.8f*(float)(x_at - Board::BOARD_X / 2) - 0.3, -y_at + Board::BOARD_Y / 4 - 10, 20,						// eye
+			x_at - Board::BOARD_X / 2, -y_at + Board::BOARD_Y / 2, 1,									// center
+			0.0f, 0.0f, 1.0f);																			// up (x, y, x)
 	}
-	else { 
+	else if (view == VIEW_FIRST_PERSON) {
 		gluLookAt(x, y, z, x + centerX, y + centerY, z + centerZ, 0.0, 0.0, 1.0);
 	}
 
-
-	
 }
 
 void Camera::RotateYaw(float angle)

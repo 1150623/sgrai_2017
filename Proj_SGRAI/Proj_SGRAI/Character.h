@@ -41,7 +41,6 @@ public:
 
 	void Reinit();				//reinitialize everything
 
-	void Draw(float pitch, float yaw);			//draw character
-	void Draw();
+	void Draw(float, float,int);			//draw character
 };
 #endif
