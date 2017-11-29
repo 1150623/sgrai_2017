@@ -38,7 +38,28 @@ int view;
 //stops key repeats
 int v_timer;
 
+int health =50;
+
 bool gameover = false;	// used to tell if the game has ended  (not implemented yet - no onjective defined)
+
+void ChangeSize(GLsizei w, GLsizei h)
+{
+	if (h == 0)
+		h = 1;
+
+	ratio = 1.0 * w / (h);
+	glViewport(0, 0, w, h);
+
+	int distance = 0;
+	if (view == VIEW_FIRST_PERSON || view == VIEW_MAP) {
+		distance = 60;
+	}
+	else {
+		distance = 10;
+	}
+
+	camera->Reshape(ratio, distance);
+}
 
 void DrawAim() {
 	glMatrixMode(GL_PROJECTION);
@@ -54,7 +75,7 @@ void DrawAim() {
 	std::string s;
 	glColor3f(0, 1, 0);
 
-	s = "+";
+	s = "o";
 	glRasterPos2d(w / 2, h / 2);
 	textSize = s.length();
 
@@ -65,6 +86,138 @@ void DrawAim() {
 	glPopMatrix();
 	glMatrixMode(GL_MODELVIEW);
 }
+void strokeCenterString(char *str, double x, double y, double z, double s)
+{
+	int i, n;
+	n = strlen(str);
+	glPushMatrix();
+	glTranslated(x - glutStrokeLength(GLUT_STROKE_ROMAN, (const unsigned char*)str)*0.5*s, y -119.05*0.5*s, z);
+	glScaled(s, s, s);
+	for (i = 0; i<n; i++)
+		glutStrokeCharacter(GLUT_STROKE_ROMAN, (int)str[i]);
+	glPopMatrix();
+
+}
+
+void drawCompass()
+{
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	gluOrtho2D(1,-0.15,1,-0.15);
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+
+	// Blending (transparencias)
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glDisable(GL_LIGHTING);
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_COLOR_MATERIAL);
+
+
+	glRotatef(GRAUS(-myCharacter->angle), 0, 0, 1);
+
+	//desenha bussola 2D
+	//Norte
+	glBegin(GL_POLYGON);
+	glColor3f(1.0, 0.7, 0.0);
+	glVertex2f(0, 0.09);
+	glVertex2f(0.03, 0.004);
+	glVertex2f(0, 0.015);
+	glVertex2f(-0.03, 0.004);
+	glEnd();
+
+	glColor3f(1.0, 1, 1.0);
+	strokeCenterString("N", 0, 0.04, 0, 0.0002); // string, x ,y ,z ,scale
+
+												//Sul
+	glBegin(GL_POLYGON);
+	glColor3f(0.1, 0.2, 0.8);
+	glVertex2f(0, -0.09);
+	glVertex2f(0.03, -0.004);
+	glVertex2f(0, -0.015);
+	glVertex2f(-0.03, -0.004);
+	glEnd();
+
+	glColor3f(1, 1, 1);
+	strokeCenterString("S", 0, -0.04, 0, 0.0002); // string, x ,y ,z ,scale
+
+
+
+
+	//											 // ropõe estado
+	glDisable(GL_BLEND);
+	glEnable(GL_LIGHTING);
+	//glEnable(GL_COLOR_MATERIAL);
+	glEnable(GL_DEPTH_TEST);
+
+	glPopMatrix();
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+
+}
+
+void drawHealthBar()
+{
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	gluOrtho2D(-0.01, 1, 1, -0.01);
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+
+	// Blending (transparencias)
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glDisable(GL_LIGHTING);
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_COLOR_MATERIAL);
+
+	glBegin(GL_POLYGON);
+	glColor3f(0.3,0, 0);
+	glVertex2f(0, 0);
+	glVertex2f(100*0.004, 0);
+	glVertex2f(100*0.004, 0.05);
+	glVertex2f(0, 0.05);
+	glEnd();
+	
+	glBegin(GL_POLYGON);
+	glColor3f(1.0, 0, 0.0);
+	glVertex2f(0, 0);
+	glVertex2f( health*0.004,0);
+	glVertex2f(health*0.004, 0.05);
+	glVertex2f(0, 0.05);
+	glEnd();
+
+	std::string s;
+	glColor3f(0, 1, 0);
+
+	s = "Health";
+	glRasterPos2d(w / 2+0.01, (h / 2)+0.03);
+	int textSize = s.length();
+	for (int i = 0; i < textSize; i++) {
+		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, s[i]);
+	}
+	/*glColor3f(1.0, 1, 1.0);
+	strokeCenterString("Health", 0.04, 0.03, 0, 0.0002);*/ // string, x ,y ,z ,scale
+
+	//											 // ropõe estado
+	glDisable(GL_BLEND);
+	glEnable(GL_LIGHTING);
+	//glEnable(GL_COLOR_MATERIAL);
+	glEnable(GL_DEPTH_TEST);
+
+	glPopMatrix();
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+
+}
+
 
 void RenderScene()
 { //Draw Scene
@@ -112,7 +265,8 @@ void RenderScene()
 	*/
 	if (view == VIEW_FIRST_PERSON)
 		DrawAim();
-
+	drawHealthBar();
+	drawCompass();
 
 	glutSwapBuffers();
 }
@@ -325,24 +479,7 @@ void TimerFunction(int value)
 	glutTimerFunc(1, TimerFunction, 1);
 }
 
-void ChangeSize(GLsizei w, GLsizei h)
-{
-	if (h == 0)
-		h = 1;
 
-	ratio = 1.0 * w / (h);
-	glViewport(0, 0, w, h);
-
-	int distance = 0;
-	if (view == VIEW_FIRST_PERSON || view == VIEW_MAP) {
-		distance = 60;
-	}
-	else {
-		distance = 10;
-	}
-
-	camera->Reshape(ratio, distance);
-}
 
 void MouseMotion(int x, int y)
 {
