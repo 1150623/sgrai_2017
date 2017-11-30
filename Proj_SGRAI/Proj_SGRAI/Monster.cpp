@@ -6,9 +6,8 @@
 // Destructor
 Monster::~Monster(void) {}
 Board boards;
-
 //Constructor (inicializa)
-Monster::Monster(double tx, double ty, float size, Board b)
+Monster::Monster(double tx, double ty, float size, int IndexMonster, Board b)
 {
 	boards = b;
 	Monster::size = size;
@@ -18,6 +17,8 @@ Monster::Monster(double tx, double ty, float size, Board b)
 	angle = MONSTER_ANGLE;
 	speed = MONSTER_SPEED;
 	animate = false;
+	startIndexMonster = IndexMonster;
+	//initDirection(); //verifica na matrix a direção que tem de seguir
 }
 
 void Monster::Draw(void)
@@ -34,3 +35,25 @@ void Monster::Draw(void)
 	}
 	glPopMatrix();
 }
+
+
+void Monster::Start(void) {
+
+	//if(isCharacterInZone(zone))
+		//Check Distance
+			//if Dist > X
+				//Estado patrulha
+			//else if dist < x*0.5f
+				//estado melee
+			//else if dist < x
+				//estado shoot
+	//else patrulha
+
+	//ativateState()
+}
+
+//void initDirection() {
+//	vector
+//
+//
+//}

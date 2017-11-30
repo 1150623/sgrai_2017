@@ -30,15 +30,20 @@ public:
 	bool animate;
 	float size;
 	int dynamiteFound = DEBBUG ? DYNAMITE_NEEDED : 0;
+	int startIndexMonster;
 
-	Monster(double, double, float, Board);
+	bool ESTADO_PATRULHA = false;
+	bool ESTADO_SHOOT = false;
+	bool ESTADO_MELEE = false;
+	bool ESTADO_DEAD = false;
+
+	Monster(double, double, float, int,Board);
 
 	~Monster(void);
 
-	void MoveTo(int, int);		//move the Character
+	void Start(void);		//Patrulha 
 
 	void Reinit();				//reinitialize everything
-
 
 	void Draw(void);			//draw character
 };

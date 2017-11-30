@@ -423,7 +423,7 @@ int main(int argc, char **argv) {
 
 
 	for (int i = 0; i <NUM_MONSTROS_RANDOM; i++){
-		monstros[i] = new Monster(board->VecPositionMonsters[i].x, board->VecPositionMonsters[i].y, CHARACTER_SIZE, *board);
+		monstros[i] = new Monster(board->VecPositionMonsters[i].x, board->VecPositionMonsters[i].y,i, CHARACTER_SIZE, *board);
 	}
 
 

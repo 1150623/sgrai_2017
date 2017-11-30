@@ -358,7 +358,6 @@ Board::IsOpen(float x, float y)
 			if (board_walls[j][i] == 1) {
 				//parede = Board::getCoordOfWall(j,i);
 				//parede = { j,i };
-
 			}
 		}
 	}
@@ -428,6 +427,7 @@ void Board::GenerateRandoMonstersPositions(void)
 		}
 	}
 
+	// imprime a matrix
 	for (i = 0; i < Board::BOARD_X; i++) {
 		for (j = 0; j < Board::BOARD_Y; j++) {
 			printf(" %2d ", board_walls[i][j]);
@@ -482,11 +482,17 @@ void Board::GenerateRandoMonstersPositions(void)
 
 		//X
 		if ((maisX + menosX) >= (maisY + menosY)){
+			//maisX
 			aumentaX = vectorTeste[x].x+1;
+
 			while (board_walls[aumentaX][vectorTeste[x].y] == 0) {
 				board_walls[aumentaX][vectorTeste[x].y] = k + BASE_INDEX_MONSTERS;
+				//Remove Valor do vector para nao deixar repetir a posição
 				for (int i = 0; i < vectorTeste.size(); i++){
-					if (vectorTeste[x].x == vectorTeste[aumentaX].x && vectorTeste[x].y == vectorTeste[i].y) {
+					if ((aumentaX == vectorTeste[i].x) && (vectorTeste[x].y == vectorTeste[i].y)) {
+						if (x > i) {
+							x--;
+						}
 						vectorTeste.erase(vectorTeste.begin() + i);
 						goto foraMaisX;
 					}
@@ -494,12 +500,18 @@ void Board::GenerateRandoMonstersPositions(void)
 			foraMaisX:
 				aumentaX++;
 			}
+
+
 			// menosX
 			diminuiX = vectorTeste[x].x-1;
+
 			while (board_walls[diminuiX][vectorTeste[x].y] == 0) {
 				board_walls[diminuiX][vectorTeste[x].y] = k + BASE_INDEX_MONSTERS;
 				for (int i = 0; i < vectorTeste.size(); i++) {
-					if (vectorTeste[x].x == vectorTeste[diminuiX].x && vectorTeste[x].y == vectorTeste[i].y) {
+					if ((diminuiX == vectorTeste[i].x) && (vectorTeste[x].y == vectorTeste[i].y)) {
+						if (x > i) {
+							x--;
+						}
 						vectorTeste.erase(vectorTeste.begin() + i);
 						goto foraMenosX;
 					}
@@ -507,6 +519,7 @@ void Board::GenerateRandoMonstersPositions(void)
 			foraMenosX:
 				diminuiX--;
 			}
+
 		}
 		//Y
 		else {
@@ -516,7 +529,10 @@ void Board::GenerateRandoMonstersPositions(void)
 			while (board_walls[vectorTeste[x].x][aumentaY] == 0) {
 				board_walls[vectorTeste[x].x][aumentaY] = k + BASE_INDEX_MONSTERS;
 				for (int i = 0; i < vectorTeste.size(); i++) {
-					if (vectorTeste[x].x == vectorTeste[i].x && vectorTeste[x].y == vectorTeste[aumentaY].y) {
+					if ((vectorTeste[x].x == vectorTeste[i].x) && (aumentaY == vectorTeste[i].y)) {
+						if (x > i) {
+							x--;
+						}
 						vectorTeste.erase(vectorTeste.begin() + i);
 						goto foraMaisY;
 					}
@@ -529,7 +545,10 @@ void Board::GenerateRandoMonstersPositions(void)
 			while (board_walls[vectorTeste[x].x][diminuiY] == 0) {
 				board_walls[vectorTeste[x].x][diminuiY] = k + BASE_INDEX_MONSTERS;
 				for (int i = 0; i < vectorTeste.size(); i++) {
-					if (vectorTeste[x].x == vectorTeste[i].x && vectorTeste[x].y == vectorTeste[diminuiY].y) {
+					if ((vectorTeste[x].x == vectorTeste[i].x) && (diminuiY == vectorTeste[i].y)) {
+						if (x > i) {
+							x--;
+						}
 						vectorTeste.erase(vectorTeste.begin() + i);
 						goto foraMenosY;
 					}
@@ -540,10 +559,7 @@ void Board::GenerateRandoMonstersPositions(void)
 		}
 
 		board_walls[vectorTeste[x].x][vectorTeste[x].y] = k + BASE_INDEX_MONSTERS;
-
-
 		vectorTeste.erase(vectorTeste.begin() + x);
-
 	}
 
 	for (i = 0; i < Board::BOARD_X; i++) {
