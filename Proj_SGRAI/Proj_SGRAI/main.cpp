@@ -2,6 +2,7 @@
 #include "Character.h"
 #include "Camera.h"
 #include "Monster.h"
+#include "Bullet.h"
 
 #define TECLA_E 0x45
 #define TECLA_S 0x53
@@ -36,6 +37,7 @@ int h, w;
 Board *board;
 Character *myCharacter;
 Camera *camera;
+Bullet *bullet;
 
 Monster *monstros[NUM_MONSTROS_RANDOM];
 
@@ -238,6 +240,10 @@ void RenderScene()
 		monstros[i]->Draw();
 	}
 
+	if (bullet->shoot) {
+		bullet->Draw();
+	}
+
 	/*
 		{
 			//Example For Monster implementation
@@ -261,6 +267,43 @@ void RenderScene()
 
 	glutSwapBuffers();
 	glFlush();
+}
+
+float normalizeAngle(float angle) {
+	int voltas = angle / (2 * M_PI);
+	return (angle - (voltas*M_PI));
+}
+
+
+void bulletConfig() {
+	int boardIndex = board->getBoardValue((int)myCharacter->y, (int)myCharacter->x);
+	for (int k = 0; k < 31; k++) {
+		for (int j = 0; j < 28; j++) {
+			printf(" %2d ", board->getBoardValue(k, j));
+		}
+		printf("\n");
+	}
+	printf("X: %d\n", (int)myCharacter->x);
+	printf("Y: %d\n", (int)myCharacter->y);
+	printf("boardIndex: %d\n", boardIndex);
+	printf("Base: %d\n", BASE_INDEX_MONSTERS);
+	int i = (boardIndex - BASE_INDEX_MONSTERS);
+	printf("i: %d\n", i);
+	if (boardIndex >= BASE_INDEX_MONSTERS && !monstros[i]->killed) {
+
+		//bulletDraw
+		if (normalizeAngle(myCharacter->angle) - (normalizeAngle(monstros[i]->angle)) <= RAD(15) ||
+			normalizeAngle(myCharacter->angle) - (normalizeAngle(monstros[i]->angle)) >= RAD(-15) ||
+			normalizeAngle(myCharacter->angle) - ((normalizeAngle(monstros[i]->angle)) - M_PI) <= RAD(15) ||
+			normalizeAngle(myCharacter->angle) - ((normalizeAngle(monstros[i]->angle) - M_PI) >= RAD(-15))) {
+			printf("shoot: true\n ");
+			bullet->x_dest = monstros[i]->x;
+			bullet->y_dest = monstros[i]->y;
+			printf("Monster x: %d\n", monstros[i]->x);
+			printf("Monster y: %d\n", monstros[i]->y);
+			bullet->shoot = true;
+		}
+	}
 }
 
 GLuint textName[NUM_TEXTURES];
@@ -292,6 +335,7 @@ void init(void)
 	srand((unsigned)time(NULL));
 	start_timer = 100;
 	myCharacter->Reinit();
+	bullet = new Bullet();
 
 }
 bool first = true;
@@ -456,6 +500,8 @@ void TimerFunction(int value)
 
 			}
 
+		
+
 	}
 
 	//DEBBUG KEYS
@@ -489,6 +535,10 @@ void TimerFunction(int value)
 	{
 		board->~Board();
 		exit(0);
+	}
+
+	if (bullet->shoot) {
+		bullet->Move();
 	}
 
 	glutPostRedisplay();
@@ -543,6 +593,27 @@ void MouseMotion(int x, int y)
 
 }
 
+void mouseClick(int button, int state, int x, int y)
+{
+	if (button == GLUT_LEFT_BUTTON) {
+		printf("Vai entrar\n");
+		if (state == GLUT_DOWN) {
+			bullet->setInitial(myCharacter->x, myCharacter->y, myCharacter->angle);
+			bullet->shoot = true;
+			//bulletConfig();
+		}
+
+	}
+
+	if (button == GLUT_RIGHT_BUTTON) {
+		printf("Vai entrar\n");
+		if (state == GLUT_DOWN) {
+			bullet->shoot = false;
+		}
+
+	}
+}
+
 int main(int argc, char **argv) {
 
 	info();
@@ -569,6 +640,7 @@ int main(int argc, char **argv) {
 	glutDisplayFunc(RenderScene);
 	glutReshapeFunc(ChangeSize);
 	glutMotionFunc(MouseMotion);
+	glutMouseFunc(mouseClick);
 	glutPassiveMotionFunc(MouseMotion);
 
 

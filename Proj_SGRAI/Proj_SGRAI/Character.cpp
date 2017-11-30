@@ -43,7 +43,7 @@ Character::Draw(float pitch, float yaw, int view)
 	if (true/*view == VIEW_FIRST_PERSON*/) {
 		//Codigo para a mira Aqui
 			glPushMatrix(); {
-				glTranslatef(Character::x, Character::y, 0.4);
+				glTranslatef(Character::x, Character::y, 0.45);
 				/*glTranslatef(size / 2, size + 0.1, 0);*/
 				//glTranslatef((float)Board::BOARD_X / -2, (float)Board::BOARD_Y / 2.0, 0.715);
 				//glRotatef(GRAUS(angle), 0, 1, 0);

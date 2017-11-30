@@ -358,6 +358,11 @@ Board::OpenDoor(int x, int y)
 	board_walls[y][x] = 0;
 }
 
+int
+Board::getBoardValue(int x, int y) {
+	return board_walls[x][y];
+}
+
 AStar::CoordList Board::getPath(int x, int y, int xF, int yF) {
 	return generator.findPath({ x, y }, { xF, yF });
 }

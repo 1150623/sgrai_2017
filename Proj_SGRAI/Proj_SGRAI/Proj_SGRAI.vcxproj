@@ -122,6 +122,7 @@
     <ClCompile Include="A-star_Algorithm.cpp" />
     <ClCompile Include="Board.cpp" />
     <ClCompile Include="BoardMatrixCalculations.cpp" />
+    <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Character.cpp" />
     <ClCompile Include="image_loader.cpp" />
@@ -138,6 +139,7 @@
   <ItemGroup>
     <ClInclude Include="Board.h" />
     <ClInclude Include="BoardMatrixCalculations.h" />
+    <ClInclude Include="Bullet.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Character.h" />
     <ClInclude Include="globalHeader.h" />

@@ -24,7 +24,7 @@ private:
 public:
 
 	int lives; // will it be needed??
-
+	bool killed;
 	double angle;
 	double x, y;
 	bool animate;

@@ -177,6 +177,9 @@ class Board {
 		//this function returns whether or not a location is a Door or not
 		void OpenDoor(int, int);
 
+		// Retorna o valor do board
+		int getBoardValue(int, int);
+
 		//this function returns whether or not a location is a Door or not
 		void makeWall
 		(int, int);

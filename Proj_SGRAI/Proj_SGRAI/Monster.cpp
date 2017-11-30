@@ -10,6 +10,7 @@ Board boards;
 //Constructor (inicializa)
 Monster::Monster(double tx, double ty, float size, Board b)
 {
+	killed = false;
 	boards = b;
 	Monster::size = size;
 	lives = MONSTER_NUM_LIVES;
