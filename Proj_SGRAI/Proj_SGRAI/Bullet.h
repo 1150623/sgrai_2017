@@ -17,8 +17,8 @@ private:
 public:
 
 	bool shoot;
-	double angle;
-	float x, y;
+	float  yaw,pitch;
+	float x, y,z;
 	float size;
 	int x_dest;
 	int y_dest;
@@ -27,7 +27,7 @@ public:
 
 	~Bullet(void);
 
-	void setInitial(float, float, float);
+	void setInitial(float, float, float,float );
 	void Draw();			//draw bullet
 	void Move();
 };

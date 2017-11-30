@@ -10,10 +10,12 @@ Bullet::Bullet()
 }
 
 void
-Bullet::setInitial(float _x, float _y, float _angle) {
+Bullet::setInitial(float _x, float _y, float _yaw,float _pitch) {
 	x = _x;
 	y = _y;
-	angle = _angle;
+	z = 0.5;
+	yaw = _yaw;
+	pitch = _pitch;
 
 }
 
@@ -25,10 +27,7 @@ Bullet::Draw()
 	glPushMatrix();
 	{
 
-		glTranslatef(x, y, 0.45);
-		/*glTranslatef(x, -y + CHARACTER_SIZE * 2, -CHARACTER_SIZE);
-		glTranslatef(CHARACTER_SIZE / 2, CHARACTER_SIZE + 0.12, 0);
-		glTranslatef((float)31 / -2, (float)28 / 2.0, 0.73);*/
+		glTranslatef(x, y, z);
 
 		glutSolidSphere(size / 2, 10, 10);
 	}
@@ -38,8 +37,10 @@ void
 Bullet::Move() {
 	printf("Monster x: %d\n", x);
 	printf("Monster y: %d\n", y);
-	x += BULLET_SPEED *cos(angle);
-	y += BULLET_SPEED *sin(angle);
-	if (x_dest == (int)x && y_dest == (int)y)
-		shoot = false;
+
+	x += BULLET_SPEED * cos(yaw) * cos(pitch);
+	y += BULLET_SPEED * sin(yaw) * cos(pitch);
+	z += BULLET_SPEED * sin(-pitch);
+	/*if (x_dest == (int)x && y_dest == (int)y)
+		shoot = false;*/
 }

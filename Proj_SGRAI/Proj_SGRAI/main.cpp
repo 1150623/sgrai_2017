@@ -598,7 +598,9 @@ void mouseClick(int button, int state, int x, int y)
 	if (button == GLUT_LEFT_BUTTON) {
 		printf("Vai entrar\n");
 		if (state == GLUT_DOWN) {
-			bullet->setInitial(myCharacter->x, myCharacter->y, myCharacter->angle);
+			float _yaw = camera->yaw;
+			float _pitch = camera->pitch;
+			bullet->setInitial(myCharacter->x, myCharacter->y, _yaw,_pitch);
 			bullet->shoot = true;
 			//bulletConfig();
 		}
