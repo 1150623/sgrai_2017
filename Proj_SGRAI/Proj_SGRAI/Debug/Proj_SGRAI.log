@@ -1,8 +1,0 @@
-﻿  Board.cpp
-c:\users\ricardo\onedrive - instituto superior de engenharia do porto\iseplei\3 ano\sgrai\labirinto\proj_sgrai\proj_sgrai\board.cpp(351): warning C4838: a conversão de 'float' em 'int' requer uma conversão de restrição
-c:\users\ricardo\onedrive - instituto superior de engenharia do porto\iseplei\3 ano\sgrai\labirinto\proj_sgrai\proj_sgrai\board.cpp(353): warning C4101: 'parede': variável local não referenciada
-c:\users\ricardo\onedrive - instituto superior de engenharia do porto\iseplei\3 ano\sgrai\labirinto\proj_sgrai\proj_sgrai\board.cpp(488): warning C4018: '<': incompatibilidade de signed/unsigned
-c:\users\ricardo\onedrive - instituto superior de engenharia do porto\iseplei\3 ano\sgrai\labirinto\proj_sgrai\proj_sgrai\board.cpp(501): warning C4018: '<': incompatibilidade de signed/unsigned
-c:\users\ricardo\onedrive - instituto superior de engenharia do porto\iseplei\3 ano\sgrai\labirinto\proj_sgrai\proj_sgrai\board.cpp(518): warning C4018: '<': incompatibilidade de signed/unsigned
-c:\users\ricardo\onedrive - instituto superior de engenharia do porto\iseplei\3 ano\sgrai\labirinto\proj_sgrai\proj_sgrai\board.cpp(531): warning C4018: '<': incompatibilidade de signed/unsigned
-  Proj_SGRAI.vcxproj -> C:\Users\Ricardo\OneDrive - Instituto Superior de Engenharia do Porto\ISEPLEI\3 Ano\SGRAI\Labirinto\Proj_SGRAI\Debug\Proj_SGRAI.exe
