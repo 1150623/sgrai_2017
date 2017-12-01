@@ -32,6 +32,7 @@ public:
 	float size;
 	int dynamiteFound = DEBBUG ? DYNAMITE_NEEDED : 0;
 	StudioModel weapon;
+	StudioModel model;
 
 	Character(double, double, float, Board);
 

@@ -54,18 +54,13 @@ using namespace AStar;
 Generator generator;
 
 Board::Board() {
-	
 	initAStarGenerator();
-	
-
 }
 
 void Board::initAStarGenerator() {
-
 	generator.setWorldSize({ BOARD_X, BOARD_Y });
 	generator.setHeuristic(AStar::Heuristic::manhattan);
 	generator.setDiagonalMovement(false);
-
 }
 
 
@@ -345,6 +340,16 @@ Board::IsOpen(float x, float y)
 	return board_walls[(int)y][(int)x] != 1 && board_walls[(int)y][(int)x] != 5;
 }
 
+bool Board::IsOpen2(float x, float y, int indexMonster)
+{
+	if (board_walls[(int)y][(int)x] == indexMonster){
+		return true;
+	}
+	else {
+		return false;
+	}
+
+}
 
 bool
 Board::IsDoor(int x, int y)
@@ -545,10 +550,15 @@ void Board::ImprimeBoarder(void) {
 		printf(" %2d ", i);
 	}
 	printf("\n");
-	for (int i = 0; i < Board::BOARD_Y; i++) {
-		printf(" %2d ", i);
-		for (int j = 0; j < Board::BOARD_X; j++) {
-			printf(" %2d ", board_walls[i][j]);
+	for (int i = 0; i < Board::BOARD_X; i++)
+	{
+		printf("_____");
+	}
+	printf("\n");
+	for (int i = Board::BOARD_X-1; i >= 0 ; i--) {
+		printf(" %2d | ", Board::BOARD_X-i);
+		for (int j = Board::BOARD_Y-1; j >= 0 ; j--) {
+			printf(" %2d ", board_walls[j][i]);
 		}
 		printf("\n");
 	}

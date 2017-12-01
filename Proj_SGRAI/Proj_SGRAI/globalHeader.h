@@ -36,7 +36,7 @@
 #define MOVE_RATIO 0.02
 #define DYNAMITE_NEEDED 3
 #define HIDE_MOUSE 1
-
+#define CUTOFF 30
 
 //TEXTURES INFO
 #define NUM_TEXTURES 2
@@ -59,6 +59,7 @@
 //Monstros
 #define NUM_MONSTROS_RANDOM 10
 #define BASE_INDEX_MONSTERS 10
+#define MONSTER_SPEED 0.008
 
 //Camera
 #define VELOCIDADE_ROTACAO	0.01

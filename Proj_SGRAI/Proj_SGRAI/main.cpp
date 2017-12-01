@@ -234,29 +234,16 @@ void RenderScene()
 
 	if (!gameover)
 		myCharacter->Draw(camera->pitch, camera->yaw, view); //go to stating place
-
+	if (!gameover)
 	for (int i = 0; i < NUM_MONSTROS_RANDOM; i++) {
-		monstros[i]->Draw();
+		if (!monstros[i]->killed)
+				monstros[i]->Draw();
 	}
 
 	if (bullet->shoot) {
 		bullet->Draw();
 	}
 
-	/*
-		{
-			//Example For Monster implementation
-
-			if (!gameover)			//Monsters not implemented
-				monster[x]->Draw();
-
-			if (!gameover)			//Monsters not implemented
-				monster[x]->Move();
-
-			if(monster->killed)
-				...
-		}
-	*/
 	if (view == VIEW_FIRST_PERSON)
 		DrawAim();
 
@@ -269,7 +256,10 @@ void RenderScene()
 }
 
 float normalizeAngle(float angle) {
+	printf("Angle : %f\n", angle);
 	int voltas = angle / (2 * M_PI);
+	printf("voltas : %f\n", angle);
+	printf("normalizado : %f\n", angle - (voltas*M_PI));
 	return (angle - (voltas*M_PI));
 }
 
@@ -285,21 +275,18 @@ void bulletConfig() {
 	printf("X: %d\n", (int)myCharacter->x);
 	printf("Y: %d\n", (int)myCharacter->y);
 	printf("boardIndex: %d\n", boardIndex);
-	printf("Base: %d\n", BASE_INDEX_MONSTERS);
 	int i = (boardIndex - BASE_INDEX_MONSTERS);
 	printf("i: %d\n", i);
 	if (boardIndex >= BASE_INDEX_MONSTERS && !monstros[i]->killed) {
 
 		//bulletDraw
-		if (normalizeAngle(myCharacter->angle) - (normalizeAngle(monstros[i]->angle)) <= RAD(15) ||
-			normalizeAngle(myCharacter->angle) - (normalizeAngle(monstros[i]->angle)) >= RAD(-15) ||
-			normalizeAngle(myCharacter->angle) - ((normalizeAngle(monstros[i]->angle)) - M_PI) <= RAD(15) ||
-			normalizeAngle(myCharacter->angle) - ((normalizeAngle(monstros[i]->angle) - M_PI) >= RAD(-15))) {
-			printf("shoot: true\n ");
+		if (normalizeAngle(myCharacter->angle) - (normalizeAngle(RAD(monstros[i]->angle))) <= RAD(10) ||
+			normalizeAngle(myCharacter->angle) - (normalizeAngle(RAD(monstros[i]->angle))) >= RAD(-10) ||
+			normalizeAngle(myCharacter->angle) - ((normalizeAngle(RAD(monstros[i]->angle))) - M_PI) <= RAD(10) ||
+			normalizeAngle(myCharacter->angle) - ((normalizeAngle(RAD(monstros[i]->angle))) - M_PI) >= RAD(-10)) {
+			printf("Char angle : %f     Monster angle: %f\n ", normalizeAngle(myCharacter->angle), normalizeAngle(monstros[i]->angle));
 			bullet->x_dest = monstros[i]->x;
 			bullet->y_dest = monstros[i]->y;
-			printf("Monster x: %d\n", monstros[i]->x);
-			printf("Monster y: %d\n", monstros[i]->y);
 			bullet->shoot = true;
 		}
 	}
@@ -337,6 +324,7 @@ void init(void)
 	bullet = new Bullet();
 
 }
+
 bool first = true;
 void TimerFunction(int value)
 {
@@ -379,11 +367,6 @@ void TimerFunction(int value)
 
 
 
-
-
-
-
-
 	//make sure game is in play
 	if (!gameover && start_timer == 0)
 	{
@@ -400,9 +383,9 @@ void TimerFunction(int value)
 				}
 			}
 			else {
-				if (board->IsOpen(myCharacter->x + MOVE_RATIO, myCharacter->y))
+				if (board->IsOpen(myCharacter->x, myCharacter->y - MOVE_RATIO))
 				{
-					myCharacter->x += MOVE_RATIO;
+					myCharacter->y -= MOVE_RATIO;
 				}
 			}
 			//Open doors wih 3 dynamites (pressing 'Q')
@@ -425,9 +408,9 @@ void TimerFunction(int value)
 				}
 			}
 			else {
-				if (board->IsOpen(myCharacter->x - MOVE_RATIO-FIX, myCharacter->y))
+				if (board->IsOpen(myCharacter->x, myCharacter->y + MOVE_RATIO))
 				{
-					myCharacter->x -= MOVE_RATIO;
+					myCharacter->y += MOVE_RATIO;
 				}
 			}
 			//Open doors wih 3 dynamites (pressing 'Q')
@@ -445,16 +428,16 @@ void TimerFunction(int value)
 		{
 
 			if (view == VIEW_FIRST_PERSON) {
-				if (board->IsOpen(myCharacter->x  + MOVE_RATIO * cos(myCharacter->angle), myCharacter->y + MOVE_RATIO * sin(myCharacter->angle)))
+				if (board->IsOpen(myCharacter->x + MOVE_RATIO * cos(myCharacter->angle), myCharacter->y + MOVE_RATIO * sin(myCharacter->angle)))
 				{
 					myCharacter->x += MOVE_RATIO * cos(myCharacter->angle);
 					myCharacter->y += MOVE_RATIO * sin(myCharacter->angle);
 				}
 			}
 			else {
-				if (board->IsOpen(myCharacter->x - MOVE_RATIO, myCharacter->y))
+				if (board->IsOpen(myCharacter->x + MOVE_RATIO, myCharacter->y))
 				{
-					myCharacter->x -= MOVE_RATIO;
+					myCharacter->x += MOVE_RATIO;
 				}
 			}
 			//Open doors wih 3 dynamites (pressing 'Q')
@@ -465,9 +448,6 @@ void TimerFunction(int value)
 				}
 			}
 
-			
-
-
 		}
 		else
 			//move down
@@ -475,16 +455,16 @@ void TimerFunction(int value)
 			{
 				//printf(" S - DOWN - NEXTPOS = [x = %f][y = %f]\n", round(myCharacter->x + -MOVE_RATIO * cos(myCharacter->angle)-0.5), round(myCharacter->y + MOVE_RATIO * sin(myCharacter->angle)));
 				if (view == VIEW_FIRST_PERSON) {
-					if (board->IsOpen(myCharacter->x - MOVE_RATIO * cos(myCharacter->angle), myCharacter->y - MOVE_RATIO * sin(myCharacter->angle) ))
+					if (board->IsOpen(myCharacter->x - MOVE_RATIO * cos(myCharacter->angle), myCharacter->y - MOVE_RATIO * sin(myCharacter->angle)))
 					{
 						myCharacter->x -= MOVE_RATIO * cos(myCharacter->angle);
 						myCharacter->y -= MOVE_RATIO * sin(myCharacter->angle);
 					}
 				}
 				else {
-					if (board->IsOpen(myCharacter->x, myCharacter->y + MOVE_RATIO))
+					if (board->IsOpen(myCharacter->x - MOVE_RATIO, myCharacter->y))
 					{
-						myCharacter->y += MOVE_RATIO;
+						myCharacter->x -= MOVE_RATIO;
 					}
 				}
 				//Open doors wih 3 dynamites (pressing 'Q')
@@ -499,10 +479,10 @@ void TimerFunction(int value)
 
 			}
 
-		
-
+		for (int i = 0; i < NUM_MONSTROS_RANDOM; i++)
+			if (monstros[i]->killed == false)
+				monstros[i]->MoveTo();
 	}
-
 	//DEBBUG KEYS
 	if (DEBBUG) {
 		float d = 0;
@@ -600,8 +580,8 @@ void mouseClick(int button, int state, int x, int y)
 			float _yaw = camera->yaw;
 			float _pitch = camera->pitch;
 			bullet->setInitial(myCharacter->x, myCharacter->y, _yaw,_pitch);
-			bullet->shoot = true;
-			//bulletConfig();
+			//bullet->shoot = true;
+			bulletConfig();
 		}
 
 	}
@@ -659,10 +639,12 @@ int main(int argc, char **argv) {
 	board->GenerateRandoMonstersPositions();
 
 	for (int IndexMonster = 0; IndexMonster < NUM_MONSTROS_RANDOM; IndexMonster++) {
-		monstros[IndexMonster] = new Monster(board->VecPositionMonsters[IndexMonster].coluna, board->VecPositionMonsters[IndexMonster].linha,CHARACTER_SIZE, IndexMonster, *board);
+		monstros[IndexMonster] = new Monster(board->VecPositionMonsters[IndexMonster].coluna, board->VecPositionMonsters[IndexMonster].linha,CHARACTER_SIZE, IndexMonster, board);
 	}
 
-
+	//for (int IndexMonster = 0; IndexMonster < NUM_MONSTROS_RANDOM; IndexMonster++) {
+	//	printf("angle [%d] = %f\n", IndexMonster, monstros[IndexMonster]->angle);
+	//}
 
 
 	init();

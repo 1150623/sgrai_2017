@@ -7,6 +7,7 @@ Board board;
 Character::Character(double tx, double ty, float size, Board b)
 {
 	mdlviewer_init("weapon.mdl", weapon);
+	//mdlviewer_init("character.mdl", model);
 	board = b;
 	Character::size = size;
 	lives = NUM_LIVES;
@@ -37,25 +38,17 @@ Character::MoveTo(int xF, int yF)
 void
 Character::Draw(float pitch, float yaw, int view)
 {
-
-	//printf("x = %f, y = %f  %d  \n", x, y, board_walls[(int)y][(int)x]);
 	//draw Weapon
 	if (true/*view == VIEW_FIRST_PERSON*/) {
 		//Codigo para a mira Aqui
 			glPushMatrix(); {
 				glTranslatef(Character::x, Character::y, 0.45);
-				/*glTranslatef(size / 2, size + 0.1, 0);*/
-				//glTranslatef((float)Board::BOARD_X / -2, (float)Board::BOARD_Y / 2.0, 0.715);
-				//glRotatef(GRAUS(angle), 0, 1, 0);
-				//glRotatef(-90, 1, 0, 0);
+
 				glRotatef(GRAUS(yaw), 0, 0, 1);
 				glRotatef(GRAUS(pitch), 0, 1, 0);
+
 				glScalef(SCALE_PLAYER + 0.01, SCALE_PLAYER + 0.01, SCALE_PLAYER + 0.01);
 				mdlviewer_display(weapon);
-			
-				/*
-				glColor3f(1.0, 1.0,0.0);
-				glutSolidSphere(size, 10, 10);*/
 			}glPopMatrix();
 	}
 	else {
@@ -63,21 +56,12 @@ Character::Draw(float pitch, float yaw, int view)
 		glColor3f(1.0, 0.25, 0.25);
 		glPushMatrix();
 		{
-			glTranslatef(Character::x, -Character::y, -size);
-			glTranslatef(0.01+ size / 2, 0.5, 0);
-
-			glTranslatef((float)Board::BOARD_X / -2.0, (float)Board::BOARD_Y / 2.0, 0.5);
-			glutSolidSphere(size / 2, 10, 10);
+			glTranslatef(Character::x, Character::y, 0.45);
+			glScalef(SCALE_PLAYER + 0.01, SCALE_PLAYER + 0.01, SCALE_PLAYER + 0.01);
+			mdlviewer_display(model);
 		}
 		glPopMatrix();
 
-
-		/*	glTranslatef(Monster::y, -Monster::x, -size);
-			glTranslatef(0.01 + size / 2, 0.5, 0);
-			glTranslatef((float)Board::BOARD_X / -2.0, (float)Board::BOARD_Y / 2.0, 0.5);
-			glutSolidSphere(size / 2, 10, 10);
-*/
-		
 	}
 
 }

@@ -57,7 +57,7 @@ Camera::Set_position(float x_at, float y_at, int view)
 	}
 	else if (view == VIEW_THIRD_PERSON) {
 
-		gluLookAt(x - 3, y - 3, z + 5,						// eye
+		gluLookAt(x - 3, y , z + 5,						// eye
 					x, y, z,									// center
 				0.0f, 0.0f, 1.0f);																			// up (x, y, x)
 	}
@@ -115,7 +115,7 @@ void Camera::set_light(float x_c, float y_c, float z_c) {
 
 		//glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
 
-		glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 30);// set cutoff angle
+		glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, CUTOFF);// set cutoff angle
 		glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, vector0);
 		/*
 		glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 1.5);
