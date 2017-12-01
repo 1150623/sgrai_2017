@@ -48,7 +48,7 @@
 
 
 //CHARACTER
-#define NUM_LIVES 3
+#define NUM_LIVES 50
 #define CHAR_ANGLE 0
 #define CHAR_SPEED 0.2
 #define CHARACTER_SIZE 0.25
@@ -60,6 +60,16 @@
 #define NUM_MONSTROS_RANDOM 10
 #define BASE_INDEX_MONSTERS 10
 #define MONSTER_SPEED 0.008
+
+//Objetos
+
+#define BANDAGES 1
+#define BULLETS 2
+#define DYNAMITE 3
+
+#define NUM_DYNAMITES 1
+#define NUM_BANDAGES 10
+#define NUM_BULLETS 5
 
 //Camera
 #define VELOCIDADE_ROTACAO	0.01
