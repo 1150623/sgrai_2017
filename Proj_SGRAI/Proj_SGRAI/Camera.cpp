@@ -49,19 +49,20 @@ Camera::Set_position(float x_at, float y_at, int view)
 
 
 	if (view == VIEW_MAP) {
-
-		gluLookAt(-1.5f, 0.0f, distance,					// eye
-			-1.5f, 0.0f, 0.0f,							// center
+		glDisable(GL_FOG);
+		gluLookAt(0.0, 0.0f, 40,					// eye
+			0.0, 0.0f, 0.0f,							// center
 			1.0f, 0.0f, 0.0f);					// up
 
 	}
 	else if (view == VIEW_THIRD_PERSON) {
-
+		glDisable(GL_FOG);
 		gluLookAt(x - 3, y - 3, z + 5,						// eye
 					x, y, z,									// center
 				0.0f, 0.0f, 1.0f);																			// up (x, y, x)
 	}
 	else if (view == VIEW_FIRST_PERSON) {
+		glEnable(GL_FOG);
 		gluLookAt(x, y, z,
 			x + centerX, y + centerY, z + centerZ,
 			0.0, 0.0, 1.0);

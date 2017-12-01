@@ -374,13 +374,15 @@ void Board::makeWall(int x, int y) {
 
 }
 
+struct Vec2ii
+{
+	int linha, coluna;
+};
+
 // Gera monstros aleatorios no mapa
 void Board::GenerateRandoMonstersPositions(void)
 {
-	struct Vec2ii
-	{
-		int linha, coluna;
-	};
+	
 
 	//Conta o numero de possiçoes onde e possivel adicionar monstro
 	int numeroPosPossivelCriarMonstro = 0;
@@ -536,6 +538,64 @@ void Board::GenerateRandoMonstersPositions(void)
 	ImprimeBoarder();
 }
 
+//gera posições aleatorias no mapa
+void Board::generateRandomObjectsPosition(void) {
+
+
+	//Adiciona as coordenadas onde é possivel adicionar objetos a um vector
+	std::vector<Vec2ii> vector;
+	for (int i = 0; i < Board::BOARD_X; i++)
+	{
+		for (int j = 0; j < Board::BOARD_Y; j++)
+		{
+			if (board_walls[i][j] == 0) {
+				Vec2ii v = { i,j };
+				vector.insert(vector.begin(), v);
+			}
+		}
+	}
+
+	ImprimeBoarder();
+
+	//Gera um numero Random que vai selecionar a posicao onde vao nascer objetos
+	srand(time(NULL));
+	for (int k = 0; k < NUM_DYNAMITES + NUM_BANDAGES + NUM_BULLETS; k++) {
+		int x = rand() % vector.size();
+
+		// Valor na matriz para a existencia de objetos
+		VecPositionObjects.push_back(savePositionObjects());
+		VecPositionObjects[k].y = vector[x].linha;
+		VecPositionObjects[k].x = vector[x].coluna;
+		printf(" x - %2d     y - %d\n ", VecPositionObjects[k].x, VecPositionObjects[k].y);
+
+		if (k<NUM_DYNAMITES) {
+			VecPositionObjects[k].type = DYNAMITE;
+			board_walls[vector[x].linha][vector[x].coluna] = k + 100;
+			vector.erase(vector.begin() + x);
+		}
+		else if (k<NUM_BANDAGES + NUM_DYNAMITES) {
+			VecPositionObjects[k].type = BANDAGES;
+			board_walls[vector[x].linha][vector[x].coluna] = k + 100;
+			vector.erase(vector.begin() + x);
+
+		}
+		else if (k <= NUM_DYNAMITES + NUM_BANDAGES + NUM_BULLETS) {
+			VecPositionObjects[k].type = BULLETS;
+			board_walls[vector[x].linha][vector[x].coluna] = k + 100;
+			vector.erase(vector.begin() + x);
+
+		}
+
+	}
+	printf("COM OBJETOS: \n");
+	for (int i = 0; i < Board::BOARD_X; i++) {
+		for (int j = 0; j < Board::BOARD_Y; j++) {
+			printf(" %2d ", board_walls[i][j]);
+		}
+		printf("\n");
+	}
+}
+
 void Board::ImprimeBoarder(void) {
 	printf("-------------------------------------------------------------------------------------------------------\n");
 	// imprime a matrix
@@ -554,3 +614,4 @@ void Board::ImprimeBoarder(void) {
 	}
 	printf("-------------------------------------------------------------------------------------------------------\n");
 }
+

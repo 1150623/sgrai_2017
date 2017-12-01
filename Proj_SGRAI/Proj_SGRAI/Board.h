@@ -164,6 +164,12 @@ class Board {
 		};
 		std::vector<savePositionMonsters> VecPositionMonsters;
 
+		struct savePositionObjects
+		{
+			int x, y, type;
+		};
+		std::vector<savePositionObjects> VecPositionObjects;
+
 		//Construtor
 		Board();
 
@@ -197,6 +203,10 @@ class Board {
 
 		// Gera monstros aleatorios no mapa
 		void GenerateRandoMonstersPositions(void);
+
+
+		//gera objetos aleatorios no mapa
+		void generateRandomObjectsPosition(void);
 
 		//Imprime board
 		void ImprimeBoarder(void);
