@@ -38,7 +38,7 @@ void
 Character::Draw(float pitch, float yaw, int view)
 {
 
-	printf("x = %f, y = %f  %d  \n", x, y, board_walls[(int)y][(int)x]);
+	//printf("x = %f, y = %f  %d  \n", x, y, board_walls[(int)y][(int)x]);
 	//draw Weapon
 	if (true/*view == VIEW_FIRST_PERSON*/) {
 		//Codigo para a mira Aqui

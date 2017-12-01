@@ -85,6 +85,8 @@ namespace AStar
 //		Para isso é necessário colocar mais numeros para além de 0 e 1
 static int board_walls[31][28] =
 {
+
+
 	{ 1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1 },
 	{ 5,	0,	0,	0,	0,	0,	0,	1,	0,	0,	0,	1,	1,	1,	1,	1,	1,	0,	0,	0,	0,	1,	1,	1,	0,	1,	1,	1 },
 	{ 1,	0,	1,	0,	1,	1,	0,	1,	0,	1,	0,	0,	0,	0,	1,	1,	1,	0,	1,	1,	0,	1,	0,	0,	0,	0,	1,	1 },
@@ -158,7 +160,7 @@ class Board {
 
 		struct savePositionMonsters
 		{
-			int x, y;
+			int linha, coluna;
 		};
 		std::vector<savePositionMonsters> VecPositionMonsters;
 
@@ -195,6 +197,9 @@ class Board {
 
 		// Gera monstros aleatorios no mapa
 		void GenerateRandoMonstersPositions(void);
+
+		//Imprime board
+		void ImprimeBoarder(void);
 
 };
 

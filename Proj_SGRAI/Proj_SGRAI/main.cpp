@@ -60,14 +60,13 @@ void DrawAim() {
 	glPushMatrix();
 	glLoadIdentity();
 
-	int textSize;
+
 
 	std::string s;
 	glColor3f(0, 1, 0);
 
-	s = "+";
+	s = "O";
 	glRasterPos2d(w / 2, h / 2);
-	textSize = s.length();
 
 	glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, s[0]);
 
@@ -659,15 +658,8 @@ int main(int argc, char **argv) {
 	// gerar labirinto aleatorio
 	board->GenerateRandoMonstersPositions();
 
-	for (int i = 0; i < board->VecPositionMonsters.size(); i++)
-	{
-		printf("%d\n", board->VecPositionMonsters[i].x);
-
-	}
-
-
-	for (int i = 0; i < NUM_MONSTROS_RANDOM; i++) {
-		monstros[i] = new Monster(board->VecPositionMonsters[i].x, board->VecPositionMonsters[i].y, CHARACTER_SIZE, *board);
+	for (int IndexMonster = 0; IndexMonster < NUM_MONSTROS_RANDOM; IndexMonster++) {
+		monstros[IndexMonster] = new Monster(board->VecPositionMonsters[IndexMonster].coluna, board->VecPositionMonsters[IndexMonster].linha,CHARACTER_SIZE, IndexMonster, *board);
 	}
 
 

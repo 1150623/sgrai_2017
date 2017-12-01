@@ -379,15 +379,13 @@ void Board::GenerateRandoMonstersPositions(void)
 {
 	struct Vec2ii
 	{
-		int x, y;
+		int linha, coluna;
 	};
 
 	//Conta o numero de possiçoes onde e possivel adicionar monstro
 	int numeroPosPossivelCriarMonstro = 0;
-	int i;
-	int j;
-	for (i = 0; i <Board::BOARD_X; i++) {
-		for (j = 0; j < Board::BOARD_Y; j++) {
+	for (int i = 0; i <Board::BOARD_X; i++) {
+		for (int j = 0; j < Board::BOARD_Y; j++) {
 			if (board_walls[i][j] == 0) {
 				numeroPosPossivelCriarMonstro++;
 			}
@@ -407,121 +405,152 @@ void Board::GenerateRandoMonstersPositions(void)
 		}
 	}
 
+	ImprimeBoarder();
+
 	//Gera um numero Random que vai selecionar a possicao onde vai nascer os monstros
 	srand(time(NULL));
 	for (int k = 0; k < NUM_MONSTROS_RANDOM; k++)
 	{
-		int x = rand() % vectorTeste.size();
+		int SelectedPosition = rand() % vectorTeste.size();
 
 		// Valor na matriz para a existencia de monstros
 		VecPositionMonsters.push_back(savePositionMonsters());
-		VecPositionMonsters[k].x = vectorTeste[x].x;
-		VecPositionMonsters[k].y = vectorTeste[x].y;
+		VecPositionMonsters[k].linha = vectorTeste[SelectedPosition].linha;
+		VecPositionMonsters[k].coluna = vectorTeste[SelectedPosition].coluna;
 
-		int maisX = 0;
-		int menosX = 0;
-		int maisY = 0;
-		int menosY = 0;
+		int maisLinha = 0;
+		int menosLinha = 0;
+		int maisColuna = 0;
+		int menosColuna = 0;
 
-		// maisX
-		int aumentaX = vectorTeste[x].x;
-		while(board_walls[aumentaX][vectorTeste[x].y] ==0){
-			maisX++;
-			aumentaX++;
+		// maisColunas
+		int aumentaLinha = vectorTeste[SelectedPosition].linha;
+		while (board_walls[aumentaLinha][vectorTeste[SelectedPosition].coluna] == 0) {
+			maisLinha++;
+			aumentaLinha++;
 		}
-		// menosX
-		int diminuiX = vectorTeste[x].x;
-		while (board_walls[diminuiX][vectorTeste[x].y] == 0) {
-			menosX++;
-			diminuiX--;
-		}
-
-		// maisY
-		int aumentaY = vectorTeste[x].y;
-		while (board_walls[vectorTeste[x].x][aumentaY] == 0){
-			maisY++;
-			aumentaY++;
-		}
-		// menosY
-		int diminuiY = vectorTeste[x].y;
-		while (board_walls[vectorTeste[x].x][diminuiY] == 0) {
-			menosY++;
-			diminuiY--;
+		// menosColunas
+		int diminiuLinha = vectorTeste[SelectedPosition].linha;
+		while (board_walls[diminiuLinha][vectorTeste[SelectedPosition].coluna] == 0) {
+			menosLinha++;
+			diminiuLinha--;
 		}
 
+		// maisLinhas
+		int aumentaColuna = vectorTeste[SelectedPosition].coluna;
+		while (board_walls[vectorTeste[SelectedPosition].linha][aumentaColuna] == 0) {
+			maisColuna++;
+			aumentaColuna++;
+		}
+		// menosLinhas
+		int diminuiColuna = vectorTeste[SelectedPosition].coluna;
+		while (board_walls[vectorTeste[SelectedPosition].linha][diminuiColuna] == 0) {
+			menosColuna++;
+			diminuiColuna--;
+		}
 
-		//X
-		if ((maisX + menosX) >= (maisY + menosY)){
-			aumentaX = vectorTeste[x].x+1;
-			while (board_walls[aumentaX][vectorTeste[x].y] == 0) {
-				board_walls[aumentaX][vectorTeste[x].y] = k + BASE_INDEX_MONSTERS;
-				for (int i = 0; i < vectorTeste.size(); i++){
-					if (vectorTeste[x].x == vectorTeste[aumentaX].x && vectorTeste[x].y == vectorTeste[i].y) {
+
+		//colunas
+		if ((maisColuna + menosColuna) >= (maisLinha + menosLinha)) {
+			//maisColunas
+			aumentaColuna = vectorTeste[SelectedPosition].coluna + 1;
+
+			while (board_walls[vectorTeste[SelectedPosition].linha][aumentaColuna] == 0) {
+				board_walls[vectorTeste[SelectedPosition].linha][aumentaColuna] = k + BASE_INDEX_MONSTERS;
+				//Remove Valor do vector para nao deixar repetir a posição
+				for (int i = 0; i < vectorTeste.size(); i++) {
+					if ((aumentaColuna == vectorTeste[i].coluna) && (vectorTeste[SelectedPosition].linha == vectorTeste[i].linha)) {
+						if (SelectedPosition > i) {
+							SelectedPosition--;
+						}
 						vectorTeste.erase(vectorTeste.begin() + i);
 						goto foraMaisX;
 					}
 				}
 			foraMaisX:
-				aumentaX++;
+				aumentaColuna++;
 			}
-			// menosX
-			diminuiX = vectorTeste[x].x-1;
-			while (board_walls[diminuiX][vectorTeste[x].y] == 0) {
-				board_walls[diminuiX][vectorTeste[x].y] = k + BASE_INDEX_MONSTERS;
+
+
+			// menosColunas
+			diminuiColuna = vectorTeste[SelectedPosition].coluna - 1;
+
+			while (board_walls[vectorTeste[SelectedPosition].linha][diminuiColuna] == 0) {
+				board_walls[vectorTeste[SelectedPosition].linha][diminuiColuna] = k + BASE_INDEX_MONSTERS;
 				for (int i = 0; i < vectorTeste.size(); i++) {
-					if (vectorTeste[x].x == vectorTeste[diminuiX].x && vectorTeste[x].y == vectorTeste[i].y) {
+					if ((diminuiColuna == vectorTeste[i].coluna) && (vectorTeste[SelectedPosition].linha == vectorTeste[i].linha)) {
+						if (SelectedPosition > i) {
+							SelectedPosition--;
+						}
 						vectorTeste.erase(vectorTeste.begin() + i);
 						goto foraMenosX;
 					}
 				}
 			foraMenosX:
-				diminuiX--;
+				diminuiColuna--;
 			}
+
 		}
-		//Y
+		//Linhas
 		else {
 
-			// maisY
-			aumentaY = vectorTeste[x].y+1;
-			while (board_walls[vectorTeste[x].x][aumentaY] == 0) {
-				board_walls[vectorTeste[x].x][aumentaY] = k + BASE_INDEX_MONSTERS;
+			// maisLinhas
+			aumentaLinha = vectorTeste[SelectedPosition].linha + 1;
+			while (board_walls[aumentaLinha][vectorTeste[SelectedPosition].coluna] == 0) {
+				board_walls[aumentaLinha][vectorTeste[SelectedPosition].coluna] = k + BASE_INDEX_MONSTERS;
 				for (int i = 0; i < vectorTeste.size(); i++) {
-					if (vectorTeste[x].x == vectorTeste[i].x && vectorTeste[x].y == vectorTeste[aumentaY].y) {
+					if ((vectorTeste[SelectedPosition].coluna == vectorTeste[i].coluna) && (aumentaLinha == vectorTeste[i].linha)) {
+						if (SelectedPosition > i) {
+							SelectedPosition--;
+						}
 						vectorTeste.erase(vectorTeste.begin() + i);
 						goto foraMaisY;
 					}
 				}
 			foraMaisY:
-				aumentaY++;
+				aumentaLinha++;
 			}
-			// menosY
-			diminuiY = vectorTeste[x].y-1;
-			while (board_walls[vectorTeste[x].x][diminuiY] == 0) {
-				board_walls[vectorTeste[x].x][diminuiY] = k + BASE_INDEX_MONSTERS;
+			// menosLinhas
+			diminiuLinha = vectorTeste[SelectedPosition].linha - 1;
+			while (board_walls[diminiuLinha][vectorTeste[SelectedPosition].coluna] == 0) {
+				board_walls[diminiuLinha][vectorTeste[SelectedPosition].coluna] = k + BASE_INDEX_MONSTERS;
 				for (int i = 0; i < vectorTeste.size(); i++) {
-					if (vectorTeste[x].x == vectorTeste[i].x && vectorTeste[x].y == vectorTeste[diminuiY].y) {
+					if ((vectorTeste[SelectedPosition].coluna == vectorTeste[i].coluna) && (diminiuLinha == vectorTeste[i].linha)) {
+						if (SelectedPosition > i) {
+							SelectedPosition--;
+						}
 						vectorTeste.erase(vectorTeste.begin() + i);
 						goto foraMenosY;
 					}
 				}
 			foraMenosY:
-				diminuiY--;
+				diminiuLinha--;
 			}
 		}
 
-		board_walls[vectorTeste[x].x][vectorTeste[x].y] = k + BASE_INDEX_MONSTERS;
-
-
-		vectorTeste.erase(vectorTeste.begin() + x);
-
+		board_walls[vectorTeste[SelectedPosition].linha][vectorTeste[SelectedPosition].coluna] = k + BASE_INDEX_MONSTERS;
+		vectorTeste.erase(vectorTeste.begin() + SelectedPosition);
+		ImprimeBoarder();
 	}
 
-	for (int i = 0; i < BOARD_X; i++)
+	ImprimeBoarder();
+}
+
+void Board::ImprimeBoarder(void) {
+	printf("-------------------------------------------------------------------------------------------------------\n");
+	// imprime a matrix
+	printf("    ");
+	for (int i = 0; i < Board::BOARD_X; i++)
 	{
-		for (int j = 0; j < BOARD_Y; j++)
-		{
+		printf(" %2d ", i);
+	}
+	printf("\n");
+	for (int i = 0; i < Board::BOARD_Y; i++) {
+		printf(" %2d ", i);
+		for (int j = 0; j < Board::BOARD_X; j++) {
 			printf(" %2d ", board_walls[i][j]);
 		}
 		printf("\n");
 	}
+	printf("-------------------------------------------------------------------------------------------------------\n");
 }

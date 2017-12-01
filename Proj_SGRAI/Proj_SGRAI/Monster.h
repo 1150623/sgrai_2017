@@ -30,8 +30,9 @@ public:
 	bool animate;
 	float size;
 	int dynamiteFound = DEBBUG ? DYNAMITE_NEEDED : 0;
+	int startIndexMonster;
 
-	Monster(double, double, float, Board);
+	Monster(double, double, float, int,Board);
 
 	~Monster(void);
 
@@ -39,6 +40,7 @@ public:
 
 	void Reinit();				//reinitialize everything
 
+	float initDirection(int); // get direction monster
 
 	void Draw(void);			//draw character
 };
