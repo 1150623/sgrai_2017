@@ -729,6 +729,16 @@ void TimerFunction(int value)
 		}
 	}
 
+	for (int i = 0; i < NUM_MONSTROS_RANDOM; i++) {
+		if (myCharacter->x <= monstros[i]->x +0.5 && myCharacter->x >= monstros[i]->x - 0.5 && myCharacter->y <= monstros[i]->y + 0.5 && myCharacter->y >= monstros[i]->y - 0.5) {
+			m_meleeDone = true;
+			if (monsterMelee_coolDownTime == 0) {
+				myCharacter->lives -= MONSTER_DAMAGE_MELEE;
+			}
+		}
+	}
+
+
 
 	//quit
 	if (GetAsyncKeyState(VK_ESCAPE))
@@ -754,7 +764,7 @@ void TimerFunction(int value)
 	}
 	int pos = board->getBoardValue(myCharacter->y, myCharacter->x);
 	printf("POS = %d\n", pos);
-	if (pos >= BASE_INDEX_MONSTERS && pos <= BASE_INDEX_MONSTERS + NUM_MONSTROS_RANDOM) { //if character is in a monster zone...
+	if (pos >= BASE_INDEX_MONSTERS && pos < BASE_INDEX_MONSTERS + NUM_MONSTROS_RANDOM) { //if character is in a monster zone...
 		if (!monstros[pos]->killed) {
 			int meleeDamage = monstros[pos]->alert(myCharacter->x, myCharacter->y);
 			if (meleeDamage == 1) { //melee
