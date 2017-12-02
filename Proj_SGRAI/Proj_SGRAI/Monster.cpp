@@ -83,10 +83,6 @@ void Monster::initDirection(int startIndexMonster) {
 
 void Monster::MoveTo() {
 
-	if (angle == 0) {
-		//printf("TA a ZEROOOOO\n");
-	}
-
 	if(angle == 180){
 		//baixo
 		if (!boards->IsOpen2(x-speed, y, (startIndexMonster + BASE_INDEX_MONSTERS))) {
@@ -172,5 +168,5 @@ void Monster::desenhaCubo()
 	desenhaPoligono(vertices[4], vertices[5], vertices[6], vertices[7], normais[4]);
 	desenhaPoligono(vertices[5], vertices[4], vertices[0], vertices[1], normais[5]);
 
-	//glBindTexture(GL_TEXTURE_2D, NULL);
+	//glBindTexture(GL_TEXTURE_2D, 0);
 }

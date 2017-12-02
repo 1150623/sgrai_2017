@@ -688,7 +688,7 @@ int main(int argc, char **argv) {
 	if (!FULLSCREEN) {
 		//windowed mode
 		glutInitWindowSize(1080, 820);
-		if (glutCreateWindow("Labirinto 3D") == GL_FALSE)
+		if (!glutCreateWindow("Labirinto 3D"))
 			exit(1);
 	}
 	else {
@@ -716,8 +716,8 @@ int main(int argc, char **argv) {
 	board = new Board();
 
 	//Inicialize character
-	myCharacter = new Character(CHARACTER_STARTLOCATION_X, CHARACTER_STARTLOCATION_Y, CHARACTER_SIZE, *board);
-	myCharacter->MoveTo(20, 20);
+	myCharacter = new Character(board->startPositionX, board->startPositionY, CHARACTER_SIZE, *board);
+	//myCharacter->MoveTo(20, 20);
 	// gerar labirinto aleatorio
 	board->GenerateRandoMonstersPositions();
 	board->generateRandomObjectsPosition();
@@ -726,11 +726,13 @@ int main(int argc, char **argv) {
 		monstros[IndexMonster] = new Monster(board->VecPositionMonsters[IndexMonster].coluna, board->VecPositionMonsters[IndexMonster].linha,CHARACTER_SIZE, IndexMonster, board);
 	}
 
-	printf("Posição dos objetos: \n");
-	for (int i = 0; i < board->VecPositionObjects.size(); i++)
-	{
-		printf("	coord: %d,%d\n	tipo:%d\n", board->VecPositionObjects[i].x, board->VecPositionObjects[i].y, board->VecPositionObjects[i].type);
+	if (DEBBUG) {
+		printf("Posição dos objetos: \n");
+		for (int i = 0; i < board->VecPositionObjects.size(); i++)
+		{
+			printf("	coord: %d,%d\n	tipo:%d\n", board->VecPositionObjects[i].x, board->VecPositionObjects[i].y, board->VecPositionObjects[i].type);
 
+		}
 	}
 
 	for (int k = 0; k < nr_objets; k++) {

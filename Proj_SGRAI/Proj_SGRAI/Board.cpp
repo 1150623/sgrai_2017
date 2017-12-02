@@ -10,12 +10,8 @@ vertex vertices[] = {
 	{ 0, 0, 0},//4
 	{ 0, 1, 0},//5
 	{ 1, 1, 0},//6
-	{ 1, 0, 0},//7
-	{ -3 / 28,	-13 / 28, 	0.5 },//8 (start door) bottom left
-	{ 3 / 28,		-13 / 28,        0.5 },//9	bottom right
-	{ 3 / 28,	  0,	0.5 },//10   top right
-	{ -3 / 28,0,	0.5 } }//11   top left
-;
+	{ 1, 0, 0}//7
+};
 
 
 static GLfloat theta[] = { 0.0,0.0,0.0 };
@@ -32,28 +28,55 @@ void Board::face(int a, int b, int c, int d)
 	glEnd();
 }
 
-void Board::MYcube(void)
+void Board::MYcube(bool start)
 {
 	glColor3f(1.0, 0.0, 0.0);         //red),
 	face(0, 3, 2, 1);
-	glColor3f(0.0, 1.0, 0.0);         //green),
-	face(4, 5, 6, 7);
-	glColor3f(0.0, 0.75388, 1.0);      //blue), 
-	face(5, 1, 2, 6);
-	glColor3f(1.0, 0.2, 0.7);       //deep pink),
-	face(4, 7, 3, 0);
-	glColor3f(1.0, 1.0, 0.0);     // yellow), 
-	face(2, 3, 7, 6);
-	glColor3f(1.0, 0.75, 0.0);     // orange).
-	face(5, 4, 0, 1);
-	glColor3f(0.0, 0.0, 0.0);         //red),
-	face(8, 9, 10, 11);
+		glColor3f(0.0, 1.0, 0.0);         //green),
+		face(4, 5, 6, 7);
+		glColor3f(0.0, 0.75388, 1.0);      //blue), 
+		face(5, 1, 2, 6);
+		glColor3f(1.0, 0.2, 0.7);       //deep pink),
+		face(4, 7, 3, 0);
+		glColor3f(1.0, 1.0, 0.0);     // yellow), 
+		face(2, 3, 7, 6);
+		glColor3f(1.0, 0.75, 0.0);     // orange).
+		face(5, 4, 0, 1);
+	
 }
+
 
 using namespace AStar;
 Generator generator;
 
 Board::Board() {
+
+	createRandomLab(board_walls);
+	for (int i = 0; i < LAB_SIZE; i++) {
+		for (int j = 0; j < LAB_SIZE; j++) {
+			if (board_walls[i][j] == START_POSITION_NUMBER) {
+				startPositionX = j;
+				startPositionY = i;
+			}
+			if (board_walls[i][j] == END_POSITION_NUMBER) {
+				endPositionX = j;
+				endPositionY = i;
+			}
+		}
+	}
+	if (DEBBUG) {
+		printf("\n       \t+---------------------------------------------------------------------------------------------------------------------------+");
+		for (int i = 0; i < LAB_SIZE; i++) {
+			printf("\n %d -> \t|", i);
+			for (int j = 0; j < LAB_SIZE; j++) {
+				if (board_walls[i][j] == START_POSITION_NUMBER || board_walls[i][j] == END_POSITION_NUMBER) {
+					printf("#%d#|", board_walls[i][j]);
+				}else
+				printf(" %d |", board_walls[i][j]);
+			}
+			printf("\n       \t+---------------------------------------------------------------------------------------------------------------------------+");
+		}
+	}
 	initAStarGenerator();
 }
 
@@ -256,15 +279,18 @@ void Board::drawWalls(void) {
 				
 				glPushMatrix(); 
 				{
+					if ( board_walls[i][j] == END_POSITION_NUMBER) {
+						aux -= WALLS_BOTTOM;
+					}
 
 					if (board_walls[i][j] == 1)
 					{
 						aux += WALLS_TOP;
 						aux -= WALLS_BOTTOM;
-						if (i - 1 >= 0) if (board_walls[i + 1][j] == 0 || board_walls[i + 1][j] >= BASE_INDEX_MONSTERS || board_walls[i + 1][j] == 5) { aux += WALLS_SOUTH; }
-						if (i + 1 < BOARD_Y) if (board_walls[i - 1][j] == 0 || board_walls[i - 1][j] >= BASE_INDEX_MONSTERS || board_walls[i - 1][j] == 5) { aux += WALLS_NORTH; }
-						if (j + 1 < BOARD_X) if (board_walls[i][j + 1] == 0 || board_walls[i][j + 1] >= BASE_INDEX_MONSTERS || board_walls[i][j + 1] == 5) { aux += WALLS_WEST; }
-						if (j - 1 >= 0) if (board_walls[i][j - 1] == 0 || board_walls[i][j - 1] >= BASE_INDEX_MONSTERS || board_walls[i][j - 1] == 5) { aux += WALLS_EAST; }
+						if (i - 1 >= 0) if (board_walls[i + 1][j] == 0 || board_walls[i + 1][j] >= BASE_INDEX_MONSTERS || board_walls[i + 1][j] == START_POSITION_NUMBER) { aux += WALLS_SOUTH; }
+						if (i + 1 < BOARD_Y) if (board_walls[i - 1][j] == 0 || board_walls[i - 1][j] >= BASE_INDEX_MONSTERS || board_walls[i - 1][j] == START_POSITION_NUMBER) { aux += WALLS_NORTH; }
+						if (j + 1 < BOARD_X) if (board_walls[i][j + 1] == 0 || board_walls[i][j + 1] >= BASE_INDEX_MONSTERS || board_walls[i][j + 1] == START_POSITION_NUMBER ) { aux += WALLS_WEST; }
+						if (j - 1 >= 0) if (board_walls[i][j - 1] == 0 || board_walls[i][j - 1] >= BASE_INDEX_MONSTERS || board_walls[i][j - 1] == START_POSITION_NUMBER) { aux += WALLS_EAST; }
 
 						if (!(aux & WALLS_SOUTH) && i == 0) if (board_walls[i][j] == 1) { aux += WALLS_SOUTH; }
 						if (!(aux & WALLS_NORTH) && i == BOARD_Y - 1) if (board_walls[i][j] == 1) { aux += WALLS_NORTH; }
@@ -275,11 +301,6 @@ void Board::drawWalls(void) {
 					else {
 						if (TEXTURE_ON) glBindTexture(GL_TEXTURE_2D, textName[1]);
 					}
-
-					if (board_walls[i][j] == 5) {
-						aux += Board::DRAW_DOOR;
-					}
-
 
 					
 					glBegin(GL_QUADS);
@@ -304,7 +325,11 @@ void Board::drawWalls(void) {
 						}
 						if (aux & DRAW_DOOR) {
 							glBindTexture(GL_TEXTURE_2D, 0);
-							Board::MYcube();
+							if (board_walls[i][j] == START_POSITION_NUMBER)
+								Board::MYcube(true);
+
+							if (board_walls[i][j] == END_POSITION_NUMBER)
+								Board::MYcube(false);
 						}
 					}
 					glEnd();
@@ -337,7 +362,7 @@ void Board::Draw(void) {
 bool
 Board::IsOpen(float x, float y)
 {	
-	return board_walls[(int)y][(int)x] != 1 && board_walls[(int)y][(int)x] != 5;
+	return board_walls[(int)y][(int)x] != 1 /*&& board_walls[(int)y][(int)x] != START_POSITION_NUMBER*/;
 }
 
 bool Board::IsOpen2(float x, float y, int indexMonster)
@@ -592,36 +617,40 @@ void Board::generateRandomObjectsPosition(void) {
 		}
 
 	}
-	printf("COM OBJETOS: \n");
-	for (int i = 0; i < Board::BOARD_X; i++) {
-		for (int j = 0; j < Board::BOARD_Y; j++) {
-			printf(" %2d ", board_walls[i][j]);
+	if (DEBBUG) {
+		printf("COM OBJETOS: \n");
+		for (int i = 0; i < Board::BOARD_X; i++) {
+			for (int j = 0; j < Board::BOARD_Y; j++) {
+				printf(" %2d ", board_walls[i][j]);
+			}
+			printf("\n");
 		}
-		printf("\n");
 	}
 }
 
 void Board::ImprimeBoarder(void) {
-	printf("-------------------------------------------------------------------------------------------------------\n");
-	// imprime a matrix
-	printf("    ");
-	for (int i = 0; i < Board::BOARD_X; i++)
-	{
-		printf(" %2d ", i);
-	}
-	printf("\n");
-	for (int i = 0; i < Board::BOARD_X; i++)
-	{
-		printf("_____");
-	}
-	printf("\n");
-	for (int i = Board::BOARD_X-1; i >= 0 ; i--) {
-		printf(" %2d | ", Board::BOARD_X-i);
-		for (int j = Board::BOARD_Y-1; j >= 0 ; j--) {
-			printf(" %2d ", board_walls[j][i]);
+	if (DEBBUG) {
+		printf("-------------------------------------------------------------------------------------------------------\n");
+		// imprime a matrix
+		printf("    ");
+		for (int i = 0; i < Board::BOARD_X; i++)
+		{
+			printf(" %2d ", i);
 		}
 		printf("\n");
+		for (int i = 0; i < Board::BOARD_X; i++)
+		{
+			printf("_____");
+		}
+		printf("\n");
+		for (int i = Board::BOARD_X - 1; i >= 0; i--) {
+			printf(" %2d | ", Board::BOARD_X - i);
+			for (int j = Board::BOARD_Y - 1; j >= 0; j--) {
+				printf(" %2d ", board_walls[j][i]);
+			}
+			printf("\n");
+		}
+		printf("-------------------------------------------------------------------------------------------------------\n");
 	}
-	printf("-------------------------------------------------------------------------------------------------------\n");
 }
 

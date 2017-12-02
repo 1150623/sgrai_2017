@@ -33,9 +33,6 @@
     <ClInclude Include="globalHeader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BoardMatrixCalculations.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TestBoardMatrixCalculations.h">
       <Filter>Header Files\tests_headers</Filter>
     </ClInclude>
@@ -66,6 +63,15 @@
     <ClInclude Include="Bullet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Object.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RandomBoard.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Board.cpp">
@@ -78,9 +84,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Character.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="BoardMatrixCalculations.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TestBoardMatrixCalculations.cpp">
@@ -114,6 +117,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Bullet.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Object.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RandomBoard.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

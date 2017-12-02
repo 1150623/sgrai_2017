@@ -17,6 +17,12 @@
 #include "mathlib.h"
 #include "studio.h"
 #include "mathlib.h"
+#include <conio.h>
+#include <stack>
+#include <fstream>
+#include <vector>
+#include <functional>
+#include <set>
 
 
 
@@ -37,6 +43,7 @@
 #define DYNAMITE_NEEDED 3
 #define HIDE_MOUSE 1
 #define CUTOFF 30
+#define LAB_SIZE 31 //must be an odd number
 
 //TEXTURES INFO
 #define NUM_TEXTURES 2
@@ -76,6 +83,13 @@
 #define VIEW_FIRST_PERSON	3
 #define VIEW_THIRD_PERSON	0
 #define VIEW_MAP	1
+
+
+
+//BOARD GENERATION
+#define START_POSITION_NUMBER 5
+#define END_POSITION_NUMBER 6
+
 
 extern "C" int read_JPEG_file(char *, char **, int *, int *, int *);
 

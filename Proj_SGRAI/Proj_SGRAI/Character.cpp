@@ -11,8 +11,8 @@ Character::Character(double tx, double ty, float size, Board b)
 	board = b;
 	Character::size = size;
 	lives = NUM_LIVES;
-	x = 1.5;
-	y = 1.5;
+	x = tx + 0.5;
+	y = ty + 0.5;
 	angle = CHAR_ANGLE;
 	speed = CHAR_SPEED;
 	animate = false;

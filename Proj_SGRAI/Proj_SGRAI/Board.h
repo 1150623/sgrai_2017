@@ -2,11 +2,9 @@
 #ifndef _BOARD_H_
 #define _BOARD_H_
 
-#include "globalHeader.h"
+
 #include "image_loader.h"
-#include <vector>
-#include <functional>
-#include <set>
+#include "RandomBoard.h"
 
 
 
@@ -83,7 +81,9 @@ namespace AStar
 //1 -> path
 // Sujeito a alterações (seria mais eficiente se fosse desenhado por faces, para evitar que paredes tivessem mais faces do que o desejado)
 //		Para isso é necessário colocar mais numeros para além de 0 e 1
-static int board_walls[31][28] =
+static int board_walls[LAB_SIZE][LAB_SIZE];
+
+/*static int board_walls[LAB_SIZE][LAB_SIZE] =
 {
 
 
@@ -118,7 +118,7 @@ static int board_walls[31][28] =
 	{ 1,	1,	0,	1,	0,	0,	1,	1,	0,	1,	1,	1,	1,	1,	0,	1,	1,	0,	1,	1,	0,	1,	1,	0,	1,	1,	1,	1 },
 	{ 1,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	0,	1,	1,	0,	0,	0,	0,	0,	0,	0,	1 },
 	{ 1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	5,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1 }
-};
+};*/
 
 class Board {
 
@@ -135,7 +135,7 @@ class Board {
 		void DRAW_WALLS_BOTTOM(void);
 		void DRAW_WALLS_TOP(void);
 
-		void MYcube(void);
+		void MYcube(bool);
 		void face(int, int, int, int);
 
 		byte DRAW_DOOR = 128;	// 10000000
@@ -154,9 +154,16 @@ class Board {
 		#define NUM_WALLS		6
 
 		static const float BOARD_WALL_SIZE;
-		static const int BOARD_X = 28;
-		static const int BOARD_Y = 31;
+		static const int BOARD_X = LAB_SIZE;
+		static const int BOARD_Y = LAB_SIZE;
 		float ang;
+
+		int startPositionX;
+		int startPositionY;
+		int endPositionX;
+		int endPositionY;
+
+
 
 		struct savePositionMonsters
 		{
