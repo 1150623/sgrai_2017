@@ -63,5 +63,4 @@ Character::Draw(float pitch, float yaw, int view)
 		glPopMatrix();
 
 	}
-
 }

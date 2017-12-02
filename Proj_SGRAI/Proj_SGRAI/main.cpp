@@ -123,8 +123,9 @@ void drawCompass()
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_COLOR_MATERIAL);
 	
-		
-		glRotatef(GRAUS(-myCharacter->angle), 0, 0, 1);
+	glRotatef(180, 0, 0, 1);
+	if(view == VIEW_FIRST_PERSON)
+	glRotatef(-GRAUS(myCharacter->angle), 0, 0, 1);
 	
 			//desenha bussola 2D
 			//Norte

@@ -596,7 +596,7 @@ void Board::generateRandomObjectsPosition(void) {
 		VecPositionObjects.push_back(savePositionObjects());
 		VecPositionObjects[k].y = vector[x].linha;
 		VecPositionObjects[k].x = vector[x].coluna;
-		printf(" x - %2d     y - %d\n ", VecPositionObjects[k].x, VecPositionObjects[k].y);
+		if(DEBBUG) printf(" x - %2d     y - %d\n ", VecPositionObjects[k].x, VecPositionObjects[k].y);
 
 		if (k<NUM_DYNAMITES) {
 			VecPositionObjects[k].type = DYNAMITE;
