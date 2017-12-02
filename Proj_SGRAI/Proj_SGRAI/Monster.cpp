@@ -14,13 +14,16 @@ Monster::Monster(double tx, double ty, float size, int IndexMonster,Board* b)
 	killed = false;
 	Monster::boards = b;
 	Monster::size = size;
-	lives = MONSTER_NUM_LIVES;
+	lives = MONSTER_LIFE;
 	x = tx + 0.5;
 	y = ty+ 0.5;
 	speed = MONSTER_SPEED;
 	animate = false;
 	startIndexMonster = IndexMonster;
 	initDirection(IndexMonster); //verifica na matrix a direção que tem de seguir
+	patrol = true;
+	melee = false;
+	shooting = false;
 }
 
 void Monster::Draw(void)
@@ -79,52 +82,86 @@ void Monster::initDirection(int startIndexMonster) {
 	}
 }
 
-
-
-void Monster::MoveTo() {
-
-	if(angle == 180){
-		//baixo
-		if (!boards->IsOpen2(x-speed, y, (startIndexMonster + BASE_INDEX_MONSTERS))) {
-			angle -= 180;
-		}else
-		if (boards->IsOpen2(x - speed, y, (startIndexMonster + BASE_INDEX_MONSTERS)))
-			x -= speed;
-	}
-	else if(angle == 90){
-		//esquerda
-		if (!boards->IsOpen2(x, y + speed, (startIndexMonster + BASE_INDEX_MONSTERS))) {
-			angle += 180;
+int Monster::alert(float c_x, float c_y) {
+	float dist = sqrt(pow(c_x - x, 2) + pow(c_y - y, 2));
+	if (dist < MONSTER_SHOOT_DIST) {
+		if (dist < MONSTER_MELEE_DIST) {
+			//MELEE
+			melee = true;
+			shooting = false;
+			patrol = false;
+			return 1;
 		}
-		else
-		if (boards->IsOpen2(x, y + speed, (startIndexMonster + BASE_INDEX_MONSTERS)))
-			y += speed;
-	}
-	else if (angle == 0 ){
-		//CIMA
-		if (!boards->IsOpen2(x + speed, y, (startIndexMonster + BASE_INDEX_MONSTERS))) {
-			angle += 180;
-		}
-		else
-		if (boards->IsOpen2(x + speed, y, (startIndexMonster + BASE_INDEX_MONSTERS)))
-			x += speed;
-		
-	}
-	else if (angle == 270) {
-		//direita
-		if (!boards->IsOpen2(x  , y - speed, (startIndexMonster + BASE_INDEX_MONSTERS))) {
-			angle -= 180;
-		}
-		else
-		if (boards->IsOpen2(x, y - speed, (startIndexMonster + BASE_INDEX_MONSTERS))) {
-			y -= speed;
+		else {
+			//SHOOT
+			melee = false;
+			shooting = true;
+			patrol = false;
+			return 2;
 		}
 	}
 	else {
-
-
+		melee = false;
+		shooting = false;
+		patrol = true;
+		return 0;
 	}
-if (startIndexMonster == 5) ("x - %f     y - %f\n", x, y);
+
+}
+
+
+void Monster::shoot(float c_x, float c_y) {
+	if (shooting) {
+		bullet = new Bullet();
+		bullet->setInitial(x, y, angle, 0);
+	}
+}
+
+void Monster::MoveTo() {
+	if (patrol) {
+		if (angle == 180) {
+			//baixo
+			if (!boards->IsOpen2(x - speed, y, (startIndexMonster + BASE_INDEX_MONSTERS))) {
+				angle -= 180;
+			}
+			else
+				if (boards->IsOpen2(x - speed, y, (startIndexMonster + BASE_INDEX_MONSTERS)))
+					x -= speed;
+		}
+		else if (angle == 90) {
+			//esquerda
+			if (!boards->IsOpen2(x, y + speed, (startIndexMonster + BASE_INDEX_MONSTERS))) {
+				angle += 180;
+			}
+			else
+				if (boards->IsOpen2(x, y + speed, (startIndexMonster + BASE_INDEX_MONSTERS)))
+					y += speed;
+		}
+		else if (angle == 0) {
+			//CIMA
+			if (!boards->IsOpen2(x + speed, y, (startIndexMonster + BASE_INDEX_MONSTERS))) {
+				angle += 180;
+			}
+			else
+				if (boards->IsOpen2(x + speed, y, (startIndexMonster + BASE_INDEX_MONSTERS)))
+					x += speed;
+
+		}
+		else if (angle == 270) {
+			//direita
+			if (!boards->IsOpen2(x, y - speed, (startIndexMonster + BASE_INDEX_MONSTERS))) {
+				angle -= 180;
+			}
+			else
+				if (boards->IsOpen2(x, y - speed, (startIndexMonster + BASE_INDEX_MONSTERS))) {
+					y -= speed;
+				}
+		}
+		else {
+
+
+		}
+	}
 }
 
 

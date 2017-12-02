@@ -11,8 +11,11 @@ Character::Character(double tx, double ty, float size, Board b)
 	board = b;
 	Character::size = size;
 	lives = NUM_LIVES;
+	retrys = NUM_RETRYS;
 	x = tx + 0.5;
+	startX = x;
 	y = ty + 0.5;
+	startY = y;
 	angle = CHAR_ANGLE;
 	speed = CHAR_SPEED;
 	animate = false;
@@ -22,10 +25,12 @@ Character::Character(double tx, double ty, float size, Board b)
 void
 Character::Reinit(void)
 {
-	//x = CHARACTER_STARTLOCATION_X;
-	//y = CHARACTER_STARTLOCATION_Y;
-	//angle = CHAR_ANGLE;
-	//animate = false;
+	x = CHARACTER_STARTLOCATION_X;
+	y = CHARACTER_STARTLOCATION_Y;
+	angle = CHAR_ANGLE;
+	retrys--;
+	lives = NUM_LIVES;
+	animate = false;
 }
 
 void

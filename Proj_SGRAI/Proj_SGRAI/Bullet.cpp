@@ -22,7 +22,7 @@ Bullet::setInitial(float _x, float _y, float _yaw, float _pitch) {
 void
 Bullet::Draw()
 {
-	//draw spheare
+	//draw sphere
 	glColor3f(0, 1, 0);
 	glPushMatrix();
 	{
@@ -35,16 +35,13 @@ Bullet::Draw()
 }
 void
 Bullet::Move() {
-	printf("Bullet x: %d\n", x);
-	printf("Bullet y: %d\n", y);
+	if (DEBBUG)printf("Bullet x: %d\n", x);
+	if (DEBBUG)printf("Bullet y: %d\n", y);
 
 	x += BULLET_SPEED * cos(yaw) * cos(pitch);
 	y += BULLET_SPEED * sin(yaw) * cos(pitch);
 	z += BULLET_SPEED * sin(-pitch);
-	printf("Monster x: %d\n", x_dest);
-	printf("Monster y: %d\n", y_dest);
-	if (x_dest == (int)x && y_dest == (int)y) {
-		printf("Acertou", y);
-		shoot = false;
-	}
+	if (DEBBUG)printf("Monster x: %d\n", x_dest);
+	if (DEBBUG)printf("Monster y: %d\n", y_dest);
+
 }

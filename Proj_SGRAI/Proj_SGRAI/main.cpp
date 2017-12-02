@@ -12,6 +12,7 @@
 #define TECLA_D 0x44
 #define TECLA_V 0x56
 #define TECLA_Q 0x51
+#define TECLA_H 0x48
 
 #define TECLA_UP VK_UP
 #define TECLA_LEFT VK_LEFT
@@ -37,7 +38,8 @@ int h, w;
 Board *board;
 Character *myCharacter;
 Camera *camera;
-Bullet *bullet;
+Bullet *c_bullet;
+Bullet *m_bullet;
 
 int nr_objets = NUM_DYNAMITES + NUM_BANDAGES + NUM_BULLETS;
 
@@ -76,7 +78,7 @@ void DrawAim() {
 	std::string s;
 	glColor3f(0, 1, 0);
 
-	s = "o";
+	s = "+";
 	glRasterPos2d(w / 2, h / 2);
 
 	glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, s[0]);
@@ -109,61 +111,59 @@ void strokeCenterString(char *str, double x, double y, double z, double s)
 void drawCompass()
  {
 	glMatrixMode(GL_PROJECTION);
-	glPushMatrix();
-	glLoadIdentity();
-	gluOrtho2D(1, -0.15, 1, -0.15);
-	glMatrixMode(GL_MODELVIEW);
-	glPushMatrix();
-	glLoadIdentity();
-	
+	glPushMatrix(); {
+		glLoadIdentity();
+		gluOrtho2D(1, -0.15, 1, -0.15);
+		glMatrixMode(GL_MODELVIEW);
+		glPushMatrix(); {
+			glLoadIdentity();
+
 			// Blending (transparencias)
-		glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glDisable(GL_LIGHTING);
-	glDisable(GL_DEPTH_TEST);
-	glDisable(GL_COLOR_MATERIAL);
-	
-	glRotatef(180, 0, 0, 1);
-	if(view == VIEW_FIRST_PERSON)
-	glRotatef(-GRAUS(myCharacter->angle), 0, 0, 1);
-	
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glDisable(GL_LIGHTING);
+			glDisable(GL_DEPTH_TEST);
+			glDisable(GL_COLOR_MATERIAL);
+
+			glRotatef(180, 0, 0, 1);
+			if (view == VIEW_FIRST_PERSON)
+				glRotatef(-GRAUS(myCharacter->angle), 0, 0, 1);
+
 			//desenha bussola 2D
 			//Norte
-		glBegin(GL_POLYGON);
-	glColor4f(0.0, 0.3, 0.0,0.7);
-	glVertex2f(0, 0.09);
-	glVertex2f(0.03, 0.004);
-	glVertex2f(0, 0.015);
-	glVertex2f(-0.03, 0.004);
-	glEnd();
-	
-		glColor4f(1.0, 1.0, 1.0,0.7);
-	strokeCenterString("N", 0, 0.04, 0, 0.0002); // string, x ,y ,z ,scale
-	
-														//Sul
-		glBegin(GL_POLYGON);
-	glColor4f(0.0, 0.7, 0.0, 0.7);
-	glVertex2f(0, -0.09);
-	glVertex2f(0.03, -0.004);
-	glVertex2f(0, -0.015);
-	glVertex2f(-0.03, -0.004);
-	glEnd();
-	
-		glColor4f(1, 1, 1,0.7);
-	strokeCenterString("S", 0, -0.04, 0, 0.0002); // string, x ,y ,z ,scale
-	
-		
-		
-		
-			//											 // ropõe estado
-		glDisable(GL_BLEND);
-	glEnable(GL_LIGHTING);
-		//glEnable(GL_COLOR_MATERIAL);
-		glEnable(GL_DEPTH_TEST);
-	
-		glPopMatrix();
-	glMatrixMode(GL_PROJECTION);
-	glPopMatrix();
+			glBegin(GL_POLYGON);
+			glColor4f(0.0, 0.3, 0.0, 0.7);
+			glVertex2f(0, 0.09);
+			glVertex2f(0.03, 0.004);
+			glVertex2f(0, 0.015);
+			glVertex2f(-0.03, 0.004);
+			glEnd();
+
+			glColor4f(1.0, 1.0, 1.0, 0.7);
+			strokeCenterString("N", 0, 0.04, 0, 0.0002); // string, x ,y ,z ,scale
+
+																//Sul
+			glBegin(GL_POLYGON);
+			glColor4f(0.0, 0.7, 0.0, 0.7);
+			glVertex2f(0, -0.09);
+			glVertex2f(0.03, -0.004);
+			glVertex2f(0, -0.015);
+			glVertex2f(-0.03, -0.004);
+			glEnd();
+
+			glColor4f(1, 1, 1, 0.7);
+			strokeCenterString("S", 0, -0.04, 0, 0.0002); // string, x ,y ,z ,scale
+
+
+			// ropõe estado
+			glDisable(GL_BLEND);
+			glEnable(GL_LIGHTING);
+			//glEnable(GL_COLOR_MATERIAL);
+			glEnable(GL_DEPTH_TEST);
+
+		}glPopMatrix();
+		glMatrixMode(GL_PROJECTION);
+	}glPopMatrix();
 	glMatrixMode(GL_MODELVIEW);
 	
 		}
@@ -224,6 +224,33 @@ void drawHealthBar()
 	glMatrixMode(GL_MODELVIEW);
 }
 
+
+void drawGameOverText()
+{
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	gluOrtho2D(w/2, w/2, h/2, h/2);
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+	std::string s;
+	glColor3f(1, 0, 0);
+
+	s = "GAME OVER (press ESC)";
+	glRasterPos2d(w / 2 + 0.01, (h / 2) + 0.03);
+	int textSize = s.length();
+	for (int i = 0; i < textSize; i++) {
+		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, s[i]);
+
+	}
+
+	glPopMatrix();
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+}
+
 void drawBulletsBar() {
 		glMatrixMode(GL_PROJECTION);
 		glPushMatrix();
@@ -274,55 +301,66 @@ void RenderScene()
 
 	camera->set_light(myCharacter->x, myCharacter->y, myCharacter->size);
 
+	
 	//labirinto Init (where to put objects for example)
 
-
-	//if (/*Something happens like catching all keys OR killing certain monsters or something...*/)
-	//{
-	//restart all
-	//	init();
-	//	//unlock something
-	//	//or, for testing:
-	//	board->tp_restore(); // (comment when needed) - restore lab
-	//}
+	if (myCharacter->retrys > 0 && myCharacter->lives <= 0) {
+		myCharacter->Reinit();
+	}
+	else if (myCharacter->retrys == 0 && myCharacter->lives <= 0) {
+		gameover = true;	
+		view = VIEW_MAP;
+		drawGameOverText();
+	}
 
 	board->Draw();
 
 
-	if (!gameover)
+	if (!gameover) {
 		myCharacter->Draw(camera->pitch, camera->yaw, view); //go to stating place
-	if (!gameover)
-	for (int i = 0; i < NUM_MONSTROS_RANDOM; i++) {
-		if (!monstros[i]->killed)
-				monstros[i]->Draw();
-	}
 
-	for (int i = 0; i < nr_objets; i++) {
-		//printf("Coord obj: %d,%d\nCoord playr: %d,%d\n", objects[i]->x, objects[i]->y, myCharacter->x, myCharacter->y);
-		if ((int)objects[i]->x == (int)myCharacter->x && (int)objects[i]->y == (int)myCharacter->y) {
-			objects[i]->got_it = true;
-			board_walls[(int)objects[i]->x][(int)objects[i]->y] = 0;
-			if (objects[i]->type==BANDAGES) {
-				myCharacter->lives = 100;
+
+		for (int i = 0; i < nr_objets; i++) {
+			//printf("Coord obj: %d,%d\nCoord playr: %d,%d\n", objects[i]->x, objects[i]->y, myCharacter->x, myCharacter->y);
+			if ((int)objects[i]->x == (int)myCharacter->x && (int)objects[i]->y == (int)myCharacter->y) {
+				objects[i]->got_it = true;
+				board_walls[(int)objects[i]->x][(int)objects[i]->y] = 0;
+				if (objects[i]->type == BANDAGES) {
+					myCharacter->lives = 100;
+				}
+				else if (objects[i]->type == BULLETS) {
+					myCharacter->weapon.SetSequence(1);
+					Sleep(5);
+				}
 			}
-			else if (objects[i]->type==BULLETS) {
-				myCharacter->weapon.SetSequence(1);
-				Sleep(5);
+		}
+
+		for (int i = 0; i < nr_objets; i++) {
+			objects[i]->Draw();
+		}
+
+
+		if (c_bullet->shoot) {
+			c_bullet->Draw();
+		}
+
+		if (view == VIEW_FIRST_PERSON)
+			DrawAim();
+
+		for (int i = 0; i < NUM_MONSTROS_RANDOM; i++) {
+			printf("MONESTR[%d] is %s\n", i, monstros[i]->killed?"dead":"alive");
+			if (!monstros[i]->killed) {
+				monstros[i]->Draw();
+			}
+				
+		}
+
+		for (int i = 0; i < NUM_MONSTROS_RANDOM; i++) {
+			if (monstros[i]->shooting && !monstros[i]->killed) {
+				monstros[i]->bullet->Draw();
 			}
 		}
 	}
-
-	for (int i = 0; i < nr_objets; i++) {
-		objects[i]->Draw();
-	}
-
-
-	if (bullet->shoot) {
-		bullet->Draw();
-	}
-
-	if (view == VIEW_FIRST_PERSON)
-		DrawAim();
 
 	drawHealthBar();
 	drawBulletsBar();
@@ -333,27 +371,30 @@ void RenderScene()
 }
 
 float normalizeAngle(float angle) {
-	printf("Angle : %f\n", angle);
+	if (DEBBUG)printf("Angle : %f\n", angle);
 	int voltas = angle / (2 * M_PI);
-	printf("voltas : %f\n", angle);
-	printf("normalizado : %f\n", angle - (voltas*M_PI));
+	if (DEBBUG)printf("voltas : %f\n", angle);
+	if (DEBBUG)printf("normalizado : %f\n", angle - (voltas*M_PI));
 	return (angle - (voltas*M_PI));
 }
 
 
 void bulletConfig() {
 	int boardIndex = board->getBoardValue((int)myCharacter->y, (int)myCharacter->x);
-	for (int k = 0; k < 31; k++) {
-		for (int j = 0; j < 28; j++) {
-			printf(" %2d ", board->getBoardValue(k, j));
+	if (DEBBUG) {
+		for (int k = 0; k < 31; k++) {
+			for (int j = 0; j < 28; j++) {
+				printf(" %2d ", board->getBoardValue(k, j));
+			}
+			printf("\n");
 		}
-		printf("\n");
+		printf("X: %d\n", (int)myCharacter->x);
+		printf("Y: %d\n", (int)myCharacter->y);
+		printf("boardIndex: %d\n", boardIndex);
 	}
-	printf("X: %d\n", (int)myCharacter->x);
-	printf("Y: %d\n", (int)myCharacter->y);
-	printf("boardIndex: %d\n", boardIndex);
+
 	int i = (boardIndex - BASE_INDEX_MONSTERS);
-	printf("i: %d\n", i);
+	if (DEBBUG)printf("i: %d\n", i);
 	if (boardIndex >= BASE_INDEX_MONSTERS && boardIndex <= BASE_INDEX_MONSTERS+ NUM_MONSTROS_RANDOM && !monstros[i]->killed) {
 
 		//bulletDraw
@@ -361,12 +402,63 @@ void bulletConfig() {
 			normalizeAngle(myCharacter->angle) - (normalizeAngle(RAD(monstros[i]->angle))) >= RAD(-10) ||
 			normalizeAngle(myCharacter->angle) - ((normalizeAngle(RAD(monstros[i]->angle))) - M_PI) <= RAD(10) ||
 			normalizeAngle(myCharacter->angle) - ((normalizeAngle(RAD(monstros[i]->angle))) - M_PI) >= RAD(-10)) {
-			printf("Char angle : %f     Monster angle: %f\n ", normalizeAngle(myCharacter->angle), normalizeAngle(monstros[i]->angle));
-			bullet->x_dest = monstros[i]->x;
-			bullet->y_dest = monstros[i]->y;
-			bullet->shoot = true;
+			if (DEBBUG)printf("Char angle : %f     Monster angle: %f\n ", normalizeAngle(myCharacter->angle), normalizeAngle(monstros[i]->angle));
+			c_bullet->x_dest = monstros[i]->x;
+			c_bullet->y_dest = monstros[i]->y;
+			c_bullet->shoot = true;
 		}
 	}
+}
+
+void printHelp() {
+	printf("+---------------------------------------------------+\n");
+	printf("|                                                   |\n");
+	printf("|                 HELP REQUESTED                    |\n");
+	printf("|                                                   |\n");
+	printf("+---------------------------------------------------+\n");
+	printf("+---------------------------------------------------+\n");
+	printf("|                    Controls                       |\n");
+	printf("+---------------------------------------------------+\n");
+	printf("|                                                   |\n");
+	printf("|---++Character Motion++                            |\n");
+	printf("|                                                   |\n");
+	printf("| This game uses W, A, S, D for character motion.   |\n");
+	printf("| If in First person, use yout mouse to rotate the  |\n");
+	printf("| camera.                                           |\n");
+	printf("|                                                   |\n");
+	printf("| + W goes Up                                       |\n");
+	printf("| + A goes Left                                     |\n");
+	printf("| + S goes Right                                    |\n");
+	printf("| + D goes Down                                     |\n");
+	printf("|                                                   |\n");
+	printf("|---++Camera and Views++                            |\n");
+	printf("|                                                   |\n");
+	printf("| + V changes view to 3º person, while              |\n");
+	printf("| + E changes view to 1º person again               |\n");
+	printf("|                                                   |\n");
+	printf("|---++Catching Objects++                            |\n");
+	printf("|                                                   |\n");
+	printf("| Just walk through them                            |\n");
+	printf("|                                                   |\n");
+	printf("|---++Attacking++                                   |\n");
+	printf("|                                                   |\n");
+	printf("| + Mouse Left-Button to shoot                      |\n");
+	printf("| + To do Melee you just have to bee in the same    |\n");
+	printf("| square as yout enemy.                             |\n");
+	printf("|									                |\n");
+	printf("|---++What OBJECTS ARE AVAILABLE?++                 |\n");
+	printf("|                                                   |\n");
+	printf("| Bandages - Heal yout wounds                       |\n");
+	printf("| Bullets  - To refill your bullets                 |\n");
+	printf("| Dinamyte - To open final door                     |\n");
+	printf("|									                |\n");
+	printf("|---++How do I open the Final door?++               |\n");
+	printf("|                                                   |\n");
+	printf("| First, you have to find the final door witch is   |\n");
+	printf("| already a big challange! Then you must have the   |\n");
+	printf("| required amount of dinamyte and finnally.......   |\n");
+	printf("| just press 'Q' in front of the door! :)           |\n");
+	printf("+---------------------------------------------------+\n");
 }
 
 GLuint textName[NUM_TEXTURES];
@@ -407,13 +499,58 @@ void init(void)
 	srand((unsigned)time(NULL));
 	start_timer = 100;
 	myCharacter->Reinit();
-	bullet = new Bullet();
+	c_bullet = new Bullet();
 
 }
 
+
+
+
+int monsterShoot_coolDownTime = 0;
+int characterShoot_coolDownTime = 0;
+
+int monsterMelee_coolDownTime = 0;
+int characterMelee_coolDownTime = 0;
+bool m_meleeDone, m_shootDone, c_shootDone;
+bool c_meleeDone = m_meleeDone = m_shootDone = c_shootDone = false;
 bool first = true;
 void TimerFunction(int value)
 {
+	//COOL DOWN TIMES FROM ATTACKS (Monsters + Character)
+	if (c_meleeDone) {
+		characterMelee_coolDownTime = CHARACTER_MELEE_COOLDOWN_TIME;
+	}
+	if (m_meleeDone) {
+		monsterMelee_coolDownTime = MONSTER_MELEE_COOLDOWN_TIME;
+	}
+	if (c_shootDone) {
+		characterShoot_coolDownTime = CHARACTER_SHOOT_COOLDOWN_TIME;
+	}
+	if (m_shootDone) {
+		monsterShoot_coolDownTime = MONSTER_SHOOT_COOLDOWN_TIME;
+	}
+	if (characterMelee_coolDownTime > 0) { characterMelee_coolDownTime -= 0.1; c_meleeDone = false; }
+	
+	if (monsterMelee_coolDownTime > 0) {
+		monsterMelee_coolDownTime -= 0.1;
+		m_meleeDone = false;
+	}
+		if (characterShoot_coolDownTime > 0) {
+			characterShoot_coolDownTime -= 0.1;
+			c_shootDone = false;
+		}
+		if (monsterShoot_coolDownTime > 0) {
+			monsterShoot_coolDownTime -= 0.1;
+			m_shootDone = false;
+		}
+
+
+
+	if (GetAsyncKeyState(TECLA_H))
+	{
+		printHelp();
+	}
+
 	//switch views from 3D to 2D (top view) - 
 	// button-> 'V'
 	if (GetAsyncKeyState(TECLA_V) && v_timer == 0)
@@ -600,8 +737,43 @@ void TimerFunction(int value)
 		exit(0);
 	}
 
-	if (bullet->shoot) {
-		bullet->Move();
+	if (c_bullet->shoot) { //if character shoot a bullet...
+		c_shootDone = true;
+		if (board->IsOpen(c_bullet->x, c_bullet->y))c_bullet->Move();
+			for (int i = 0; i < NUM_MONSTROS_RANDOM; i++) {
+				if (!monstros[i]->killed) {
+					if ((monstros[i]->x <= c_bullet->x + 0.2 && monstros[i]->x >= c_bullet->x - 0.2) && (monstros[i]->y <= c_bullet->y + 0.2 && monstros[i]->y >= c_bullet->y - 0.2) ) {
+						monstros[i]->lives -= CHARACTER_DAMAGE_SHOOT;
+						c_shootDone = false;
+						if (monstros[i]->lives <= 0) {
+							monstros[i]->killed = true;
+						}
+					}
+				}
+			}
+	}
+	int pos = board->getBoardValue(myCharacter->y, myCharacter->x);
+	printf("POS = %d\n", pos);
+	if (pos >= BASE_INDEX_MONSTERS && pos <= BASE_INDEX_MONSTERS + NUM_MONSTROS_RANDOM) { //if character is in a monster zone...
+		if (!monstros[pos]->killed) {
+			int meleeDamage = monstros[pos]->alert(myCharacter->x, myCharacter->y);
+			if (meleeDamage == 1) { //melee
+				m_meleeDone = true;
+				myCharacter->lives -= MONSTER_DAMAGE_MELEE;
+			}
+			if (meleeDamage == 2 ) { //shooting
+				m_shootDone = true;
+				monstros[pos]->shoot(myCharacter->x, myCharacter->y);
+				myCharacter->lives -= MONSTER_DAMAGE_SHOOT;
+			}
+		}
+	}
+
+	for (int i = 0; i < NUM_MONSTROS_RANDOM; i++) {
+		if (monstros[i]->shooting) {
+			if (board->IsOpen(monstros[i]->bullet->x, monstros[i]->bullet->y))monstros[i]->bullet->Move();
+			
+		}
 	}
 
 	glutPostRedisplay();
@@ -659,21 +831,21 @@ void MouseMotion(int x, int y)
 void mouseClick(int button, int state, int x, int y)
 {
 	if (button == GLUT_LEFT_BUTTON) {
-		printf("Vai entrar\n");
+		if (DEBBUG)printf("Vai entrar\n");
 		if (state == GLUT_DOWN) {
 			float _yaw = camera->yaw;
 			float _pitch = camera->pitch;
-			bullet->setInitial(myCharacter->x, myCharacter->y, _yaw,_pitch);
-			//bullet->shoot = true;
+			c_bullet->setInitial(myCharacter->x, myCharacter->y, _yaw,_pitch);
+			c_bullet->shoot = true;
 			bulletConfig();
 		}
 
 	}
 
 	if (button == GLUT_RIGHT_BUTTON) {
-		printf("Vai entrar\n");
+		if (DEBBUG)printf("Vai entrar\n");
 		if (state == GLUT_DOWN) {
-			bullet->shoot = false;
+			c_bullet->shoot = false;
 		}
 
 	}

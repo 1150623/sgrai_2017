@@ -11,7 +11,9 @@
 #ifndef _BOARD_H_
 #include "Board.h"
 #endif
-#define MONSTER_NUM_LIVES 3
+
+#include "Bullet.h"
+
 #define MONSTER_ANGLE 30
 
 
@@ -20,9 +22,10 @@ private:
 
 	void desenhaPoligono(GLfloat a[], GLfloat b[], GLfloat c[], GLfloat  d[], GLfloat normal[]);
 	void desenhaCubo();
+
 public:
 	double speed;
-	int lives; // will it be needed??
+	int lives;
 	bool killed;
 	float angle;
 	double x, y;
@@ -32,17 +35,24 @@ public:
 	int startIndexMonster;
 	StudioModel model;
 	Board* boards;
+	Bullet* bullet;
+
+	bool patrol;
+	bool shooting;
+	bool melee;
 
 	Monster(double, double, float, int,Board*);
 
 	~Monster(void);
 
-	void MoveTo();		//move the Character
-
-	void Reinit();				//reinitialize everything
+	void MoveTo();		//move the Character (Patrulha)
 
 	void initDirection(int); // get direction monster
 
 	void Draw(void);			//draw character
+
+	int alert(float, float);
+
+	void shoot(float, float);
 };
 #endif

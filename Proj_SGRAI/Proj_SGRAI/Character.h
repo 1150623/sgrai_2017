@@ -8,8 +8,6 @@
 #include "mdlviewer.h"
 
 
-
-#define NUM_LIVES 3
 #define CHAR_ANGLE 30
 #define CHAR_SPEED 0.1
 
@@ -24,7 +22,11 @@ public:
 		int x, y;
 	} direction;
 
-	int lives; // will it be needed??
+	int lives;
+	int retrys;
+
+	int startX;
+	int startY;
 
 	double angle;
 	double x, y;

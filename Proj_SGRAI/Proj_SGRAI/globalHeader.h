@@ -38,7 +38,7 @@
 //MAIN GLOBAL INFO
 #define TEXTURE_ON 1
 #define FULLSCREEN 0
-#define DEBBUG 1
+#define DEBBUG 0
 #define MOVE_RATIO 0.02
 #define DYNAMITE_NEEDED 3
 #define HIDE_MOUSE 1
@@ -55,18 +55,30 @@
 
 
 //CHARACTER
-#define NUM_LIVES 50
+#define NUM_LIVES 100
+#define NUM_RETRYS 3
 #define CHAR_ANGLE 0
 #define CHAR_SPEED 0.2
 #define CHARACTER_SIZE 0.25
 #define CHARACTER_STARTLOCATION_X 1
 #define CHARACTER_STARTLOCATION_Y 17
 #define SCALE_PLAYER         0.005
+#define CHARACTER_DAMAGE_SHOOT 25
+#define CHARACTER_DAMAGE_MELEE 50
+#define CHARACTER_SHOOT_COOLDOWN_TIME 40
+#define CHARACTER_MELEE_COOLDOWN_TIME 75
 
 //Monstros
 #define NUM_MONSTROS_RANDOM 10
 #define BASE_INDEX_MONSTERS 10
 #define MONSTER_SPEED 0.008
+#define MONSTER_LIFE 100
+#define MONSTER_DAMAGE_SHOOT 10
+#define MONSTER_DAMAGE_MELEE 15
+#define MONSTER_SHOOT_COOLDOWN_TIME 75
+#define MONSTER_MELEE_COOLDOWN_TIME 100
+#define MONSTER_SHOOT_DIST 2.5
+#define MONSTER_MELEE_DIST 0.5
 
 //Objetos
 
@@ -112,7 +124,7 @@ static void info() {
 	printf("| TEXTURE_Floor	[	%s	] |\n", textureFloor);
 	printf("+-----------------------------------------------+\n");
 
-
+	printf("\n\nPress 'H' for help...");
 }
 
 #endif
