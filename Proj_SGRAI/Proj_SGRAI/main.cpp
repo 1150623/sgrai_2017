@@ -178,7 +178,7 @@ void drawHealthBar()
 	glPushMatrix();
 	glLoadIdentity();
 	
-			// Blending (transparencias)
+	// Blending (transparencias)
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glDisable(GL_LIGHTING);
@@ -322,15 +322,18 @@ void RenderScene()
 
 		for (int i = 0; i < nr_objets; i++) {
 			//printf("Coord obj: %d,%d\nCoord playr: %d,%d\n", objects[i]->x, objects[i]->y, myCharacter->x, myCharacter->y);
-			if ((int)objects[i]->x == (int)myCharacter->x && (int)objects[i]->y == (int)myCharacter->y) {
-				objects[i]->got_it = true;
-				board_walls[(int)objects[i]->x][(int)objects[i]->y] = 0;
-				if (objects[i]->type == BANDAGES) {
-					myCharacter->lives = 100;
-				}
-				else if (objects[i]->type == BULLETS) {
-					myCharacter->weapon.SetSequence(1);
-					Sleep(5);
+			if (objects[i]->got_it==false) {
+				if ((int)objects[i]->x == (int)myCharacter->x && (int)objects[i]->y == (int)myCharacter->y) {
+
+					objects[i]->got_it = true;
+					board_walls[(int)objects[i]->x][(int)objects[i]->y] = 0;
+
+					if (objects[i]->type == BANDAGES) {
+						myCharacter->lives = 100;
+					}
+					else if (objects[i]->type == BULLETS) {
+
+					}
 				}
 			}
 		}
@@ -348,7 +351,7 @@ void RenderScene()
 			DrawAim();
 
 		for (int i = 0; i < NUM_MONSTROS_RANDOM; i++) {
-			printf("MONESTR[%d] is %s\n", i, monstros[i]->killed?"dead":"alive");
+			//printf("MONESTR[%d] is %s\n", i, monstros[i]->killed?"dead":"alive");
 			if (!monstros[i]->killed) {
 				monstros[i]->Draw();
 			}
@@ -763,7 +766,7 @@ void TimerFunction(int value)
 			}
 	}
 	int pos = board->getBoardValue(myCharacter->y, myCharacter->x);
-	printf("POS = %d\n", pos);
+	//printf("POS = %d\n", pos);
 	if (pos >= BASE_INDEX_MONSTERS && pos < BASE_INDEX_MONSTERS + NUM_MONSTROS_RANDOM) { //if character is in a monster zone...
 		if (!monstros[pos]->killed) {
 			int meleeDamage = monstros[pos]->alert(myCharacter->x, myCharacter->y);
@@ -861,7 +864,84 @@ void mouseClick(int button, int state, int x, int y)
 	}
 }
 
+static int menu_id;
+static int submenu_id;
+static int window;
+static int value = 0;
+static int dificulty = 0;
+
+void menu(int num) {
+	if (num == 0) {
+		glutDestroyWindow(window);
+		exit(0);
+	}
+	else if(num==1){
+		myCharacter->lives = NUM_LIVES;
+		myCharacter->retrys= NUM_RETRYS;
+		init();
+		board->tp_restore();
+		gameover = false;
+		board = new Board();
+		board->GenerateRandoMonstersPositions();
+		board->generateRandomObjectsPosition(dificulty);
+		
+	}
+	else if(num==2){
+		glutFullScreen();
+	}
+	else if (num == 3) {
+		myCharacter->lives = NUM_LIVES;
+		myCharacter->retrys = NUM_RETRYS+3;
+		init();
+		board->tp_restore();
+		gameover = false;
+		board = new Board();
+		board->GenerateRandoMonstersPositions();
+		dificulty = num;
+		board->generateRandomObjectsPosition(dificulty);
+	}
+	else if (num == 4) {
+		myCharacter->lives = NUM_LIVES;
+		myCharacter->retrys = NUM_RETRYS;
+		init();
+		board->tp_restore();
+		gameover = false;
+		board = new Board();
+		board->GenerateRandoMonstersPositions();
+		dificulty = num;
+		board->generateRandomObjectsPosition(dificulty);
+	}
+	else if (num == 5) {
+		myCharacter->lives = NUM_LIVES-50;
+		myCharacter->retrys = NUM_RETRYS - 2;
+		init();
+		board->tp_restore();
+		gameover = false;
+		board = new Board();
+		board->GenerateRandoMonstersPositions();
+		dificulty = num;
+		board->generateRandomObjectsPosition(dificulty);
+	}
+}
+
+void createMenu(void) {
+
+	submenu_id = glutCreateMenu(menu);
+	glutAddMenuEntry("Easy", 3);
+	glutAddMenuEntry("Medium", 4);
+	glutAddMenuEntry("Hard", 5);
+	menu_id = glutCreateMenu(menu);
+	glutAddMenuEntry("Restart", 1);
+	glutAddMenuEntry("FullScreen", 2);
+	glutAddSubMenu("Difficulty", submenu_id);
+	glutAddMenuEntry("Quit", 0);     
+	glutAttachMenu(GLUT_RIGHT_BUTTON);
+
+}
+
+
 int main(int argc, char **argv) {
+
 
 	info();
 	glutInit(&argc, argv);
@@ -871,8 +951,7 @@ int main(int argc, char **argv) {
 	if (!FULLSCREEN) {
 		//windowed mode
 		glutInitWindowSize(1080, 820);
-		if (!glutCreateWindow("Labirinto 3D"))
-			exit(1);
+		window=glutCreateWindow("Labirinto 3D");
 	}
 	else {
 		//fullscreen mode
@@ -903,7 +982,7 @@ int main(int argc, char **argv) {
 	//myCharacter->MoveTo(20, 20);
 	// gerar labirinto aleatorio
 	board->GenerateRandoMonstersPositions();
-	board->generateRandomObjectsPosition();
+	board->generateRandomObjectsPosition(dificulty);
 
 	for (int IndexMonster = 0; IndexMonster < NUM_MONSTROS_RANDOM; IndexMonster++) {
 		monstros[IndexMonster] = new Monster(board->VecPositionMonsters[IndexMonster].coluna, board->VecPositionMonsters[IndexMonster].linha,CHARACTER_SIZE, IndexMonster, board);
@@ -937,6 +1016,8 @@ int main(int argc, char **argv) {
 		}
 	}
 
+	createMenu();
+	
 
 	init();
 

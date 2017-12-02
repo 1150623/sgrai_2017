@@ -87,8 +87,8 @@
 #define DYNAMITE 3
 
 #define NUM_DYNAMITES 1
-#define NUM_BANDAGES 10
-#define NUM_BULLETS 5
+#define NUM_BANDAGES 6
+#define NUM_BULLETS 6
 
 //Camera
 #define VELOCIDADE_ROTACAO	0.01

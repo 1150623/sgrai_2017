@@ -569,7 +569,7 @@ void Board::GenerateRandoMonstersPositions(void)
 }
 
 //gera posições aleatorias no mapa
-void Board::generateRandomObjectsPosition(void) {
+void Board::generateRandomObjectsPosition(int num) {
 
 
 	//Adiciona as coordenadas onde é possivel adicionar objetos a um vector
@@ -584,32 +584,38 @@ void Board::generateRandomObjectsPosition(void) {
 			}
 		}
 	}
+	int dificulty = 0;
 
-	ImprimeBoarder();
-
+	if (num==3) {
+		dificulty = 3;
+	}
+	else if (num == 5) {
+		dificulty = -3;
+	}
 	//Gera um numero Random que vai selecionar a posicao onde vao nascer objetos
 	srand(time(NULL));
-	for (int k = 0; k < NUM_DYNAMITES + NUM_BANDAGES + NUM_BULLETS; k++) {
+	int nr_objets = NUM_DYNAMITES + NUM_BANDAGES + NUM_BULLETS;
+	for (int k = 0; k < nr_objets+dificulty ; k++) {
 		int x = rand() % vector.size();
 
 		// Valor na matriz para a existencia de objetos
 		VecPositionObjects.push_back(savePositionObjects());
 		VecPositionObjects[k].y = vector[x].linha;
 		VecPositionObjects[k].x = vector[x].coluna;
-		if(DEBBUG) printf(" x - %2d     y - %d\n ", VecPositionObjects[k].x, VecPositionObjects[k].y);
 
 		if (k<NUM_DYNAMITES) {
 			VecPositionObjects[k].type = DYNAMITE;
 			board_walls[vector[x].linha][vector[x].coluna] = k + 100;
 			vector.erase(vector.begin() + x);
 		}
-		else if (k<NUM_BANDAGES + NUM_DYNAMITES) {
+		else if (k<NUM_BANDAGES + NUM_DYNAMITES+dificulty) {
+			int b = NUM_BANDAGES + NUM_DYNAMITES + dificulty;
 			VecPositionObjects[k].type = BANDAGES;
 			board_walls[vector[x].linha][vector[x].coluna] = k + 100;
 			vector.erase(vector.begin() + x);
 
 		}
-		else if (k <= NUM_DYNAMITES + NUM_BANDAGES + NUM_BULLETS) {
+		else if (k <= NUM_DYNAMITES + NUM_BANDAGES + NUM_BULLETS+ dificulty) {
 			VecPositionObjects[k].type = BULLETS;
 			board_walls[vector[x].linha][vector[x].coluna] = k + 100;
 			vector.erase(vector.begin() + x);

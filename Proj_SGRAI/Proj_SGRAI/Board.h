@@ -215,7 +215,7 @@ class Board {
 		void GenerateRandoMonstersPositions(void);
 
 		//gera objetos aleatorios no mapa
-		void generateRandomObjectsPosition(void);
+		void generateRandomObjectsPosition(int);
 
 		//Imprime board
 		void ImprimeBoarder(void);
