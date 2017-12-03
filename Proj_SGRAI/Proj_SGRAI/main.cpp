@@ -682,6 +682,7 @@ void TimerFunction(int value)
 			{
 				view = (view == VIEW_FIRST_PERSON) ? VIEW_THIRD_PERSON : (view == VIEW_THIRD_PERSON) ? VIEW_MAP : (view == VIEW_MAP) ? VIEW_THIRD_PERSON : view;
 				if (view == VIEW_MAP && !DEBBUG) {
+					myCharacter->InitModelTerceicaPessoa();
 					view = VIEW_THIRD_PERSON;
 				}
 
@@ -694,6 +695,7 @@ void TimerFunction(int value)
 
 			if (GetAsyncKeyState(TECLA_E) && !GetAsyncKeyState(TECLA_V))
 			{
+				myCharacter->InitModelPrimeiraPessoa();
 				view = VIEW_FIRST_PERSON;
 				camera->Reshape(ratio, 60);
 			}

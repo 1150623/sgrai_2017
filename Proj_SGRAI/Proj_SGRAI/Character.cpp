@@ -7,7 +7,7 @@ Board board;
 Character::Character(double tx, double ty, float size, Board b)
 {
 	mdlviewer_init("weapon.mdl", weapon);
-	//mdlviewer_init("character.mdl", model);
+	mdlviewer_init("terceiraPessoa.mdl", model);
 	board = b;
 	Character::size = size;
 	lives = NUM_LIVES;
@@ -20,6 +20,19 @@ Character::Character(double tx, double ty, float size, Board b)
 	speed = CHAR_SPEED;
 	animate = false;
 }
+
+
+void
+Character::InitModelPrimeiraPessoa() {
+	mdlviewer_init("weapon.mdl", weapon);
+}
+
+
+void
+Character::InitModelTerceicaPessoa() {
+	mdlviewer_init("terceiraPessoa.mdl", model);
+}
+
 
 //put Character at starting position and angle
 void
@@ -45,7 +58,6 @@ Character::Draw(float pitch, float yaw, int view)
 {
 	//draw Weapon
 	if (view == VIEW_FIRST_PERSON) {
-		//Codigo para a mira Aqui
 			glPushMatrix(); {
 				glTranslatef(Character::x, Character::y, 0.45);
 
