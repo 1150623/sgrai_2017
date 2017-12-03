@@ -44,7 +44,7 @@ void
 Character::Draw(float pitch, float yaw, int view)
 {
 	//draw Weapon
-	if (true/*view == VIEW_FIRST_PERSON*/) {
+	if (view == VIEW_FIRST_PERSON) {
 		//Codigo para a mira Aqui
 			glPushMatrix(); {
 				glTranslatef(Character::x, Character::y, 0.45);
@@ -57,7 +57,8 @@ Character::Draw(float pitch, float yaw, int view)
 			}glPopMatrix();
 	}
 	else {
-		//draw spheare
+
+		//draw soldier
 		glColor3f(1.0, 0.25, 0.25);
 		glPushMatrix();
 		{
