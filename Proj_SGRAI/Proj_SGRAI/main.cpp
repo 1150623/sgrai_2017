@@ -372,23 +372,23 @@ void drawStart()
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_COLOR_MATERIAL);
 
-	/*PPMImage2 *imagemPPM;
-	imagemPPM = LoadPPM2(TEXTURE_START_IMAGE);
-	glBindTexture(GL_TEXTURE_2D, textName[2]);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imagemPPM->sizeX, imagemPPM->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, imagemPPM->data);*/
+	//PPMImage2 *imagemPPM;
+	//imagemPPM = LoadPPM2(TEXTURE_START_IMAGE);
+	//glBindTexture(GL_TEXTURE_2D, textName[2]);
+	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imagemPPM->sizeX, imagemPPM->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, imagemPPM->data);
 
 
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
 	glBegin(GL_QUADS);
 	glColor4f(1, 0, 0, 0.7);
-	glVertex2f(0, 0); // Upper left
-	glVertex2f(glutGet(GLUT_WINDOW_WIDTH), 0); // Upper right
-	glVertex2f(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT)); // Lower right
-	glVertex2f(0, glutGet(GLUT_WINDOW_HEIGHT)); // Lower left
+	glVertex3f(0, 0, 10); // Upper left
+	glVertex3f(glutGet(GLUT_WINDOW_WIDTH), 0, 10); // Upper right
+	glVertex3f(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), 10); // Lower right
+	glVertex3f(0, glutGet(GLUT_WINDOW_HEIGHT), 10); // Lower left
 	glEnd();
 	
 
@@ -496,7 +496,7 @@ void RenderScene()
 		drawHealthBar();
 		drawBulletsBar();
 		drawCompass();
-		//drawStart();
+		drawStart();
 	}
 	else {
 
@@ -986,6 +986,21 @@ void TimerFunction(int value)
 							}
 							break;
 						}
+					}
+				}
+
+				bool monsterArea = false;
+				for (int i = 0; i < NUM_MONSTROS_RANDOM; i++) {
+					if (monstros[i]->startIndexMonster + BASE_INDEX_MONSTERS == posValue) {
+						monsterArea = true;
+					}
+				}
+
+				if (!monsterArea) {
+					for (int i = 0; i < NUM_MONSTROS_RANDOM; i++) {
+						monstros[i]->patrol = true;
+						monstros[i]->shooting = false;
+						monstros[i]->melee = false;
 					}
 				}
 
