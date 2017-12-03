@@ -21,7 +21,7 @@
 #define TECLA_RIGHT VK_RIGHT
 #define TECLA_DOWN VK_DOWN
 
-
+bool gameWon = false;
 GLuint textName[NUM_TEXTURES];
 //delays in game
 int start_timer;
@@ -221,6 +221,31 @@ void drawHealthBar()
 	glMatrixMode(GL_MODELVIEW);
 }
 
+void drawGameWon()
+{
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	gluOrtho2D(w / 2, w / 2, h / 2, h / 2);
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+	std::string s;
+	glColor3f(0, 1, 0);
+
+	s = "GAME WON! You managed to Escape, congratulations!! (press ESC to leave)";
+	glRasterPos2d(w / 2-0.7, (h / 2) + 0.03);
+	int textSize = s.length();
+	for (int i = 0; i < textSize; i++) {
+		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, s[i]);
+
+	}
+
+	glPopMatrix();
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+}
 
 void drawGameOverText()
 {
@@ -234,8 +259,8 @@ void drawGameOverText()
 	std::string s;
 	glColor3f(1, 0, 0);
 
-	s = "GAME OVER (press ESC)";
-	glRasterPos2d(w / 2 + 0.01, (h / 2) + 0.03);
+	s = "GAME OVER (press ESC to leave)";
+	glRasterPos2d(w / 2 -0.1, (h / 2) + 0.75);
 	int textSize = s.length();
 	for (int i = 0; i < textSize; i++) {
 		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, s[i]);
@@ -343,10 +368,10 @@ void drawStart()
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_COLOR_MATERIAL);
 
-	PPMImage2 *imagemPPM;
+	/*PPMImage2 *imagemPPM;
 	imagemPPM = LoadPPM2(TEXTURE_START_IMAGE);
 	glBindTexture(GL_TEXTURE_2D, textName[2]);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imagemPPM->sizeX, imagemPPM->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, imagemPPM->data);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imagemPPM->sizeX, imagemPPM->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, imagemPPM->data);*/
 
 
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
@@ -384,112 +409,105 @@ void drawStart()
 void RenderScene()
 { //Draw Scene
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  //camera update
-	camera->Set_position(myCharacter->x, myCharacter->y, view);
+  
+	if (!gameWon) {
+		//camera update
 
-	camera->set_light(myCharacter->x, myCharacter->y, myCharacter->size);
+		camera->Set_position(myCharacter->x, myCharacter->y, view);
 
-	
-	//labirinto Init (where to put objects for example)
-
-	if (myCharacter->retrys > 0 && myCharacter->lives <= 0) {
-		myCharacter->Reinit();
-	}
-	else if (myCharacter->retrys == 0 && myCharacter->lives <= 0) {
-		gameover = true;	
-		view = VIEW_MAP;
-		drawGameOverText();
-	}
-
-	board->Draw();
+		camera->set_light(myCharacter->x, myCharacter->y, myCharacter->size);
 
 
-	if (!gameover) {
-		myCharacter->Draw(camera->pitch, camera->yaw, view); //go to stating place
+		//labirinto Init (where to put objects for example)
+
+		if (myCharacter->retrys > 0 && myCharacter->lives <= 0) {
+			myCharacter->Reinit();
+			numBullets = NUM_BULLETS;
+		}
+		else if (myCharacter->retrys == 0 && myCharacter->lives <= 0) {
+			gameover = true;
+			view = VIEW_MAP;
+			drawGameOverText();
+		}
+
+		board->Draw();
+		if (!gameover) {
+
+			myCharacter->Draw(camera->pitch, camera->yaw, view); //go to stating place
 
 
-		for (int i = 0; i < nr_objets; i++) {
-			if (objects[i]->got_it==false) {
-				if ((int)objects[i]->x == (int)myCharacter->x && (int)objects[i]->y == (int)myCharacter->y) {
+			for (int i = 0; i < nr_objets; i++) {
+				if (objects[i]->got_it == false) {
+					if ((int)objects[i]->x == (int)myCharacter->x && (int)objects[i]->y == (int)myCharacter->y) {
 
-					objects[i]->got_it = true;
-					board_walls[(int)objects[i]->x][(int)objects[i]->y] = 0;
+						objects[i]->got_it = true;
+						board_walls[(int)objects[i]->x][(int)objects[i]->y] = 0;
 
-					if (objects[i]->type == BANDAGES) {
-						myCharacter->lives = NUM_LIVES;
+						if (objects[i]->type == BANDAGES) {
+							myCharacter->lives = NUM_LIVES;
+						}
+						else if (objects[i]->type == BULLETS) {
+							numBullets = NUM_BULLETS;
+						}
+						else if (objects[i]->type == DYNAMITE) {
+							numDynamite++;
+						}
 					}
-					else if (objects[i]->type == BULLETS) {
-						numBullets = NUM_BULLETS;
-					}
-					else if (objects[i]->type == DYNAMITE){
-						numDynamite++;
-					}
+				}
+			}
+
+			for (int i = 0; i < nr_objets; i++) {
+				objects[i]->Draw();
+			}
+
+
+			if (c_bullet->shoot) {
+				c_bullet->Draw();
+			}
+
+			if (view == VIEW_FIRST_PERSON)
+				DrawAim();
+
+			for (int i = 0; i < NUM_MONSTROS_RANDOM; i++) {
+				if (!monstros[i]->killed) {
+					monstros[i]->Draw();
+				}
+
+			}
+
+			for (int i = 0; i < NUM_MONSTROS_RANDOM; i++) {
+				if (monstros[i]->shooting && !monstros[i]->killed && monstros[i]->bullet != nullptr) {
+					if (monstros[i]->bullet->draw)
+						monstros[i]->bullet->Draw();
 				}
 			}
 		}
 
-		for (int i = 0; i < nr_objets; i++) {
-			objects[i]->Draw();
-		}
-
-
-		if (c_bullet->shoot) {
-			c_bullet->Draw();
-		}
-
-		if (view == VIEW_FIRST_PERSON)
-			DrawAim();
-
-		for (int i = 0; i < NUM_MONSTROS_RANDOM; i++) {
-			//printf("MONESTR[%d] is %s\n", i, monstros[i]->killed?"dead":"alive");
-			if (!monstros[i]->killed) {
-				monstros[i]->Draw();
-			}
-				
-		}
-
-		for (int i = 0; i < NUM_MONSTROS_RANDOM; i++) {
-			if (monstros[i]->shooting && !monstros[i]->killed) {
-				if(monstros[i]->bullet->draw)
-				monstros[i]->bullet->Draw();
-			}
-		}
+		drawHealthBar();
+		drawBulletsBar();
+		drawCompass();
+		//drawStart();
 	}
+	else {
 
-	drawHealthBar();
-	drawBulletsBar();
-	drawCompass();
-	//drawStart();
+		drawGameWon();
 
+	}
 	glutSwapBuffers();
 	glFlush();
 }
 
 float normalizeAngle(float angle) {
-	if (DEBBUG)printf("Angle : %f\n", angle);
 	int voltas = angle / (2 * M_PI);
-	if (DEBBUG)printf("voltas : %f\n", angle);
-	if (DEBBUG)printf("normalizado : %f\n", angle - (voltas*M_PI));
 	return (angle - (voltas*M_PI));
 }
 
 
 void bulletConfig() {
 	int boardIndex = board->getBoardValue((int)myCharacter->y, (int)myCharacter->x);
-	if (DEBBUG) {
-		for (int k = 0; k < 31; k++) {
-			for (int j = 0; j < 28; j++) {
-				printf(" %2d ", board->getBoardValue(k, j));
-			}
-			printf("\n");
-		}
-		printf("X: %d\n", (int)myCharacter->x);
-		printf("Y: %d\n", (int)myCharacter->y);
-		printf("boardIndex: %d\n", boardIndex);
-	}
+	
 
 	int i = (boardIndex - BASE_INDEX_MONSTERS);
-	if (DEBBUG)printf("i: %d\n", i);
 	if (boardIndex >= BASE_INDEX_MONSTERS && boardIndex <= BASE_INDEX_MONSTERS+ NUM_MONSTROS_RANDOM && !monstros[i]->killed) {
 
 		//bulletDraw
@@ -497,7 +515,6 @@ void bulletConfig() {
 			normalizeAngle(myCharacter->angle) - (normalizeAngle(RAD(monstros[i]->angle))) >= RAD(-10) ||
 			normalizeAngle(myCharacter->angle) - ((normalizeAngle(RAD(monstros[i]->angle))) - M_PI) <= RAD(10) ||
 			normalizeAngle(myCharacter->angle) - ((normalizeAngle(RAD(monstros[i]->angle))) - M_PI) >= RAD(-10)) {
-			if (DEBBUG)printf("Char angle : %f     Monster angle: %f\n ", normalizeAngle(myCharacter->angle), normalizeAngle(monstros[i]->angle));
 			c_bullet->x_dest = monstros[i]->x;
 			c_bullet->y_dest = monstros[i]->y;
 			c_bullet->shoot = true;
@@ -599,9 +616,6 @@ void init(void)
 
 }
 
-
-
-
 int monsterShoot_coolDownTime = 0;
 int characterShoot_coolDownTime = 0;
 
@@ -611,302 +625,351 @@ bool m_meleeDone = false, m_shootDone = false, c_shootDone = false, c_meleeDone 
 bool first = true;
 void TimerFunction(int value)
 {
-	//COOL DOWN TIMES FROM ATTACKS (Monsters + Character)
-	if (c_meleeDone) {
-		characterMelee_coolDownTime = CHARACTER_MELEE_COOLDOWN_TIME;
-	}
-	if (m_meleeDone) {
-		monsterMelee_coolDownTime = MONSTER_MELEE_COOLDOWN_TIME;
-	}
-	if (c_shootDone) {
-		characterShoot_coolDownTime = CHARACTER_SHOOT_COOLDOWN_TIME;
-	}
-	if (m_shootDone) {
-		monsterShoot_coolDownTime = MONSTER_SHOOT_COOLDOWN_TIME;
-	}
-	if (characterMelee_coolDownTime > 0) { 
-		characterMelee_coolDownTime -= 0.1; 
-		c_meleeDone = false; 
-	}
-	
-	if (monsterMelee_coolDownTime > 0) {
-		monsterMelee_coolDownTime -= 0.1;
-		m_meleeDone = false;
-	}
-	
-	if (characterShoot_coolDownTime > 0) {
-		characterShoot_coolDownTime -= 0.1;
-		c_shootDone = false;
-	}
-	if (monsterShoot_coolDownTime > 0) {
-		monsterShoot_coolDownTime -= 0.1;
-		m_shootDone = false;
-	}
+
+		if (!gameWon) {
 
 
 
-	if (GetAsyncKeyState(TECLA_H))
-	{
-		printHelp();
-	}
-
-	//switch views from 3D to 2D (top view) - 
-	// button-> 'V'
-	if (GetAsyncKeyState(TECLA_V) && v_timer == 0)
-	{
-		view = (view == VIEW_FIRST_PERSON) ? VIEW_THIRD_PERSON : (view == VIEW_THIRD_PERSON) ? VIEW_MAP : (view == VIEW_MAP) ? VIEW_THIRD_PERSON : view;
-		if (view == VIEW_MAP && !DEBBUG) {
-			view = VIEW_THIRD_PERSON;
-		}
-
-		if (view == VIEW_MAP) camera->Reshape(ratio, 60);
-		if (view == VIEW_THIRD_PERSON) camera->Reshape(ratio, 10);
-		v_timer = 10;
-	}
-	if (v_timer > 0)
-		v_timer--;
-
-	if (GetAsyncKeyState(TECLA_E) && !GetAsyncKeyState(TECLA_V))
-	{
-		view = VIEW_FIRST_PERSON;
-		camera->Reshape(ratio, 60);
-	}
-
-	//start a new game
-	if (GetAsyncKeyState(VK_RETURN) && gameover) // GAMEOVER not implemented yet
-	{
-		myCharacter->lives = 3;
-		init();
-		//labirinto->tp_restore();
-		gameover = false;
-	}
-
-
-	//short pause when starting game
-	if (start_timer > 0)
-		start_timer--;
-
-
-	//make sure game is in play
-	if (!gameover && start_timer == 0)
-	{
-
-		// Get keyboard input
-		//move right
-		if (GetAsyncKeyState(TECLA_D) && !GetAsyncKeyState(TECLA_A))
-		{
-			if (view == VIEW_FIRST_PERSON) {
-				if (board->IsOpen(myCharacter->x + MOVE_RATIO * cos(myCharacter->angle - RAD(90)), myCharacter->y + MOVE_RATIO * sin(myCharacter->angle - RAD(90))))
-				{
-					myCharacter->x += MOVE_RATIO * cos(myCharacter->angle - RAD(90));
-					myCharacter->y += MOVE_RATIO * sin(myCharacter->angle - RAD(90));
-				}
+			//COOL DOWN TIMES FROM ATTACKS (Monsters + Character)
+			if (c_meleeDone) {
+				characterMelee_coolDownTime = CHARACTER_MELEE_COOLDOWN_TIME;
 			}
-			else {
-				if (board->IsOpen(myCharacter->x, myCharacter->y - MOVE_RATIO))
-				{
-					myCharacter->y -= MOVE_RATIO;
-				}
+			if (m_meleeDone) {
+				monsterMelee_coolDownTime = MONSTER_MELEE_COOLDOWN_TIME;
 			}
-			//Open doors wih 3 dynamites (pressing 'Q')
-			if (GetAsyncKeyState(TECLA_Q) && myCharacter->dynamiteFound == DYNAMITE_NEEDED) {
-				if (board->IsDoor(myCharacter->x + MOVE_RATIO, myCharacter->y))
-				{
-					board->OpenDoor(myCharacter->x + MOVE_RATIO, myCharacter->y);
-				}
+			if (c_shootDone) {
+				characterShoot_coolDownTime = CHARACTER_SHOOT_COOLDOWN_TIME;
 			}
-		}
-
-		//move left
-		if (GetAsyncKeyState(TECLA_A) && !GetAsyncKeyState(TECLA_D))
-		{
-			if (view == VIEW_FIRST_PERSON) {
-				if (board->IsOpen(myCharacter->x + MOVE_RATIO * cos(myCharacter->angle + RAD(90)), myCharacter->y + MOVE_RATIO * sin(myCharacter->angle + RAD(90))))
-				{
-					myCharacter->x += MOVE_RATIO * cos(myCharacter->angle + RAD(90));
-					myCharacter->y += MOVE_RATIO * sin(myCharacter->angle + RAD(90));
-				}
+			if (m_shootDone) {
+				monsterShoot_coolDownTime = MONSTER_SHOOT_COOLDOWN_TIME;
 			}
-			else {
-				if (board->IsOpen(myCharacter->x, myCharacter->y + MOVE_RATIO))
-				{
-					myCharacter->y += MOVE_RATIO;
-				}
-			}
-			//Open doors wih 3 dynamites (pressing 'Q')
-			if (GetAsyncKeyState(TECLA_Q) && myCharacter->dynamiteFound == DYNAMITE_NEEDED) {
-				if (board->IsDoor(myCharacter->x - MOVE_RATIO, myCharacter->y))
-				{
-					board->OpenDoor(myCharacter->x - MOVE_RATIO, myCharacter->y);
-				}
+			if (characterMelee_coolDownTime > 0) {
+				characterMelee_coolDownTime -= 0.1;
+				c_meleeDone = false;
 			}
 
-		}
-		//move up
-		if (GetAsyncKeyState(TECLA_W) && !GetAsyncKeyState(TECLA_S))
-		{
-
-			if (view == VIEW_FIRST_PERSON) {
-				if (board->IsOpen(myCharacter->x + MOVE_RATIO * cos(myCharacter->angle), myCharacter->y + MOVE_RATIO * sin(myCharacter->angle)))
-				{
-					myCharacter->x += MOVE_RATIO * cos(myCharacter->angle);
-					myCharacter->y += MOVE_RATIO * sin(myCharacter->angle);
-				}
-			}
-			else {
-				if (board->IsOpen(myCharacter->x + MOVE_RATIO, myCharacter->y))
-				{
-					myCharacter->x += MOVE_RATIO;
-				}
-			}
-			//Open doors wih 3 dynamites (pressing 'Q')
-			if (GetAsyncKeyState(TECLA_Q) && myCharacter->dynamiteFound == DYNAMITE_NEEDED) {
-				if (board->IsDoor(myCharacter->x - MOVE_RATIO, myCharacter->y))
-				{
-					board->OpenDoor(myCharacter->x - MOVE_RATIO, myCharacter->y);
-				}
+			if (monsterMelee_coolDownTime > 0) {
+				monsterMelee_coolDownTime -= 0.1;
+				m_meleeDone = false;
 			}
 
-		}
+			if (characterShoot_coolDownTime > 0) {
+				characterShoot_coolDownTime -= 0.1;
+				c_shootDone = false;
+			}
+			if (monsterShoot_coolDownTime > 0) {
+				monsterShoot_coolDownTime -= 0.1;
+				m_shootDone = false;
+			}
 
-			//move down
-			if (GetAsyncKeyState(TECLA_S) && !GetAsyncKeyState(TECLA_W))
+
+
+			if (GetAsyncKeyState(TECLA_H))
 			{
-				//printf(" S - DOWN - NEXTPOS = [x = %f][y = %f]\n", round(myCharacter->x + -MOVE_RATIO * cos(myCharacter->angle)-0.5), round(myCharacter->y + MOVE_RATIO * sin(myCharacter->angle)));
-				if (view == VIEW_FIRST_PERSON) {
-					if (board->IsOpen(myCharacter->x - MOVE_RATIO * cos(myCharacter->angle), myCharacter->y - MOVE_RATIO * sin(myCharacter->angle)))
-					{
-						myCharacter->x -= MOVE_RATIO * cos(myCharacter->angle);
-						myCharacter->y -= MOVE_RATIO * sin(myCharacter->angle);
-					}
-				}
-				else {
-					if (board->IsOpen(myCharacter->x - MOVE_RATIO, myCharacter->y))
-					{
-						myCharacter->x -= MOVE_RATIO;
-					}
-				}
-				//Open doors wih 3 dynamites (pressing 'Q')
-				if (GetAsyncKeyState(TECLA_Q) && myCharacter->dynamiteFound == DYNAMITE_NEEDED) {
-
-					if (board->IsDoor(myCharacter->x, myCharacter->y + MOVE_RATIO))
-					{
-						board->OpenDoor(myCharacter->x, myCharacter->y + MOVE_RATIO);
-					}
-
-				}
-
+				printHelp();
 			}
 
-		for (int i = 0; i < NUM_MONSTROS_RANDOM; i++)
-			if (monstros[i]->killed == false && monstros[i]->patrol)
-				monstros[i]->MoveTo();
-
-
-
-		for (int i = 0; i < NUM_MONSTROS_RANDOM; i++) {
-			if (myCharacter->x <= monstros[i]->x + 0.5 && myCharacter->x >= monstros[i]->x - 0.5 && myCharacter->y <= monstros[i]->y + 0.5 && myCharacter->y >= monstros[i]->y - 0.5) {
-				if (monsterMelee_coolDownTime == 0) {
-					m_meleeDone = true;
-					myCharacter->lives -= MONSTER_DAMAGE_MELEE;
+			//switch views from 3D to 2D (top view) - 
+			// button-> 'V'
+			if (GetAsyncKeyState(TECLA_V) && v_timer == 0)
+			{
+				view = (view == VIEW_FIRST_PERSON) ? VIEW_THIRD_PERSON : (view == VIEW_THIRD_PERSON) ? VIEW_MAP : (view == VIEW_MAP) ? VIEW_THIRD_PERSON : view;
+				if (view == VIEW_MAP && !DEBBUG) {
+					view = VIEW_THIRD_PERSON;
 				}
-				if (characterMelee_coolDownTime <= 0) {
-					c_meleeDone = true;
-					monstros[i]->lives -= CHARACTER_DAMAGE_MELEE;
-					if (monstros[i]->lives <= 0) {
-						monstros[i]->x = -5;
-						monstros[i]->killed = true;
-					}
-				}
+
+				if (view == VIEW_MAP) camera->Reshape(ratio, 60);
+				if (view == VIEW_THIRD_PERSON) camera->Reshape(ratio, 10);
+				v_timer = 10;
 			}
-		}
+			if (v_timer > 0)
+				v_timer--;
+
+			if (GetAsyncKeyState(TECLA_E) && !GetAsyncKeyState(TECLA_V))
+			{
+				view = VIEW_FIRST_PERSON;
+				camera->Reshape(ratio, 60);
+			}
+
+			//start a new game
+			if (GetAsyncKeyState(VK_RETURN) && gameover) // GAMEOVER not implemented yet
+			{
+				myCharacter->lives = 3;
+				init();
+				//labirinto->tp_restore();
+				gameover = false;
+			}
 
 
+			//short pause when starting game
+			if (start_timer > 0)
+				start_timer--;
 
-		if (c_bullet->shoot) { //if character shoot a bullet...
-			if (board->IsOpen(c_bullet->x, c_bullet->y))c_bullet->Move();
-			for (int i = 0; i < NUM_MONSTROS_RANDOM; i++) {
-				if (!monstros[i]->killed) {
-					if ((monstros[i]->x <= c_bullet->x + BULLET_SPEED && monstros[i]->x >= c_bullet->x - BULLET_SPEED) && (monstros[i]->y <= c_bullet->y + BULLET_SPEED && monstros[i]->y >= c_bullet->y - BULLET_SPEED)) {
-						monstros[i]->lives -= CHARACTER_DAMAGE_SHOOT;
 
-						if (monstros[i]->lives <= 0) {
-							monstros[i]->killed = true;
-							monstros[i]->x = -5;
+			//make sure game is in play
+			if (!gameover && start_timer == 0)
+			{
+
+				// Get keyboard input
+				//move right
+				if (GetAsyncKeyState(TECLA_D) && !GetAsyncKeyState(TECLA_A))
+				{
+					if (view == VIEW_FIRST_PERSON) {
+						if (board->IsOpen(myCharacter->x + MOVE_RATIO * cos(myCharacter->angle - RAD(90)), myCharacter->y + MOVE_RATIO * sin(myCharacter->angle - RAD(90))))
+						{
+							myCharacter->x += MOVE_RATIO * cos(myCharacter->angle - RAD(90));
+							myCharacter->y += MOVE_RATIO * sin(myCharacter->angle - RAD(90));
+						}
+						//Open doors wih 3 dynamites (pressing 'Q')
+						if (GetAsyncKeyState(TECLA_Q) && myCharacter->dynamiteFound == DYNAMITE_NEEDED) {
+							if (board->IsDoor(myCharacter->x + MOVE_RATIO * cos(myCharacter->angle - RAD(90)), myCharacter->y + MOVE_RATIO * sin(myCharacter->angle - RAD(90))))
+							{
+								board->OpenDoor(myCharacter->x + MOVE_RATIO * cos(myCharacter->angle - RAD(90)), myCharacter->y + MOVE_RATIO * sin(myCharacter->angle - RAD(90)));
+								gameWon = true;
+							}
+						}
+					}
+					else {
+						if (board->IsOpen(myCharacter->x, myCharacter->y - MOVE_RATIO))
+						{
+							myCharacter->y -= MOVE_RATIO;
+						}
+						//Open doors wih 3 dynamites (pressing 'Q')
+						if (GetAsyncKeyState(TECLA_Q) && myCharacter->dynamiteFound == DYNAMITE_NEEDED) {
+							if (board->IsDoor(myCharacter->x, myCharacter->y - MOVE_RATIO))
+							{
+								board->OpenDoor(myCharacter->x, myCharacter->y - MOVE_RATIO);
+								gameWon = true;
+							}
 						}
 					}
 
 				}
-			}
-		}
 
-
-		for (int i = 0; i < NUM_MONSTROS_RANDOM; i++) {
-			if (monstros[i]->shooting) {
-				if (board->IsOpen(monstros[i]->bullet->x, monstros[i]->bullet->y)) {
-					monstros[i]->updateShootingAngle(myCharacter->x, myCharacter->y);
-					monstros[i]->bullet->updateAngle(monstros[i]->shootingAngle);
-					monstros[i]->bullet->Move2();
-				}
-
-				if ((myCharacter->x <= monstros[i]->bullet->x + BULLET_SPEED*2.0 && myCharacter->x >= monstros[i]->bullet->x - BULLET_SPEED*2.0) && (myCharacter->y <= monstros[i]->bullet->y + BULLET_SPEED*2.0 && myCharacter->y >= monstros[i]->bullet->y - BULLET_SPEED*2.0)) {
-					monstros[i]->bullet->draw = false;
-					myCharacter->lives -= MONSTER_DAMAGE_SHOOT;
-				}
-
-			}
-
-		}
-
-
-		int posValue = board->getBoardValue(myCharacter->y, myCharacter->x);
-
-		for (int i = 0; i < NUM_MONSTROS_RANDOM; i++) {
-			if (monstros[i]->startIndexMonster + BASE_INDEX_MONSTERS == posValue) {
-				switch (monstros[i]->alert(myCharacter->y, myCharacter->x)) {
-				case 1://melee aready done in timer
-					break;
-				case 2://shooting
-					monstros[i]->shooting = true;
-					monstros[i]->patrol = false;
-					if (monsterShoot_coolDownTime <= 0) {
-						monstros[i]->shoot(myCharacter->y, myCharacter->x);
-						monstros[i]->bullet->draw = true;
-						m_shootDone = true;
+				//move left
+				if (GetAsyncKeyState(TECLA_A) && !GetAsyncKeyState(TECLA_D))
+				{
+					if (view == VIEW_FIRST_PERSON) {
+						if (board->IsOpen(myCharacter->x + MOVE_RATIO * cos(myCharacter->angle + RAD(90)), myCharacter->y + MOVE_RATIO * sin(myCharacter->angle + RAD(90))))
+						{
+							myCharacter->x += MOVE_RATIO * cos(myCharacter->angle + RAD(90));
+							myCharacter->y += MOVE_RATIO * sin(myCharacter->angle + RAD(90));
+						}
+						//Open doors wih 3 dynamites (pressing 'Q')
+						if (GetAsyncKeyState(TECLA_Q) && myCharacter->dynamiteFound == DYNAMITE_NEEDED) {
+							if (board->IsDoor(myCharacter->x + MOVE_RATIO * cos(myCharacter->angle + RAD(90)), myCharacter->y + MOVE_RATIO * sin(myCharacter->angle + RAD(90))))
+							{
+								board->OpenDoor(myCharacter->x + MOVE_RATIO * cos(myCharacter->angle + RAD(90)), myCharacter->y + MOVE_RATIO * sin(myCharacter->angle + RAD(90))); gameWon = true;
+							}
+						}
 					}
-					break;
+					else {
+						if (board->IsOpen(myCharacter->x, myCharacter->y + MOVE_RATIO))
+						{
+							myCharacter->y += MOVE_RATIO;
+						}
+						//Open doors wih 3 dynamites (pressing 'Q')
+						if (GetAsyncKeyState(TECLA_Q) && myCharacter->dynamiteFound == DYNAMITE_NEEDED) {
+							if (board->IsDoor(myCharacter->x, myCharacter->y + MOVE_RATIO))
+							{
+								board->OpenDoor(myCharacter->x, myCharacter->y + MOVE_RATIO); gameWon = true;
+							}
+						}
+					}
+
+
+				}
+				//move up
+				if (GetAsyncKeyState(TECLA_W) && !GetAsyncKeyState(TECLA_S))
+				{
+
+					if (view == VIEW_FIRST_PERSON) {
+						if (board->IsOpen(myCharacter->x + MOVE_RATIO * cos(myCharacter->angle), myCharacter->y + MOVE_RATIO * sin(myCharacter->angle)))
+						{
+							myCharacter->x += MOVE_RATIO * cos(myCharacter->angle);
+							myCharacter->y += MOVE_RATIO * sin(myCharacter->angle);
+						}
+
+						if (GetAsyncKeyState(TECLA_Q) && myCharacter->dynamiteFound == DYNAMITE_NEEDED) {//Open doors wih 3 dynamites (pressing 'Q')
+							if (board->IsDoor(myCharacter->x + MOVE_RATIO * cos(myCharacter->angle), myCharacter->y + MOVE_RATIO * sin(myCharacter->angle)))
+							{
+								board->OpenDoor(myCharacter->x + MOVE_RATIO * cos(myCharacter->angle), myCharacter->y + MOVE_RATIO * sin(myCharacter->angle)); gameWon = true;
+							}
+						}
+					}
+					else { //3rd view or map
+						if (board->IsOpen(myCharacter->x + MOVE_RATIO, myCharacter->y))
+						{
+							myCharacter->x += MOVE_RATIO;
+						}
+						if (GetAsyncKeyState(TECLA_Q) && myCharacter->dynamiteFound == DYNAMITE_NEEDED) {//Open doors wih 3 dynamites (pressing 'Q')
+							if (board->IsDoor(myCharacter->x + MOVE_RATIO, myCharacter->y))
+							{
+								board->OpenDoor(myCharacter->x + MOVE_RATIO, myCharacter->y); gameWon = true;
+							}
+						}
+					}
+
+
+
+				}
+
+				//move down
+				if (GetAsyncKeyState(TECLA_S) && !GetAsyncKeyState(TECLA_W))
+				{
+					//printf(" S - DOWN - NEXTPOS = [x = %f][y = %f]\n", round(myCharacter->x + -MOVE_RATIO * cos(myCharacter->angle)-0.5), round(myCharacter->y + MOVE_RATIO * sin(myCharacter->angle)));
+					if (view == VIEW_FIRST_PERSON) {
+						if (board->IsOpen(myCharacter->x - MOVE_RATIO * cos(myCharacter->angle), myCharacter->y - MOVE_RATIO * sin(myCharacter->angle)))
+						{
+							myCharacter->x -= MOVE_RATIO * cos(myCharacter->angle);
+							myCharacter->y -= MOVE_RATIO * sin(myCharacter->angle);
+						}
+
+						if (GetAsyncKeyState(TECLA_Q) && myCharacter->dynamiteFound == DYNAMITE_NEEDED) {
+
+							if (board->IsDoor(myCharacter->x - MOVE_RATIO * cos(myCharacter->angle), myCharacter->y - MOVE_RATIO * sin(myCharacter->angle)))
+							{
+								board->OpenDoor(myCharacter->x - MOVE_RATIO * cos(myCharacter->angle), myCharacter->y - MOVE_RATIO * sin(myCharacter->angle)); gameWon = true;
+							}
+
+						}
+					}
+					else {
+						if (board->IsOpen(myCharacter->x - MOVE_RATIO, myCharacter->y))
+						{
+							myCharacter->x -= MOVE_RATIO;
+						}
+
+						if (GetAsyncKeyState(TECLA_Q) && myCharacter->dynamiteFound == DYNAMITE_NEEDED) {
+
+							if (board->IsDoor(myCharacter->x - MOVE_RATIO, myCharacter->y))
+							{
+								board->OpenDoor(myCharacter->x - MOVE_RATIO, myCharacter->y); gameWon = true;
+							}
+
+						}
+					}
+					//Open doors wih 3 dynamites (pressing 'Q')
+
+
+				}
+
+				for (int i = 0; i < NUM_MONSTROS_RANDOM; i++)
+					if (monstros[i]->killed == false && monstros[i]->patrol)
+						monstros[i]->MoveTo();
+
+
+
+				for (int i = 0; i < NUM_MONSTROS_RANDOM; i++) {
+					if (myCharacter->x <= monstros[i]->x + 0.5 && myCharacter->x >= monstros[i]->x - 0.5 && myCharacter->y <= monstros[i]->y + 0.5 && myCharacter->y >= monstros[i]->y - 0.5) {
+						if (monsterMelee_coolDownTime == 0) {
+							m_meleeDone = true;
+							myCharacter->lives -= MONSTER_DAMAGE_MELEE;
+						}
+						if (characterMelee_coolDownTime <= 0) {
+							c_meleeDone = true;
+							monstros[i]->lives -= CHARACTER_DAMAGE_MELEE;
+							if (monstros[i]->lives <= 0) {
+								monstros[i]->x = -5;
+								monstros[i]->killed = true;
+							}
+						}
+					}
+				}
+
+
+
+				if (c_bullet->shoot) { //if character shoot a bullet...
+					if (board->IsOpen(c_bullet->x, c_bullet->y))c_bullet->Move();
+					for (int i = 0; i < NUM_MONSTROS_RANDOM; i++) {
+						if (!monstros[i]->killed) {
+							if ((monstros[i]->x <= c_bullet->x + BULLET_SPEED && monstros[i]->x >= c_bullet->x - BULLET_SPEED) && (monstros[i]->y <= c_bullet->y + BULLET_SPEED && monstros[i]->y >= c_bullet->y - BULLET_SPEED)) {
+								monstros[i]->lives -= CHARACTER_DAMAGE_SHOOT;
+
+								if (monstros[i]->lives <= 0) {
+									monstros[i]->killed = true;
+									monstros[i]->x = -5;
+								}
+							}
+
+						}
+					}
+				}
+
+
+				for (int i = 0; i < NUM_MONSTROS_RANDOM; i++) {
+					if (monstros[i]->shooting) {
+						if (board->IsOpen(monstros[i]->bullet->x, monstros[i]->bullet->y)) {
+							monstros[i]->updateShootingAngle(myCharacter->x, myCharacter->y);
+							monstros[i]->bullet->updateAngle(monstros[i]->shootingAngle);
+							monstros[i]->bullet->Move2();
+						}
+
+						if ((myCharacter->x <= monstros[i]->bullet->x + BULLET_SPEED*2.0 && myCharacter->x >= monstros[i]->bullet->x - BULLET_SPEED*2.0) && (myCharacter->y <= monstros[i]->bullet->y + BULLET_SPEED*2.0 && myCharacter->y >= monstros[i]->bullet->y - BULLET_SPEED*2.0)) {
+							monstros[i]->bullet->draw = false;
+							myCharacter->lives -= MONSTER_DAMAGE_SHOOT;
+						}
+
+					}
+
+				}
+
+
+				int posValue = board->getBoardValue(myCharacter->y, myCharacter->x);
+
+				for (int i = 0; i < NUM_MONSTROS_RANDOM; i++) {
+					if (monstros[i]->startIndexMonster + BASE_INDEX_MONSTERS == posValue) {
+						switch (monstros[i]->alert(myCharacter->y, myCharacter->x)) {
+						case 1://melee aready done in timer
+							break;
+						case 2://shooting
+							monstros[i]->shooting = true;
+							monstros[i]->patrol = false;
+							if (monsterShoot_coolDownTime <= 0) {
+								monstros[i]->shoot(myCharacter->y, myCharacter->x);
+								monstros[i]->bullet->draw = true;
+								m_shootDone = true;
+							}
+							break;
+						}
+					}
+				}
+
+
+			}
+			//DEBBUG KEYS
+			if (DEBBUG) {
+				float d = 0;
+				if (GetAsyncKeyState(VK_F1) && !GetAsyncKeyState(VK_F2))
+				{
+					d = camera->distance += 0.5;
+					camera->Reshape(camera->ratio, d);
+					camera->Set_position(myCharacter->x, myCharacter->y, view);
+				}
+				if (GetAsyncKeyState(VK_F2) && !GetAsyncKeyState(VK_F1)) {
+					d = camera->distance -= 0.5;
+					camera->Reshape(camera->ratio, d);
+					camera->Set_position(myCharacter->x, myCharacter->y, view);
+				}
+
+				if (GetAsyncKeyState(VK_F3) && !GetAsyncKeyState(VK_F4)) { //F3 - Não atribuido
+					gameWon = true;
+				}
+				if (GetAsyncKeyState(VK_F4) && !GetAsyncKeyState(VK_F3)) { //F4 - Não atribuido
+					
+				}
+				if (GetAsyncKeyState(VK_F5) && !GetAsyncKeyState(VK_F6)) { //F5 - Não atribuido
+				}
+				if (GetAsyncKeyState(VK_F6) && !GetAsyncKeyState(VK_F5)) { //F6 - Não atribuido
 				}
 			}
-		}
 
+		}
+else {
 
-	}
-	//DEBBUG KEYS
-	if (DEBBUG) {
-		float d = 0;
-		if (GetAsyncKeyState(VK_F1) && !GetAsyncKeyState(VK_F2))
-		{
-			d = camera->distance += 0.5;
-			camera->Reshape(camera->ratio, d);
-			camera->Set_position(myCharacter->x, myCharacter->y, view);
-		}
-		if (GetAsyncKeyState(VK_F2) && !GetAsyncKeyState(VK_F1)) {
-			d = camera->distance -= 0.5;
-			camera->Reshape(camera->ratio, d);
-			camera->Set_position(myCharacter->x, myCharacter->y, view);
-		}
+	drawGameWon();
 
-		if (GetAsyncKeyState(VK_F3) && !GetAsyncKeyState(VK_F4)) { //F3 - Não atribuido
-		}
-		if (GetAsyncKeyState(VK_F4) && !GetAsyncKeyState(VK_F3)) { //F4 - Não atribuido
-		}
-		if (GetAsyncKeyState(VK_F5) && !GetAsyncKeyState(VK_F6)) { //F5 - Não atribuido
-		}
-		if (GetAsyncKeyState(VK_F6) && !GetAsyncKeyState(VK_F5)) { //F6 - Não atribuido
-		}
-	}
-
-	
+}
 
 
 	//quit
@@ -974,9 +1037,7 @@ void mouseClick(int button, int state, int x, int y)
 {
 	if (button == GLUT_LEFT_BUTTON && characterShoot_coolDownTime <= 0 && numBullets > 0) {
 		numBullets--;
-		printf("SHOOT\n");
 		c_shootDone = true;
-		if (DEBBUG)printf("Vai entrar\n");
 		if (state == GLUT_DOWN) {
 			float _yaw = camera->yaw;
 			float _pitch = camera->pitch;
@@ -986,14 +1047,6 @@ void mouseClick(int button, int state, int x, int y)
 		}
 
 	}
-
-	/*if (button == GLUT_RIGHT_BUTTON) {
-		if (DEBBUG)printf("Vai entrar\n");
-		if (state == GLUT_DOWN) {
-			c_bullet->shoot = false;
-		}
-
-	}*/
 }
 
 static int menu_id;
@@ -1120,14 +1173,6 @@ int main(int argc, char **argv) {
 		monstros[IndexMonster] = new Monster(board->VecPositionMonsters[IndexMonster].coluna, board->VecPositionMonsters[IndexMonster].linha,CHARACTER_SIZE, IndexMonster, board);
 	}
 
-	if (DEBBUG) {
-		printf("Posição dos objetos: \n");
-		for (int i = 0; i < board->VecPositionObjects.size(); i++)
-		{
-			printf("	coord: %d,%d\n	tipo:%d\n", board->VecPositionObjects[i].x, board->VecPositionObjects[i].y, board->VecPositionObjects[i].type);
-
-		}
-	}
 
 	for (int k = 0; k < nr_objets; k++) {
 		if (board->VecPositionObjects[k].type == DYNAMITE) {

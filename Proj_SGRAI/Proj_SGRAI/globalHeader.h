@@ -43,7 +43,7 @@
 #define MOVE_RATIO 0.02
 #define DYNAMITE_NEEDED 3
 #define HIDE_MOUSE 1
-#define CUTOFF 30
+#define CUTOFF 180//30
 #define LAB_SIZE 31 //must be an odd number
 
 //TEXTURES INFO
@@ -54,6 +54,7 @@
 #define TEXTURE_FLOOR_4 "Texturas/FLOOR4_128_128.ppm" //FLOOR{Nr_IMAGE}_128_128.ppm
 #define TEXTURE_WALL_1 "Texturas/WALL1_128_128.ppm"	//WALL{Nr_IMAGE}_128_128.ppm
 #define TEXTURE_START_IMAGE "Texturas/maze_initial_img.ppm"
+#define TEXTURE_END_BLOCK "Texturas/end_block.ppm"
 
 
 //CHARACTER

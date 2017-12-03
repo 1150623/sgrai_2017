@@ -133,16 +133,30 @@ void Board::loadTextures(void) {
 		}
 		// END
 
+		//LOAD END BLOCK TEXTURE
+		// START
+		{
+			PPMImage *imagemPPM3;
+			imagemPPM3 = LoadPPM(TEXTURE_END_BLOCK);
+			glBindTexture(GL_TEXTURE_2D, textName[2]);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imagemPPM3->sizeX, imagemPPM3->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, imagemPPM3->data);
+			free(imagemPPM3); // the GPU already has the image
+
+			//glBindTexture(GL_TEXTURE_2D, textName[2]);
+
+
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		}
+		// END
+
 	}
 }
 
 void Board::DRAW_WALLS_NORTH(void) {
-	if (!TEXTURE_ON) {
-		glColor3f(0.2, 0.3, 0.4);
-	}
-	else {
-		glColor3f(1.0f, 1.0f, 1.0f);
-	}
+	
 	glNormal3f(-1.0f, 0.0f, 0.0f);
 	if (TEXTURE_ON)glTexCoord2f(0.0, 0.0);
 	glVertex3f(0.0f, 0.0f, 0.0f);
@@ -157,12 +171,7 @@ void Board::DRAW_WALLS_NORTH(void) {
 }
 
 void Board::DRAW_WALLS_SOUTH(void) {
-	if (!TEXTURE_ON) {
-		glColor3f(0.2, 0.3, 0.4);
-	}
-	else {
-		glColor3f(1.0f, 1.0f, 1.0f);
-	}
+	
 	glNormal3f(1.0f, 0.0f, 0.0f);
 	if (TEXTURE_ON)glTexCoord2f(0.0, 0.0);
 	glVertex3f(1.0f, 1.0f, 0.0f);
@@ -175,12 +184,7 @@ void Board::DRAW_WALLS_SOUTH(void) {
 }
 
 void Board::DRAW_WALLS_EAST(void) {
-	if (!TEXTURE_ON) {
-		glColor3f(0.2, 0.3, 0.4);
-	}
-	else {
-		glColor3f(1.0f, 1.0f, 1.0f);
-	}
+	
 	glNormal3f(0.0f, -1.0f, 0.0f);
 	if (TEXTURE_ON)glTexCoord2f(0.0, 0.0);
 	glVertex3f(0.0, 0.0, 0.0);
@@ -193,12 +197,8 @@ void Board::DRAW_WALLS_EAST(void) {
 }
 
 void Board::DRAW_WALLS_WEST(void) {
-	if (!TEXTURE_ON) {
-		glColor3f(0.2, 0.3, 0.4);
-	}
-	else {
-		glColor3f(1.0f, 1.0f, 1.0f);
-	}
+	
+
 	glNormal3f(0.0f, 1.0f, 0.0f);
 	if (TEXTURE_ON)glTexCoord2f(0.0, 0.0);
 	glVertex3f(1.0, 1.0, 0.0);
@@ -211,12 +211,8 @@ void Board::DRAW_WALLS_WEST(void) {
 }
 
 void Board::DRAW_WALLS_TOP(void) {
-	if (!TEXTURE_ON) {
-		glColor3f(0.2, 0.3, 0.4);
-	}
-	else {
-		glColor3f(1.0f, 1.0f, 1.0f);
-	}
+	
+
 	
 	glNormal3f(0.0f, 0.0f, 1.0);
 	if (TEXTURE_ON)glTexCoord2f(0.0, 0.0);
@@ -232,12 +228,7 @@ void Board::DRAW_WALLS_TOP(void) {
 
 void Board::DRAW_WALLS_BOTTOM(void) {
 
-	if (!TEXTURE_ON) {
-		glColor3f(0.2, 0.1, 0.1);
-	}
-	else {
-		glColor3f(1.0f, 1.0f, 1.0f);
-	}
+	
 	glNormal3f(0.0f, 0.0f, 1.0f);
 	if (TEXTURE_ON)glTexCoord2f(0.0, 0.0);
 	glVertex3f(1, 0, 0);
@@ -268,6 +259,7 @@ void Board::drawWalls(void) {
 				{
 					if ( board_walls[i][j] == END_POSITION_NUMBER) {
 						aux -= WALLS_BOTTOM;
+						aux += DRAW_DOOR;
 					}
 
 					if (board_walls[i][j] == 1)
@@ -284,39 +276,89 @@ void Board::drawWalls(void) {
 						if (!(aux & WALLS_WEST) && j == BOARD_X - 1) if (board_walls[i][j] == 1) { aux += WALLS_WEST; }
 						if (!(aux & WALLS_EAST) && j == 0) if (board_walls[i][j] == 1) { aux += WALLS_EAST; }
 						if (TEXTURE_ON) glBindTexture(GL_TEXTURE_2D, textName[0]);
+					
+					}
+					else if(board_walls[i][j] == END_POSITION_NUMBER){
+
+						glBindTexture(GL_TEXTURE_2D, textName[2]);
 					}
 					else {
 						if (TEXTURE_ON) glBindTexture(GL_TEXTURE_2D, textName[1]);
 					}
 
-					
 					glBegin(GL_QUADS);
 					{
+						
 						if (aux & WALLS_NORTH) {
+							if (!TEXTURE_ON) {
+								glColor3f(0.2, 0.3, 0.4);
+							}
+							else {
+								glColor3f(1.0f, 1.0f, 1.0f);
+							}
 							Board::DRAW_WALLS_NORTH();
 						}
 						if (aux & WALLS_SOUTH) {
+							if (!TEXTURE_ON) {
+								glColor3f(0.2, 0.3, 0.4);
+							}
+							else {
+								glColor3f(1.0f, 1.0f, 1.0f);
+							}
 							Board::DRAW_WALLS_SOUTH();
 						}
 						if (aux & WALLS_EAST) {
+							if (!TEXTURE_ON) {
+								glColor3f(0.2, 0.3, 0.4);
+							}
+							else {
+								glColor3f(1.0f, 1.0f, 1.0f);
+							}
 							Board::DRAW_WALLS_EAST();
 						}
 						if (aux & WALLS_WEST) {
+							if (!TEXTURE_ON) {
+								glColor3f(0.2, 0.3, 0.4);
+							}
+							else {
+								glColor3f(1.0f, 1.0f, 1.0f);
+							}
 							Board::DRAW_WALLS_WEST();
 						}
 						if (aux & WALLS_TOP) {
+							if (!TEXTURE_ON) {
+								glColor3f(0.2, 0.3, 0.4);
+							}
+							else {
+								glColor3f(1.0f, 1.0f, 1.0f);
+							}
 							Board::DRAW_WALLS_TOP();
 						}
 						if (aux & WALLS_BOTTOM) {
+							if (!TEXTURE_ON) {
+								glColor3f(0.2, 0.3, 0.4);
+							}
+							else {
+								glColor3f(1.0f, 1.0f, 1.0f);
+							}
 							Board::DRAW_WALLS_BOTTOM();
 						}
 						if (aux & DRAW_DOOR) {
-							glBindTexture(GL_TEXTURE_2D, 0);
-							if (board_walls[i][j] == START_POSITION_NUMBER)
-								Board::MYcube(true);
-
-							if (board_walls[i][j] == END_POSITION_NUMBER)
-								Board::MYcube(false);
+					
+							if (board_walls[i][j] == END_POSITION_NUMBER) {
+								if (!TEXTURE_ON) {
+									glColor3f(0.2, 0.3, 0.4);
+								}
+								else {
+									glColor3f(1.0f, 1.0f, 1.0f);
+								}
+								glColor3f(1, 1, 1);
+								Board::DRAW_WALLS_NORTH();
+								Board::DRAW_WALLS_SOUTH();
+								Board::DRAW_WALLS_EAST();
+								Board::DRAW_WALLS_WEST();
+								Board::DRAW_WALLS_TOP();
+							}
 						}
 					}
 					glEnd();
@@ -349,7 +391,7 @@ void Board::Draw(void) {
 bool
 Board::IsOpen(float x, float y)
 {	
-	return board_walls[(int)y][(int)x] != 1 /*&& board_walls[(int)y][(int)x] != START_POSITION_NUMBER*/;
+	return board_walls[(int)y][(int)x] != 1 && board_walls[(int)y][(int)x] != END_POSITION_NUMBER;
 }
 
 bool Board::IsOpen2(float x, float y, int indexMonster)
@@ -366,7 +408,7 @@ bool Board::IsOpen2(float x, float y, int indexMonster)
 bool
 Board::IsDoor(int x, int y)
 {
-	return board_walls[y][x] == 5;
+	return board_walls[y][x] == END_POSITION_NUMBER;
 }
 
 void
