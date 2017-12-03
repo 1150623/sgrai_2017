@@ -4,6 +4,8 @@
 #include "Monster.h"
 #include "Bullet.h"
 #include "Object.h"
+#include "image_loader.h"
+#include <string>;
 
 #define TECLA_E 0x45
 #define TECLA_S 0x53
@@ -166,7 +168,7 @@ void drawCompass()
 	}glPopMatrix();
 	glMatrixMode(GL_MODELVIEW);
 	
-		}
+}
 
 void drawHealthBar()
  {
@@ -255,7 +257,7 @@ void drawBulletsBar() {
 		glMatrixMode(GL_PROJECTION);
 		glPushMatrix();
 		glLoadIdentity();
-		gluOrtho2D(1,0,1,-3);
+		gluOrtho2D(-0.9, 0.1, 0.08, -0.9);
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 		glLoadIdentity();
@@ -267,18 +269,40 @@ void drawBulletsBar() {
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_COLOR_MATERIAL);
 
-		const int numDiv = 1;
-		const float sep = 0.01;
-		const float barHeight = 0.1 / (float)numDiv;
 		glBegin(GL_QUADS);
-		glColor4f(0.5, 1, 0, 0.7);
-		for (float i = 0; i < 10; i += (sep + barHeight)) {
-			glVertex2f(0, i);
-			glVertex2f(0.1, i);
-			glVertex2f(0.1, i + barHeight);
-			glVertex2f(0, i + barHeight);
-		}
+		glColor4f(0, 0, 0, 0.7);
+		glVertex2f(0, 0); // Upper left
+		glVertex2f(glutGet(GLUT_WINDOW_WIDTH)/6, 0); // Upper right
+		glVertex2f(glutGet(GLUT_WINDOW_WIDTH)/6, glutGet(GLUT_WINDOW_HEIGHT)/6); // Lower right
+		glVertex2f(0, glutGet(GLUT_WINDOW_HEIGHT)/6); // Lower left
 		glEnd();
+
+		glColor4f(0, 1, 0, 0.7);
+
+		//alterar aqui para numeros reais
+		int balas = 10;
+		int dinamites = 3;
+
+		std::string text_bullets = "Bullets: ";
+		text_bullets += std::to_string(balas);
+
+		glRasterPos2d(w / 2 + 0.01, (h / 2) + 0.03);
+		int textSize = text_bullets.length();
+		for (int i = 0; i < textSize; i++) {
+			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, text_bullets[i]);
+
+		}
+
+		std::string text_dyn = "Dynamite: ";
+		text_dyn += std::to_string(dinamites);
+
+		glRasterPos2d(w / 2 + 0.01, (h / 2) + 0.06);
+		int textSize2 = text_dyn.length();
+		for (int i = 0; i < textSize2; i++) {
+			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, text_dyn[i]);
+
+		}
+
 
 		// ropõe estado
 		glDisable(GL_BLEND);
@@ -290,6 +314,68 @@ void drawBulletsBar() {
 		glMatrixMode(GL_PROJECTION);
 		glPopMatrix();
 		glMatrixMode(GL_MODELVIEW);
+}
+
+typedef struct {
+	int sizeX, sizeY;
+	char *data;
+} PPMImage;
+
+extern "C" PPMImage *LoadPPM2(char * path) {
+	PPMImage* result = new PPMImage;
+	result->sizeX = 128;
+	result->sizeY = 128;
+	result->data = SAIL_load_image(path, &result->sizeX, &result->sizeY);
+
+	return result;
+};
+
+void drawStart()
+{
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	gluOrtho2D(1, 0, 1, 0);
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+
+	// Blending (transparencias)
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glDisable(GL_LIGHTING);
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_COLOR_MATERIAL);
+
+	PPMImage *imagemPPM2;
+	imagemPPM2 = LoadPPM2("mazeimage.ppm");
+	glBindTexture(GL_TEXTURE_2D, textName[2]);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imagemPPM2->sizeX, imagemPPM2->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, imagemPPM2->data);
+
+	glBegin(GL_QUADS);
+	glColor4f(1, 0, 0, 0.7);
+	glVertex2f(0, 0); // Upper left
+	glVertex2f(glutGet(GLUT_WINDOW_WIDTH), 0); // Upper right
+	glVertex2f(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT)); // Lower right
+	glVertex2f(0, glutGet(GLUT_WINDOW_HEIGHT)); // Lower left
+	glEnd();
+	
+
+	// ropõe estado
+	glDisable(GL_BLEND);
+	glEnable(GL_LIGHTING);
+	//glEnable(GL_COLOR_MATERIAL);
+	glEnable(GL_DEPTH_TEST);
+
+	glPopMatrix();
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+	
+		
+
+			
+
 }
 
 
@@ -368,6 +454,7 @@ void RenderScene()
 	drawHealthBar();
 	drawBulletsBar();
 	drawCompass();
+	//drawStart();
 
 	glutSwapBuffers();
 	glFlush();
@@ -464,7 +551,7 @@ void printHelp() {
 	printf("+---------------------------------------------------+\n");
 }
 
-GLuint textName[NUM_TEXTURES];
+GLuint textName[NUM_TEXTURES+1];
 
 //SET UP THE GAME
 void init(void)
