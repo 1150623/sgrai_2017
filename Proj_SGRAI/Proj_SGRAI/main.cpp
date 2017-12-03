@@ -755,11 +755,12 @@ void TimerFunction(int value)
 			//make sure game is in play
 			if (!gameover && start_timer == 0)
 			{
-
+				int ifs = 0;
 				// Get keyboard input
 				//move right
 				if (GetAsyncKeyState(TECLA_D) && !GetAsyncKeyState(TECLA_A))
 				{
+					ifs++;
 					myCharacter->Moving(true);
 					if (view == VIEW_FIRST_PERSON) {
 						if (board->IsOpen(myCharacter->x  + MOVE_RATIO * cos(myCharacter->angle - RAD(90)), myCharacter->y  + MOVE_RATIO * sin(myCharacter->angle - RAD(90))))
@@ -791,11 +792,12 @@ void TimerFunction(int value)
 						}
 					}
 
-				}else
+				}
 
 				//move left
 				if (GetAsyncKeyState(TECLA_A) && !GetAsyncKeyState(TECLA_D))
 				{
+					ifs++;
 					myCharacter->Moving(true);
 					if (view == VIEW_FIRST_PERSON) {
 						if (board->IsOpen(myCharacter->x  + MOVE_RATIO * cos(myCharacter->angle + RAD(90)), myCharacter->y + MOVE_RATIO * sin(myCharacter->angle + RAD(90))))
@@ -827,10 +829,11 @@ void TimerFunction(int value)
 
 
 				}
-				else
+				
 				//move up
 				if (GetAsyncKeyState(TECLA_W) && !GetAsyncKeyState(TECLA_S))
 				{
+					ifs++;
 					myCharacter->Moving(true);
 
 					if (view == VIEW_FIRST_PERSON) {
@@ -860,13 +863,11 @@ void TimerFunction(int value)
 						}
 					}
 
-
-
 				}
-				else
 				//move down
 				if (GetAsyncKeyState(TECLA_S) && !GetAsyncKeyState(TECLA_W))
 				{
+					ifs++;
 					myCharacter->Moving(true);
 					//printf(" S - DOWN - NEXTPOS = [x = %f][y = %f]\n", round(myCharacter->x + -MOVE_RATIO * cos(myCharacter->angle)-0.5), round(myCharacter->y + MOVE_RATIO * sin(myCharacter->angle)));
 					if (view == VIEW_FIRST_PERSON) {
@@ -904,7 +905,7 @@ void TimerFunction(int value)
 
 
 				}
-				else
+				if(ifs == 0)
 					myCharacter->Moving(false);
 				for (int i = 0; i < NUM_MONSTROS_RANDOM; i++)
 					if (monstros[i]->killed == false && monstros[i]->patrol)
