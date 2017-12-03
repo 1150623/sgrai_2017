@@ -1,7 +1,4 @@
 #include "Monster.h"
-#include <stdio.h>
-#include <GL/glut.h>
-#include <Math.h>
 
 // Destructor
 Monster::~Monster(void) {}
@@ -14,6 +11,7 @@ Monster::Monster(double tx, double ty, float size, int IndexMonster,Board* b)
 	killed = false;
 	Monster::boards = b;
 	Monster::size = size;
+	bullet = new Bullet();
 	lives = MONSTER_LIFE;
 	x = tx + 0.5;
 	y = ty+ 0.5;
@@ -84,7 +82,6 @@ void Monster::initDirection(int startIndexMonster) {
 
 int Monster::alert(float c_y, float c_x) {
 	float dist = sqrt(pow(c_x - x, 2) + pow(c_y - y, 2));
-	printf("Monster [%d] -> dist = %.3f\n", startIndexMonster,dist);
 	if (dist < MONSTER_SHOOT_DIST) {
 		if (dist < MONSTER_MELEE_DIST) {
 			//MELEE

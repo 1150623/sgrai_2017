@@ -15,7 +15,7 @@ private:
 
 
 public:
-
+	void setSize(float);
 	bool shoot;
 	float  yaw,pitch;
 	float x, y,z;

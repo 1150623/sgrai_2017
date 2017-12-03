@@ -506,6 +506,7 @@ void RenderScene()
 
 
 			if (c_bullet->shoot) {
+				if(c_bullet->draw)
 				c_bullet->Draw();
 			}
 
@@ -670,7 +671,7 @@ void init(void)
 #define FIX 0.2
 
 
-
+bool resizeOnce = true;
 int monsterShoot_coolDownTime = 0;
 int characterShoot_coolDownTime = 0;
 int characterShootingAnimation_coolDownTime = 0;
@@ -684,7 +685,6 @@ void TimerFunction(int value)
 		if (!gameWon) {
 
 			
-
 
 			if (reloading2) {
 				characterReload_coolDownTime = 100;
@@ -963,10 +963,11 @@ void TimerFunction(int value)
 
 
 				for (int i = 0; i < NUM_MONSTROS_RANDOM; i++) {
-					if (myCharacter->x <= monstros[i]->x + 0.5 && myCharacter->x >= monstros[i]->x - 0.5 && myCharacter->y <= monstros[i]->y + 0.5 && myCharacter->y >= monstros[i]->y - 0.5) {
+					if (myCharacter->x <= monstros[i]->x + 0.5 && myCharacter->x >= monstros[i]->x - 0.5 && myCharacter->y <= monstros[i]->y + 0.5 && myCharacter->y >= monstros[i]->y - 0.5 && monstros[i]->bullet->draw) {
 						if (monsterMelee_coolDownTime == 0) {
 							m_meleeDone = true;
 							myCharacter->lives -= MONSTER_DAMAGE_MELEE;
+							monstros[i]->bullet->draw = false;
 						}
 						if (characterMelee_coolDownTime <= 0) {
 							c_meleeDone = true;
@@ -983,37 +984,41 @@ void TimerFunction(int value)
 
 				if (c_bullet->shoot) { //if character shoot a bullet...
 					
-					if (board->IsOpen(c_bullet->x, c_bullet->y))c_bullet->Move();
-					for (int i = 0; i < NUM_MONSTROS_RANDOM; i++) {
-						if (!monstros[i]->killed) {
-							if ((monstros[i]->x <= c_bullet->x + BULLET_SPEED && monstros[i]->x >= c_bullet->x - BULLET_SPEED) && (monstros[i]->y <= c_bullet->y + BULLET_SPEED && monstros[i]->y >= c_bullet->y - BULLET_SPEED)) {
-								monstros[i]->lives -= CHARACTER_DAMAGE_SHOOT;
+					if (board->IsOpen(c_bullet->x, c_bullet->y)) 
+						if (c_bullet->draw) {
+							c_bullet->Move();
+							for (int i = 0; i < NUM_MONSTROS_RANDOM; i++) {
+								if (!monstros[i]->killed) {
+									if ((monstros[i]->x <= c_bullet->x + BULLET_SPEED && monstros[i]->x >= c_bullet->x - BULLET_SPEED) && (monstros[i]->y <= c_bullet->y + BULLET_SPEED && monstros[i]->y >= c_bullet->y - BULLET_SPEED)) {
+										monstros[i]->lives -= CHARACTER_DAMAGE_SHOOT;
+										c_bullet->draw = false;
+										if (monstros[i]->lives <= 0) {
+											monstros[i]->killed = true;
+											monstros[i]->x = -5;
+										}
+									}
 
-								if (monstros[i]->lives <= 0) {
-									monstros[i]->killed = true;
-									monstros[i]->x = -5;
 								}
 							}
-
 						}
-					}
 				}
 
 
 				for (int i = 0; i < NUM_MONSTROS_RANDOM; i++) {
 					if (monstros[i]->shooting) {
 						if (monstros[i]->bullet != nullptr) {
-							if (board->IsOpen(monstros[i]->bullet->x, monstros[i]->bullet->y)) {
-								monstros[i]->updateShootingAngle(myCharacter->x, myCharacter->y);
-								monstros[i]->bullet->updateAngle(monstros[i]->shootingAngle);
-								monstros[i]->bullet->Move2();
-							}
+							if (monstros[i]->bullet->draw) {
+								if (board->IsOpen(monstros[i]->bullet->x, monstros[i]->bullet->y)) {
+									monstros[i]->updateShootingAngle(myCharacter->x, myCharacter->y);
+									monstros[i]->bullet->updateAngle(monstros[i]->shootingAngle);
+									monstros[i]->bullet->Move2();
+								}
 
-							if ((myCharacter->x <= monstros[i]->bullet->x + BULLET_SPEED*2.0 && myCharacter->x >= monstros[i]->bullet->x - BULLET_SPEED*2.0) && (myCharacter->y <= monstros[i]->bullet->y + BULLET_SPEED*2.0 && myCharacter->y >= monstros[i]->bullet->y - BULLET_SPEED*2.0)) {
-								monstros[i]->bullet->draw = false;
-								myCharacter->lives -= MONSTER_DAMAGE_SHOOT;
+								if ((myCharacter->x <= monstros[i]->bullet->x + 0.5 && myCharacter->x >= monstros[i]->bullet->x - 0.5) && (myCharacter->y <= monstros[i]->bullet->y + 0.5 && myCharacter->y >= monstros[i]->bullet->y - 0.5)) {
+									monstros[i]->bullet->draw = false;
+									myCharacter->lives -= MONSTER_DAMAGE_SHOOT;
+								}
 							}
-
 						}
 					}
 				}
@@ -1030,6 +1035,7 @@ void TimerFunction(int value)
 							monstros[i]->shooting = true;
 							monstros[i]->patrol = false;
 							if (monsterShoot_coolDownTime <= 0) {
+								monstros[i]->bullet->setSize(0.5);
 								monstros[i]->shoot(myCharacter->y, myCharacter->x);
 								monstros[i]->bullet->draw = true;
 								m_shootDone = true;
@@ -1072,7 +1078,7 @@ void TimerFunction(int value)
 				}
 
 				if (GetAsyncKeyState(VK_F3) && !GetAsyncKeyState(VK_F4)) { //F3 - Não atribuido
-					gameWon = true;
+
 				}
 				if (GetAsyncKeyState(VK_F4) && !GetAsyncKeyState(VK_F3)) { //F4 - Não atribuido
 					
@@ -1162,6 +1168,7 @@ void mouseClick(int button, int state, int x, int y)
 			float _pitch = camera->pitch;
 			c_bullet->setInitial(myCharacter->x, myCharacter->y, _yaw,_pitch);
 			c_bullet->shoot = true;
+			c_bullet->draw = true;
 			myCharacter->Shooting(true);
 			shootingAnimation = true;
 			shootingAnimation2 = true;
