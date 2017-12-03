@@ -185,8 +185,8 @@ void drawHealthBar()
 	glBegin(GL_POLYGON);
 	glColor4f(0.3, 0, 0,0.7);
 	glVertex2f(0, 0);
-	glVertex2f(100 * 0.004, 0);
-	glVertex2f(100 * 0.004, 0.05);
+	glVertex2f(NUM_LIVES * 0.004, 0);
+	glVertex2f(NUM_LIVES * 0.004, 0.05);
 	glVertex2f(0, 0.05);
 	glEnd();
 	
@@ -201,7 +201,15 @@ void drawHealthBar()
 		std::string s;
 	glColor4f(0, 1, 0, 0.7);
 	
-		s = "Health";
+		s = "Health ( ";
+		s += std::to_string(myCharacter->lives);
+		s += " / ";
+		s += std::to_string(NUM_LIVES);
+		s += " )";
+
+		s += "       Lives Remaining - ";
+		s += std::to_string(myCharacter->retrys);
+		
 	glRasterPos2d(w / 2 + 0.01, (h / 2) + 0.03);
 	int textSize = s.length();
 	for (int i = 0; i < textSize; i++) {
