@@ -570,6 +570,13 @@ void printHelp() {
 	printf("\t| already a big challange! Then you must have the   |\n");
 	printf("\t| required amount of dinamyte and finnally.......   |\n");
 	printf("\t| just press 'Q' in front of the door! :)           |\n");
+	printf("\t|                                                   |\n");
+	printf("\t|---++Too Easy?++                                   |\n");
+	printf("\t|                                                   |\n");
+	printf("\t| If you don't know, there is menu in the game, you |\n");
+	printf("\t| can open it clicking in the mouse's right button. |\n");
+	printf("\t| From the diferent options, you have the ones that |\n");
+	printf("\t| regulate the dificulty.                           |\n");
 	printf("\t+---------------------------------------------------+\n");
 	
 }
