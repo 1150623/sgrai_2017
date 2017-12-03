@@ -74,7 +74,22 @@ void Board::initAStarGenerator() {
 }
 
 
-void Board::tp_restore(){}
+void Board::tp_restore(){
+
+	createRandomLab(board_walls);
+	for (int i = 0; i < LAB_SIZE; i++) {
+		for (int j = 0; j < LAB_SIZE; j++) {
+			if (board_walls[i][j] == START_POSITION_NUMBER) {
+				startPositionX = j;
+				startPositionY = i;
+			}
+			if (board_walls[i][j] == END_POSITION_NUMBER) {
+				endPositionX = j;
+				endPositionY = i;
+			}
+		}
+	}
+}
 
 typedef struct {
 	int sizeX, sizeY;

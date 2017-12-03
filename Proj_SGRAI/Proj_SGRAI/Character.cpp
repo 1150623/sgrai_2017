@@ -61,6 +61,7 @@ Character::Draw(float pitch, float yaw, int view)
 
 				glScalef(SCALE_PLAYER + 0.01, SCALE_PLAYER + 0.01, SCALE_PLAYER + 0.01);
 				mdlviewer_display(weapon);
+				mdlviewer_nextsequence;
 			}glPopMatrix();
 	}
 	else {
@@ -69,11 +70,12 @@ Character::Draw(float pitch, float yaw, int view)
 		glColor3f(1.0, 0.25, 0.25);
 		glPushMatrix();
 		{
-			glTranslatef(Character::x, Character::y, 0.45);
+			glTranslatef(Character::x, Character::y, 0.55);
 			glRotatef(GRAUS(yaw), 0, 0, 1);
 			glScalef(SCALE_PLAYER + 0.01, SCALE_PLAYER + 0.01, SCALE_PLAYER + 0.01);
 			mdlviewer_display(model);
-			model.AdvanceFrame(100);
+			model.AdvanceFrame(0.01);
+			
 		}
 		glPopMatrix();
 

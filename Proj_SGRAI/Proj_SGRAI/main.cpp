@@ -1109,7 +1109,6 @@ void menu(int num) {
 			init();
 			board->tp_restore();
 			gameover = false;
-			board = new Board();
 			board->GenerateRandoMonstersPositions();
 			for (int IndexMonster = 0; IndexMonster < NUM_MONSTROS_RANDOM; IndexMonster++) {
 				monstros[IndexMonster] = new Monster(board->VecPositionMonsters[IndexMonster].coluna, board->VecPositionMonsters[IndexMonster].linha, CHARACTER_SIZE, IndexMonster, board);
@@ -1141,7 +1140,6 @@ void menu(int num) {
 			init();
 			board->tp_restore();
 			gameover = false;
-			board = new Board();
 			board->GenerateRandoMonstersPositions();
 			for (int IndexMonster = 0; IndexMonster < NUM_MONSTROS_RANDOM; IndexMonster++) {
 				monstros[IndexMonster] = new Monster(board->VecPositionMonsters[IndexMonster].coluna, board->VecPositionMonsters[IndexMonster].linha, CHARACTER_SIZE, IndexMonster, board);
@@ -1178,7 +1176,6 @@ void menu(int num) {
 		init();
 		board->tp_restore();
 		gameover = false;
-		board = new Board();
 		board->GenerateRandoMonstersPositions();
 		for (int IndexMonster = 0; IndexMonster < NUM_MONSTROS_RANDOM; IndexMonster++) {
 			monstros[IndexMonster] = new Monster(board->VecPositionMonsters[IndexMonster].coluna, board->VecPositionMonsters[IndexMonster].linha, CHARACTER_SIZE, IndexMonster, board);
