@@ -274,7 +274,7 @@ void drawGameOverText()
 }
 
 int numBullets = NUM_BULLETS;
-int numDynamite = 0;
+int numDynamite = 1;
 
 void drawBulletsBar() {
 		glMatrixMode(GL_PROJECTION);
@@ -451,10 +451,11 @@ void RenderScene()
 							myCharacter->lives = NUM_LIVES;
 						}
 						else if (objects[i]->type == BULLETS) {
-							numBullets = NUM_BULLETS;
 							myCharacter->Reload(true);
 							reloading = true;
 							reloading2 = true;
+							numBullets = NUM_BULLETS+numBullets;
+
 						}
 						else if (objects[i]->type == DYNAMITE) {
 							numDynamite++;
@@ -1117,6 +1118,7 @@ void menu(int num) {
 	}
 	else if (num == 1) {
 		if (dificulty==3) {
+			numDynamite = 2;
 			numBullets = 15;
 			myCharacter->lives = NUM_LIVES;
 			myCharacter->retrys = NUM_RETRYS + 2;
@@ -1149,6 +1151,7 @@ void menu(int num) {
 				}
 			}
 		}else if (dificulty == 4) {
+			numDynamite = 1;
 			numBullets = 6;
 			myCharacter->lives = NUM_LIVES;
 			myCharacter->retrys = NUM_RETRYS;
@@ -1180,6 +1183,7 @@ void menu(int num) {
 				}
 			}
 		}else if (dificulty == 3) {
+			numDynamite = 0;
 			numBullets = 3;
 			myCharacter->lives = NUM_LIVES-50;
 			myCharacter->retrys = NUM_RETRYS -1;
@@ -1216,6 +1220,7 @@ void menu(int num) {
 		glutFullScreen();
 	}
 	else if (num == 3) {
+		numDynamite = 2;
 		numBullets = 15;
 		myCharacter->lives = NUM_LIVES;
 		myCharacter->retrys = NUM_RETRYS + 2;
@@ -1248,6 +1253,7 @@ void menu(int num) {
 		}
 	}
 	else if (num == 4) {
+		numDynamite = 1;
 		numBullets = 6;
 		myCharacter->lives = 100;
 		myCharacter->retrys = NUM_RETRYS;
@@ -1281,6 +1287,7 @@ void menu(int num) {
 		}
 	}
 	else if (num == 5) {
+		numDynamite = 0;
 		numBullets = 3;
 		myCharacter->lives = 50;
 		myCharacter->retrys = NUM_RETRYS - 1;
