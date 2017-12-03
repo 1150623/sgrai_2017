@@ -622,7 +622,7 @@ void init(void)
 	c_bullet = new Bullet();
 
 }
-
+#define FIX 0.2
 int monsterShoot_coolDownTime = 0;
 int characterShoot_coolDownTime = 0;
 
@@ -724,30 +724,30 @@ void TimerFunction(int value)
 				if (GetAsyncKeyState(TECLA_D) && !GetAsyncKeyState(TECLA_A))
 				{
 					if (view == VIEW_FIRST_PERSON) {
-						if (board->IsOpen(myCharacter->x + MOVE_RATIO * cos(myCharacter->angle - RAD(90)), myCharacter->y + MOVE_RATIO * sin(myCharacter->angle - RAD(90))))
+						if (board->IsOpen(myCharacter->x  + MOVE_RATIO * cos(myCharacter->angle - RAD(90)), myCharacter->y  + MOVE_RATIO * sin(myCharacter->angle - RAD(90))))
 						{
 							myCharacter->x += MOVE_RATIO * cos(myCharacter->angle - RAD(90));
 							myCharacter->y += MOVE_RATIO * sin(myCharacter->angle - RAD(90));
 						}
 						//Open doors wih 3 dynamites (pressing 'Q')
 						if (GetAsyncKeyState(TECLA_Q) && myCharacter->dynamiteFound == DYNAMITE_NEEDED) {
-							if (board->IsDoor(myCharacter->x + MOVE_RATIO * cos(myCharacter->angle - RAD(90)), myCharacter->y + MOVE_RATIO * sin(myCharacter->angle - RAD(90))))
+							if (board->IsDoor(myCharacter->x  + MOVE_RATIO * cos(myCharacter->angle - RAD(90)), myCharacter->y  + MOVE_RATIO * sin(myCharacter->angle - RAD(90))))
 							{
-								board->OpenDoor(myCharacter->x + MOVE_RATIO * cos(myCharacter->angle - RAD(90)), myCharacter->y + MOVE_RATIO * sin(myCharacter->angle - RAD(90)));
+								board->OpenDoor(myCharacter->x  + MOVE_RATIO * cos(myCharacter->angle - RAD(90)), myCharacter->y + MOVE_RATIO * sin(myCharacter->angle - RAD(90)));
 								gameWon = true;
 							}
 						}
 					}
 					else {
-						if (board->IsOpen(myCharacter->x, myCharacter->y - MOVE_RATIO))
+						if (board->IsOpen(myCharacter->x, myCharacter->y - FIX - MOVE_RATIO))
 						{
 							myCharacter->y -= MOVE_RATIO;
 						}
 						//Open doors wih 3 dynamites (pressing 'Q')
 						if (GetAsyncKeyState(TECLA_Q) && myCharacter->dynamiteFound == DYNAMITE_NEEDED) {
-							if (board->IsDoor(myCharacter->x, myCharacter->y - MOVE_RATIO))
+							if (board->IsDoor(myCharacter->x, myCharacter->y - FIX - MOVE_RATIO))
 							{
-								board->OpenDoor(myCharacter->x, myCharacter->y - MOVE_RATIO);
+								board->OpenDoor(myCharacter->x, myCharacter->y - FIX - MOVE_RATIO);
 								gameWon = true;
 							}
 						}
@@ -759,29 +759,29 @@ void TimerFunction(int value)
 				if (GetAsyncKeyState(TECLA_A) && !GetAsyncKeyState(TECLA_D))
 				{
 					if (view == VIEW_FIRST_PERSON) {
-						if (board->IsOpen(myCharacter->x + MOVE_RATIO * cos(myCharacter->angle + RAD(90)), myCharacter->y + MOVE_RATIO * sin(myCharacter->angle + RAD(90))))
+						if (board->IsOpen(myCharacter->x  + MOVE_RATIO * cos(myCharacter->angle + RAD(90)), myCharacter->y + MOVE_RATIO * sin(myCharacter->angle + RAD(90))))
 						{
 							myCharacter->x += MOVE_RATIO * cos(myCharacter->angle + RAD(90));
 							myCharacter->y += MOVE_RATIO * sin(myCharacter->angle + RAD(90));
 						}
 						//Open doors wih 3 dynamites (pressing 'Q')
 						if (GetAsyncKeyState(TECLA_Q) && myCharacter->dynamiteFound == DYNAMITE_NEEDED) {
-							if (board->IsDoor(myCharacter->x + MOVE_RATIO * cos(myCharacter->angle + RAD(90)), myCharacter->y + MOVE_RATIO * sin(myCharacter->angle + RAD(90))))
+							if (board->IsDoor(myCharacter->x + MOVE_RATIO * cos(myCharacter->angle + RAD(90)), myCharacter->y +MOVE_RATIO * sin(myCharacter->angle + RAD(90))))
 							{
-								board->OpenDoor(myCharacter->x + MOVE_RATIO * cos(myCharacter->angle + RAD(90)), myCharacter->y + MOVE_RATIO * sin(myCharacter->angle + RAD(90))); gameWon = true;
+								board->OpenDoor(myCharacter->x  + MOVE_RATIO * cos(myCharacter->angle + RAD(90)), myCharacter->y + MOVE_RATIO * sin(myCharacter->angle + RAD(90))); gameWon = true;
 							}
 						}
 					}
 					else {
-						if (board->IsOpen(myCharacter->x, myCharacter->y + MOVE_RATIO))
+						if (board->IsOpen(myCharacter->x, myCharacter->y + FIX + MOVE_RATIO))
 						{
 							myCharacter->y += MOVE_RATIO;
 						}
 						//Open doors wih 3 dynamites (pressing 'Q')
 						if (GetAsyncKeyState(TECLA_Q) && myCharacter->dynamiteFound == DYNAMITE_NEEDED) {
-							if (board->IsDoor(myCharacter->x, myCharacter->y + MOVE_RATIO))
+							if (board->IsDoor(myCharacter->x, myCharacter->y + FIX + MOVE_RATIO))
 							{
-								board->OpenDoor(myCharacter->x, myCharacter->y + MOVE_RATIO); gameWon = true;
+								board->OpenDoor(myCharacter->x, myCharacter->y + FIX + MOVE_RATIO); gameWon = true;
 							}
 						}
 					}
@@ -793,28 +793,28 @@ void TimerFunction(int value)
 				{
 
 					if (view == VIEW_FIRST_PERSON) {
-						if (board->IsOpen(myCharacter->x + MOVE_RATIO * cos(myCharacter->angle), myCharacter->y + MOVE_RATIO * sin(myCharacter->angle)))
+						if (board->IsOpen(myCharacter->x+ MOVE_RATIO * cos(myCharacter->angle), myCharacter->y + MOVE_RATIO * sin(myCharacter->angle)))
 						{
 							myCharacter->x += MOVE_RATIO * cos(myCharacter->angle);
 							myCharacter->y += MOVE_RATIO * sin(myCharacter->angle);
 						}
 
 						if (GetAsyncKeyState(TECLA_Q) && myCharacter->dynamiteFound == DYNAMITE_NEEDED) {//Open doors wih 3 dynamites (pressing 'Q')
-							if (board->IsDoor(myCharacter->x + MOVE_RATIO * cos(myCharacter->angle), myCharacter->y + MOVE_RATIO * sin(myCharacter->angle)))
+							if (board->IsDoor(myCharacter->x + MOVE_RATIO * cos(myCharacter->angle), myCharacter->y  + MOVE_RATIO * sin(myCharacter->angle)))
 							{
 								board->OpenDoor(myCharacter->x + MOVE_RATIO * cos(myCharacter->angle), myCharacter->y + MOVE_RATIO * sin(myCharacter->angle)); gameWon = true;
 							}
 						}
 					}
 					else { //3rd view or map
-						if (board->IsOpen(myCharacter->x + MOVE_RATIO, myCharacter->y))
+						if (board->IsOpen(myCharacter->x + FIX + MOVE_RATIO, myCharacter->y))
 						{
 							myCharacter->x += MOVE_RATIO;
 						}
 						if (GetAsyncKeyState(TECLA_Q) && myCharacter->dynamiteFound == DYNAMITE_NEEDED) {//Open doors wih 3 dynamites (pressing 'Q')
-							if (board->IsDoor(myCharacter->x + MOVE_RATIO, myCharacter->y))
+							if (board->IsDoor(myCharacter->x + FIX + MOVE_RATIO, myCharacter->y))
 							{
-								board->OpenDoor(myCharacter->x + MOVE_RATIO, myCharacter->y); gameWon = true;
+								board->OpenDoor(myCharacter->x + FIX + MOVE_RATIO, myCharacter->y); gameWon = true;
 							}
 						}
 					}
@@ -828,7 +828,7 @@ void TimerFunction(int value)
 				{
 					//printf(" S - DOWN - NEXTPOS = [x = %f][y = %f]\n", round(myCharacter->x + -MOVE_RATIO * cos(myCharacter->angle)-0.5), round(myCharacter->y + MOVE_RATIO * sin(myCharacter->angle)));
 					if (view == VIEW_FIRST_PERSON) {
-						if (board->IsOpen(myCharacter->x - MOVE_RATIO * cos(myCharacter->angle), myCharacter->y - MOVE_RATIO * sin(myCharacter->angle)))
+						if (board->IsOpen(myCharacter->x - MOVE_RATIO * cos(myCharacter->angle), myCharacter->y  - MOVE_RATIO * sin(myCharacter->angle)))
 						{
 							myCharacter->x -= MOVE_RATIO * cos(myCharacter->angle);
 							myCharacter->y -= MOVE_RATIO * sin(myCharacter->angle);
@@ -836,24 +836,24 @@ void TimerFunction(int value)
 
 						if (GetAsyncKeyState(TECLA_Q) && myCharacter->dynamiteFound == DYNAMITE_NEEDED) {
 
-							if (board->IsDoor(myCharacter->x - MOVE_RATIO * cos(myCharacter->angle), myCharacter->y - MOVE_RATIO * sin(myCharacter->angle)))
+							if (board->IsDoor(myCharacter->x  - MOVE_RATIO * cos(myCharacter->angle), myCharacter->y  - MOVE_RATIO * sin(myCharacter->angle)))
 							{
-								board->OpenDoor(myCharacter->x - MOVE_RATIO * cos(myCharacter->angle), myCharacter->y - MOVE_RATIO * sin(myCharacter->angle)); gameWon = true;
+								board->OpenDoor(myCharacter->x  - MOVE_RATIO * cos(myCharacter->angle), myCharacter->y - MOVE_RATIO * sin(myCharacter->angle)); gameWon = true;
 							}
 
 						}
 					}
 					else {
-						if (board->IsOpen(myCharacter->x - MOVE_RATIO, myCharacter->y))
+						if (board->IsOpen(myCharacter->x - FIX - MOVE_RATIO, myCharacter->y))
 						{
 							myCharacter->x -= MOVE_RATIO;
 						}
 
 						if (GetAsyncKeyState(TECLA_Q) && myCharacter->dynamiteFound == DYNAMITE_NEEDED) {
 
-							if (board->IsDoor(myCharacter->x - MOVE_RATIO, myCharacter->y))
+							if (board->IsDoor(myCharacter->x - FIX - MOVE_RATIO, myCharacter->y))
 							{
-								board->OpenDoor(myCharacter->x - MOVE_RATIO, myCharacter->y); gameWon = true;
+								board->OpenDoor(myCharacter->x - FIX - MOVE_RATIO, myCharacter->y); gameWon = true;
 							}
 
 						}
@@ -1111,7 +1111,6 @@ void menu(int num) {
 			init();
 			board->tp_restore();
 			gameover = false;
-			board = new Board();
 			board->GenerateRandoMonstersPositions();
 			for (int IndexMonster = 0; IndexMonster < NUM_MONSTROS_RANDOM; IndexMonster++) {
 				monstros[IndexMonster] = new Monster(board->VecPositionMonsters[IndexMonster].coluna, board->VecPositionMonsters[IndexMonster].linha, CHARACTER_SIZE, IndexMonster, board);
@@ -1144,7 +1143,6 @@ void menu(int num) {
 			init();
 			board->tp_restore();
 			gameover = false;
-			board = new Board();
 			board->GenerateRandoMonstersPositions();
 			for (int IndexMonster = 0; IndexMonster < NUM_MONSTROS_RANDOM; IndexMonster++) {
 				monstros[IndexMonster] = new Monster(board->VecPositionMonsters[IndexMonster].coluna, board->VecPositionMonsters[IndexMonster].linha, CHARACTER_SIZE, IndexMonster, board);
@@ -1182,7 +1180,6 @@ void menu(int num) {
 		init();
 		board->tp_restore();
 		gameover = false;
-		board = new Board();
 		board->GenerateRandoMonstersPositions();
 		for (int IndexMonster = 0; IndexMonster < NUM_MONSTROS_RANDOM; IndexMonster++) {
 			monstros[IndexMonster] = new Monster(board->VecPositionMonsters[IndexMonster].coluna, board->VecPositionMonsters[IndexMonster].linha, CHARACTER_SIZE, IndexMonster, board);

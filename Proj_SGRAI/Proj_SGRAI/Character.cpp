@@ -12,9 +12,9 @@ Character::Character(double tx, double ty, float size, Board b)
 	Character::size = size;
 	lives = NUM_LIVES;
 	retrys = NUM_RETRYS;
-	x = tx + 0.5;
+	x = tx + 1;
 	startX = x;
-	y = ty + 0.5;
+	y = ty - 0.5;
 	startY = y;
 	angle = CHAR_ANGLE;
 	speed = CHAR_SPEED;
@@ -38,26 +38,21 @@ Character::InitModelTerceicaPessoa() {
 void
 Character::Reinit(void)
 {
-	x = CHARACTER_STARTLOCATION_X;
-	y = CHARACTER_STARTLOCATION_Y;
+	x = startX;
+	y = startY;
 	angle = CHAR_ANGLE;
 	retrys--;
 	lives = NUM_LIVES;
 	animate = false;
 }
 
-void
-Character::MoveTo(int xF, int yF)
-{
-	AStar::CoordList coords = board.getPath(x, y, xF, yF);
-	
-}
 
 void
 Character::Draw(float pitch, float yaw, int view)
 {
 	//draw Weapon
 	if (view == VIEW_FIRST_PERSON) {
+
 			glPushMatrix(); {
 				glTranslatef(Character::x, Character::y, 0.45);
 
@@ -66,6 +61,7 @@ Character::Draw(float pitch, float yaw, int view)
 
 				glScalef(SCALE_PLAYER + 0.01, SCALE_PLAYER + 0.01, SCALE_PLAYER + 0.01);
 				mdlviewer_display(weapon);
+				mdlviewer_nextsequence;
 			}glPopMatrix();
 	}
 	else {
@@ -74,9 +70,12 @@ Character::Draw(float pitch, float yaw, int view)
 		glColor3f(1.0, 0.25, 0.25);
 		glPushMatrix();
 		{
-			glTranslatef(Character::x, Character::y, 0.45);
+			glTranslatef(Character::x, Character::y, 0.55);
+			glRotatef(GRAUS(yaw), 0, 0, 1);
 			glScalef(SCALE_PLAYER + 0.01, SCALE_PLAYER + 0.01, SCALE_PLAYER + 0.01);
 			mdlviewer_display(model);
+			model.AdvanceFrame(0.01);
+			
 		}
 		glPopMatrix();
 

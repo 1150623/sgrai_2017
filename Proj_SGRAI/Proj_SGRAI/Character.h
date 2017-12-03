@@ -44,7 +44,6 @@ public:
 
 	void InitModelPrimeiraPessoa();
 
-	void MoveTo(int, int);		//move the Character
 
 	void Reinit();				//reinitialize everything
 
