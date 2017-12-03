@@ -390,6 +390,57 @@ extern "C" PPMImage2 *LoadPPM2(char * path) {
 	return result;
 };
 
+void lowHP() {
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	gluOrtho2D(1, 0, 1, 0);
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+
+	// Blending (transparencias)
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glDisable(GL_LIGHTING);
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_COLOR_MATERIAL);
+
+	//PPMImage2 *imagemPPM;
+	//imagemPPM = LoadPPM2(TEXTURE_START_IMAGE);
+	//glBindTexture(GL_TEXTURE_2D, textName[2]);
+	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imagemPPM->sizeX, imagemPPM->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, imagemPPM->data);
+
+
+	//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+	glBegin(GL_QUADS);
+	glColor4f(1, 0, 0, 0.4);
+	glVertex2f(0, 0); // Upper left
+	glVertex2f(glutGet(GLUT_WINDOW_WIDTH), 0); // Upper right
+	glVertex2f(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT)); // Lower right
+	glVertex2f(0, glutGet(GLUT_WINDOW_HEIGHT)); // Lower left
+	glEnd();
+
+
+	// ropõe estado
+	glDisable(GL_BLEND);
+	glEnable(GL_LIGHTING);
+	//glEnable(GL_COLOR_MATERIAL);
+	glEnable(GL_DEPTH_TEST);
+
+	glPopMatrix();
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+
+
+}
+
+
 void drawStart()
 {
 	glMatrixMode(GL_PROJECTION);
@@ -418,13 +469,17 @@ void drawStart()
 	//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
+	
+
 	glBegin(GL_QUADS);
-	glColor4f(1, 0, 0, 0.7);
-	glVertex3f(0, 0, 10); // Upper left
-	glVertex3f(glutGet(GLUT_WINDOW_WIDTH), 0, 10); // Upper right
-	glVertex3f(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), 10); // Lower right
-	glVertex3f(0, glutGet(GLUT_WINDOW_HEIGHT), 10); // Lower left
+	glColor4f(0, 0, 0, 0.9);
+	glVertex2f(0, 0); // Upper left
+	glVertex2f(glutGet(GLUT_WINDOW_WIDTH), 0); // Upper right
+	glVertex2f(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT)); // Lower right
+	glVertex2f(0, glutGet(GLUT_WINDOW_HEIGHT)); // Lower left
 	glEnd();
+
+
 	
 
 	// ropõe estado
@@ -539,7 +594,11 @@ void RenderScene()
 		drawHealthBar();
 		drawBulletsBar();
 		drawCompass();
-		drawStart();
+		//drawStart();
+
+		if (myCharacter->lives<25) {
+			lowHP();
+		}
 	}
 	else {
 
@@ -1266,7 +1325,7 @@ void menu(int num) {
 		}else if (dificulty == 3) {
 			numDynamite = 0;
 			numBullets = 3;
-			myCharacter->lives = NUM_LIVES-50;
+			myCharacter->lives = NUM_LIVES;
 			myCharacter->retrys = NUM_RETRYS -1;
 			init();
 			board->tp_restore();
@@ -1301,6 +1360,7 @@ void menu(int num) {
 		glutFullScreen();
 	}
 	else if (num == 3) {
+		dificulty = num;
 		numDynamite = 2;
 		numBullets = 15;
 		myCharacter->lives = NUM_LIVES;
@@ -1312,7 +1372,7 @@ void menu(int num) {
 		for (int IndexMonster = 0; IndexMonster < NUM_MONSTROS_RANDOM; IndexMonster++) {
 			monstros[IndexMonster] = new Monster(board->VecPositionMonsters[IndexMonster].coluna, board->VecPositionMonsters[IndexMonster].linha, CHARACTER_SIZE, IndexMonster, board);
 		}
-		dificulty = num;
+		
 		board->generateRandomObjectsPosition(dificulty);
 		for (int k = 0; k < nr_objets; k++) {
 			if (board->VecPositionObjects[k].type == DYNAMITE) {
@@ -1334,6 +1394,7 @@ void menu(int num) {
 		}
 	}
 	else if (num == 4) {
+		dificulty = num;
 		numDynamite = 1;
 		numBullets = 6;
 		myCharacter->lives = 100;
@@ -1346,7 +1407,7 @@ void menu(int num) {
 		for (int IndexMonster = 0; IndexMonster < NUM_MONSTROS_RANDOM; IndexMonster++) {
 			monstros[IndexMonster] = new Monster(board->VecPositionMonsters[IndexMonster].coluna, board->VecPositionMonsters[IndexMonster].linha, CHARACTER_SIZE, IndexMonster, board);
 		}
-		dificulty = num;
+		
 		board->generateRandomObjectsPosition(dificulty);
 		for (int k = 0; k < nr_objets; k++) {
 			if (board->VecPositionObjects[k].type == DYNAMITE) {
@@ -1366,8 +1427,10 @@ void menu(int num) {
 					board->VecPositionObjects[k].y, CHARACTER_SIZE, *board);
 			}
 		}
+		
 	}
 	else if (num == 5) {
+		dificulty = num;
 		numDynamite = 0;
 		numBullets = 3;
 		myCharacter->lives = 50;
@@ -1380,7 +1443,7 @@ void menu(int num) {
 		for (int IndexMonster = 0; IndexMonster < NUM_MONSTROS_RANDOM; IndexMonster++) {
 			monstros[IndexMonster] = new Monster(board->VecPositionMonsters[IndexMonster].coluna, board->VecPositionMonsters[IndexMonster].linha, CHARACTER_SIZE, IndexMonster, board);
 		}
-		dificulty = num;
+		
 		board->generateRandomObjectsPosition(dificulty);
 		for (int k = 0; k < nr_objets - 3; k++) {
 			if (board->VecPositionObjects[k].type == DYNAMITE) {

@@ -20,6 +20,7 @@ public:
 
 	StudioModel bandage;
 	StudioModel bullet;
+	StudioModel dynamite;
 
 	~Object(void);
 
