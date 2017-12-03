@@ -22,13 +22,15 @@ public:
 	float size;
 	int x_dest;
 	int y_dest;
-
+	bool draw;
 	Bullet();
 
 	~Bullet(void);
 
+	void updateAngle(float);
 	void setInitial(float, float, float,float );
 	void Draw();			//draw bullet
 	void Move();
+	void Move2();
 };
 #endif

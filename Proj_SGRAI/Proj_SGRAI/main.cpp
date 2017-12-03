@@ -321,7 +321,6 @@ void RenderScene()
 
 
 		for (int i = 0; i < nr_objets; i++) {
-			//printf("Coord obj: %d,%d\nCoord playr: %d,%d\n", objects[i]->x, objects[i]->y, myCharacter->x, myCharacter->y);
 			if (objects[i]->got_it==false) {
 				if ((int)objects[i]->x == (int)myCharacter->x && (int)objects[i]->y == (int)myCharacter->y) {
 
@@ -360,6 +359,7 @@ void RenderScene()
 
 		for (int i = 0; i < NUM_MONSTROS_RANDOM; i++) {
 			if (monstros[i]->shooting && !monstros[i]->killed) {
+				if(monstros[i]->bullet->draw)
 				monstros[i]->bullet->Draw();
 			}
 		}
@@ -414,54 +414,55 @@ void bulletConfig() {
 }
 
 void printHelp() {
-	printf("+---------------------------------------------------+\n");
-	printf("|                                                   |\n");
-	printf("|                 HELP REQUESTED                    |\n");
-	printf("|                                                   |\n");
-	printf("+---------------------------------------------------+\n");
-	printf("+---------------------------------------------------+\n");
-	printf("|                    Controls                       |\n");
-	printf("+---------------------------------------------------+\n");
-	printf("|                                                   |\n");
-	printf("|---++Character Motion++                            |\n");
-	printf("|                                                   |\n");
-	printf("| This game uses W, A, S, D for character motion.   |\n");
-	printf("| If in First person, use yout mouse to rotate the  |\n");
-	printf("| camera.                                           |\n");
-	printf("|                                                   |\n");
-	printf("| + W goes Up                                       |\n");
-	printf("| + A goes Left                                     |\n");
-	printf("| + S goes Right                                    |\n");
-	printf("| + D goes Down                                     |\n");
-	printf("|                                                   |\n");
-	printf("|---++Camera and Views++                            |\n");
-	printf("|                                                   |\n");
-	printf("| + V changes view to 3º person, while              |\n");
-	printf("| + E changes view to 1º person again               |\n");
-	printf("|                                                   |\n");
-	printf("|---++Catching Objects++                            |\n");
-	printf("|                                                   |\n");
-	printf("| Just walk through them                            |\n");
-	printf("|                                                   |\n");
-	printf("|---++Attacking++                                   |\n");
-	printf("|                                                   |\n");
-	printf("| + Mouse Left-Button to shoot                      |\n");
-	printf("| + To do Melee you just have to bee in the same    |\n");
-	printf("| square as yout enemy.                             |\n");
-	printf("|									                |\n");
-	printf("|---++What OBJECTS ARE AVAILABLE?++                 |\n");
-	printf("|                                                   |\n");
-	printf("| Bandages - Heal yout wounds                       |\n");
-	printf("| Bullets  - To refill your bullets                 |\n");
-	printf("| Dinamyte - To open final door                     |\n");
-	printf("|									                |\n");
-	printf("|---++How do I open the Final door?++               |\n");
-	printf("|                                                   |\n");
-	printf("| First, you have to find the final door witch is   |\n");
-	printf("| already a big challange! Then you must have the   |\n");
-	printf("| required amount of dinamyte and finnally.......   |\n");
-	printf("| just press 'Q' in front of the door! :)           |\n");
-	printf("+---------------------------------------------------+\n");
+	printf("\t+---------------------------------------------------+\n");
+	printf("\t|                                                   |\n");
+	printf("\t|                 HELP REQUESTED                    |\n");
+	printf("\t|                                                   |\n");
+	printf("\t+---------------------------------------------------+\n");
+	printf("\t+---------------------------------------------------+\n");
+	printf("\t|                    Controls                       |\n");
+	printf("\t+---------------------------------------------------+\n");
+	printf("\t|                                                   |\n");
+	printf("\t|---++Character Motion++                            |\n");
+	printf("\t|                                                   |\n");
+	printf("\t| This game uses W, A, S, D for character motion.   |\n");
+	printf("\t| If in First person, use yout mouse to rotate the  |\n");
+	printf("\t| camera.                                           |\n");
+	printf("\t|                                                   |\n");
+	printf("\t| + W goes Up                                       |\n");
+	printf("\t| + A goes Left                                     |\n");
+	printf("\t| + S goes Right                                    |\n");
+	printf("\t| + D goes Down                                     |\n");
+	printf("\t|                                                   |\n");
+	printf("\t|---++Camera and Views++                            |\n");
+	printf("\t|                                                   |\n");
+	printf("\t| + V changes view to 3th person, while             |\n");
+	printf("\t| + E changes view to 1st person again              |\n");
+	printf("\t|                                                   |\n");
+	printf("\t|---++Catching Objects++                            |\n");
+	printf("\t|                                                   |\n");
+	printf("\t| Just walk through them                            |\n");
+	printf("\t|                                                   |\n");
+	printf("\t|---++Attacking++                                   |\n");
+	printf("\t|                                                   |\n");
+	printf("\t| + Mouse Left-Button to shoot                      |\n");
+	printf("\t| + To do Melee you just have to bee in the same    |\n");
+	printf("\t| square as yout enemy.                             |\n");
+	printf("\t|                                                   |\n");
+	printf("\t|---++What OBJECTS ARE AVAILABLE?++                 |\n");
+	printf("\t|                                                   |\n");
+	printf("\t| Bandages - Heal yout wounds                       |\n");
+	printf("\t| Bullets  - To refill your bullets                 |\n");
+	printf("\t| Dinamyte - To open final door                     |\n");
+	printf("\t|                                                   |\n");
+	printf("\t|---++How do I open the Final door?++               |\n");
+	printf("\t|                                                   |\n");
+	printf("\t| First, you have to find the final door witch is   |\n");
+	printf("\t| already a big challange! Then you must have the   |\n");
+	printf("\t| required amount of dinamyte and finnally.......   |\n");
+	printf("\t| just press 'Q' in front of the door! :)           |\n");
+	printf("\t+---------------------------------------------------+\n");
+	
 }
 
 GLuint textName[NUM_TEXTURES];
@@ -514,8 +515,7 @@ int characterShoot_coolDownTime = 0;
 
 int monsterMelee_coolDownTime = 0;
 int characterMelee_coolDownTime = 0;
-bool m_meleeDone, m_shootDone, c_shootDone;
-bool c_meleeDone = m_meleeDone = m_shootDone = c_shootDone = false;
+bool m_meleeDone = false, m_shootDone = false, c_shootDone = false, c_meleeDone =  false;
 bool first = true;
 void TimerFunction(int value)
 {
@@ -532,20 +532,24 @@ void TimerFunction(int value)
 	if (m_shootDone) {
 		monsterShoot_coolDownTime = MONSTER_SHOOT_COOLDOWN_TIME;
 	}
-	if (characterMelee_coolDownTime > 0) { characterMelee_coolDownTime -= 0.1; c_meleeDone = false; }
+	if (characterMelee_coolDownTime > 0) { 
+		characterMelee_coolDownTime -= 0.1; 
+		c_meleeDone = false; 
+	}
 	
 	if (monsterMelee_coolDownTime > 0) {
 		monsterMelee_coolDownTime -= 0.1;
 		m_meleeDone = false;
 	}
-		if (characterShoot_coolDownTime > 0) {
-			characterShoot_coolDownTime -= 0.1;
-			c_shootDone = false;
-		}
-		if (monsterShoot_coolDownTime > 0) {
-			monsterShoot_coolDownTime -= 0.1;
-			m_shootDone = false;
-		}
+	
+	if (characterShoot_coolDownTime > 0) {
+		characterShoot_coolDownTime -= 0.1;
+		c_shootDone = false;
+	}
+	if (monsterShoot_coolDownTime > 0) {
+		monsterShoot_coolDownTime -= 0.1;
+		m_shootDone = false;
+	}
 
 
 
@@ -704,7 +708,7 @@ void TimerFunction(int value)
 			}
 
 		for (int i = 0; i < NUM_MONSTROS_RANDOM; i++)
-			if (monstros[i]->killed == false)
+			if (monstros[i]->killed == false && monstros[i]->patrol)
 				monstros[i]->MoveTo();
 	}
 	//DEBBUG KEYS
@@ -734,9 +738,17 @@ void TimerFunction(int value)
 
 	for (int i = 0; i < NUM_MONSTROS_RANDOM; i++) {
 		if (myCharacter->x <= monstros[i]->x +0.5 && myCharacter->x >= monstros[i]->x - 0.5 && myCharacter->y <= monstros[i]->y + 0.5 && myCharacter->y >= monstros[i]->y - 0.5) {
-			m_meleeDone = true;
 			if (monsterMelee_coolDownTime == 0) {
+				m_meleeDone = true;
 				myCharacter->lives -= MONSTER_DAMAGE_MELEE;
+			}
+			if (characterMelee_coolDownTime <= 0) {
+				c_meleeDone = true;
+				monstros[i]->lives -= CHARACTER_DAMAGE_MELEE;
+				if (monstros[i]->lives <= 0) {
+					monstros[i]->x = -5;
+					monstros[i]->killed = true;
+				}
 			}
 		}
 	}
@@ -751,41 +763,58 @@ void TimerFunction(int value)
 	}
 
 	if (c_bullet->shoot) { //if character shoot a bullet...
-		c_shootDone = true;
 		if (board->IsOpen(c_bullet->x, c_bullet->y))c_bullet->Move();
 			for (int i = 0; i < NUM_MONSTROS_RANDOM; i++) {
 				if (!monstros[i]->killed) {
-					if ((monstros[i]->x <= c_bullet->x + 0.2 && monstros[i]->x >= c_bullet->x - 0.2) && (monstros[i]->y <= c_bullet->y + 0.2 && monstros[i]->y >= c_bullet->y - 0.2) ) {
+					if ((monstros[i]->x <= c_bullet->x + BULLET_SPEED && monstros[i]->x >= c_bullet->x - BULLET_SPEED) && (monstros[i]->y <= c_bullet->y + BULLET_SPEED && monstros[i]->y >= c_bullet->y - BULLET_SPEED)) {
 						monstros[i]->lives -= CHARACTER_DAMAGE_SHOOT;
-						c_shootDone = false;
-						if (monstros[i]->lives <= 0) {
-							monstros[i]->killed = true;
+						
+							if (monstros[i]->lives <= 0) {
+								monstros[i]->killed = true;
+								monstros[i]->x = -5;
+							}
 						}
-					}
+					
 				}
 			}
 	}
-	int pos = board->getBoardValue(myCharacter->y, myCharacter->x);
-	//printf("POS = %d\n", pos);
-	if (pos >= BASE_INDEX_MONSTERS && pos < BASE_INDEX_MONSTERS + NUM_MONSTROS_RANDOM) { //if character is in a monster zone...
-		if (!monstros[pos]->killed) {
-			int meleeDamage = monstros[pos]->alert(myCharacter->x, myCharacter->y);
-			if (meleeDamage == 1) { //melee
-				m_meleeDone = true;
-				myCharacter->lives -= MONSTER_DAMAGE_MELEE;
-			}
-			if (meleeDamage == 2 ) { //shooting
-				m_shootDone = true;
-				monstros[pos]->shoot(myCharacter->x, myCharacter->y);
-				myCharacter->lives -= MONSTER_DAMAGE_SHOOT;
-			}
-		}
-	}
+	
 
 	for (int i = 0; i < NUM_MONSTROS_RANDOM; i++) {
 		if (monstros[i]->shooting) {
-			if (board->IsOpen(monstros[i]->bullet->x, monstros[i]->bullet->y))monstros[i]->bullet->Move();
-			
+			if (board->IsOpen(monstros[i]->bullet->x, monstros[i]->bullet->y)) { 
+				monstros[i]->updateShootingAngle(myCharacter->x, myCharacter->y);
+				monstros[i]->bullet->updateAngle(monstros[i]->shootingAngle);
+				monstros[i]->bullet->Move2(); 
+			}
+
+			if ((myCharacter->x <= monstros[i]->bullet->x + BULLET_SPEED && myCharacter->x >= monstros[i]->bullet->x - BULLET_SPEED) && (myCharacter->y <= monstros[i]->bullet->y + BULLET_SPEED && myCharacter->y >= monstros[i]->bullet->y - BULLET_SPEED)) {
+				monstros[i]->bullet->draw = false;
+				myCharacter->lives -= MONSTER_DAMAGE_SHOOT;
+			}
+
+		}
+	
+	}
+
+
+	int posValue = board->getBoardValue(myCharacter->y, myCharacter->x);
+
+	for (int i = 0; i < NUM_MONSTROS_RANDOM; i++) {
+		if (monstros[i]->startIndexMonster + BASE_INDEX_MONSTERS == posValue) {
+			switch (monstros[i]->alert(myCharacter->y, myCharacter->x)) {
+			case 1://melee aready done in timer
+				break;
+			case 2://shooting
+				monstros[i]->shooting = true;
+				monstros[i]->patrol = false;
+				if (monsterShoot_coolDownTime <= 0) {
+					monstros[i]->shoot(myCharacter->y, myCharacter->x);
+					monstros[i]->bullet->draw = true;
+					m_shootDone = true;
+				}
+				break;
+			}
 		}
 	}
 
@@ -843,7 +872,9 @@ void MouseMotion(int x, int y)
 
 void mouseClick(int button, int state, int x, int y)
 {
-	if (button == GLUT_LEFT_BUTTON) {
+	if (button == GLUT_LEFT_BUTTON && characterShoot_coolDownTime <= 0) {
+		printf("SHOOT\n");
+		c_shootDone = true;
 		if (DEBBUG)printf("Vai entrar\n");
 		if (state == GLUT_DOWN) {
 			float _yaw = camera->yaw;
@@ -855,13 +886,13 @@ void mouseClick(int button, int state, int x, int y)
 
 	}
 
-	if (button == GLUT_RIGHT_BUTTON) {
+	/*if (button == GLUT_RIGHT_BUTTON) {
 		if (DEBBUG)printf("Vai entrar\n");
 		if (state == GLUT_DOWN) {
 			c_bullet->shoot = false;
 		}
 
-	}
+	}*/
 }
 
 static int menu_id;
@@ -869,7 +900,7 @@ static int submenu_id;
 static int window;
 static int value = 0;
 static int dificulty = 0;
-
+bool fullscreen = false;
 void menu(int num) {
 	if (num == 0) {
 		glutDestroyWindow(window);
@@ -887,7 +918,7 @@ void menu(int num) {
 		
 	}
 	else if(num==2){
-		glutFullScreen();
+			glutFullScreen();
 	}
 	else if (num == 3) {
 		myCharacter->lives = NUM_LIVES;

@@ -82,8 +82,9 @@ void Monster::initDirection(int startIndexMonster) {
 	}
 }
 
-int Monster::alert(float c_x, float c_y) {
+int Monster::alert(float c_y, float c_x) {
 	float dist = sqrt(pow(c_x - x, 2) + pow(c_y - y, 2));
+	printf("Monster [%d] -> dist = %.3f\n", startIndexMonster,dist);
 	if (dist < MONSTER_SHOOT_DIST) {
 		if (dist < MONSTER_MELEE_DIST) {
 			//MELEE
@@ -109,16 +110,56 @@ int Monster::alert(float c_x, float c_y) {
 
 }
 
+void Monster::updateShootingAngle(float c_x, float c_y) {
+
+	if (shooting) {
+		if (angle == 0) {
+			if (c_x > x && (c_y+0.5 >= y && c_y -0.5 <=y)) {
+				shootingAngle = 0;
+			}
+			else {
+				shootingAngle = 180;
+			}
+		}
+		else if (angle == 180) {
+			if (c_x < x && (c_y + 0.5 >= y && c_y - 0.5 <= y)) {
+				shootingAngle = 180;
+			}
+			else {
+				shootingAngle = 0;
+			}
+		}
+		else if (angle == 90) {
+			if (c_y > y && (c_x + 0.5 >= x && c_x - 0.5 <= x)) {
+				shootingAngle = 90;
+			}
+			else {
+				shootingAngle = 270;
+			}
+		}
+		else if (angle == 270) {
+			if (c_y < y && (c_x + 0.5 >= x && c_x - 0.5 <= x)) {
+				shootingAngle = 270;
+			}
+			else {
+				shootingAngle = 90;
+			}
+		}
+	}
+}
 
 void Monster::shoot(float c_x, float c_y) {
+	
 	if (shooting) {
+		updateShootingAngle(c_x, c_y);
 		bullet = new Bullet();
-		bullet->setInitial(x, y, angle, 0);
+		bullet->setInitial(x, y, shootingAngle, 0);
 	}
 }
 
 void Monster::MoveTo() {
 	if (patrol) {
+
 		if (angle == 180) {
 			//baixo
 			if (!boards->IsOpen2(x - speed, y, (startIndexMonster + BASE_INDEX_MONSTERS))) {

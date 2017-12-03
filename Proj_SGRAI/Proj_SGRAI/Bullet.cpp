@@ -7,6 +7,7 @@ Bullet::Bullet()
 {
 	Bullet::size = 0.005;
 	shoot = false;
+	draw = false;
 }
 
 void
@@ -44,4 +45,24 @@ Bullet::Move() {
 	if (DEBBUG)printf("Monster x: %d\n", x_dest);
 	if (DEBBUG)printf("Monster y: %d\n", y_dest);
 
+}
+
+void Bullet::Move2() {
+	if (yaw == 180) {
+		x -= BULLET_SPEED;
+	}
+	if (yaw == 90) {
+		y += BULLET_SPEED;
+	}
+	if (yaw == 0) {
+		x += BULLET_SPEED;
+	}
+
+	if (yaw == 270) {
+		y -= BULLET_SPEED;
+	}
+}
+
+void Bullet::updateAngle(float angle) {
+	yaw = angle;
 }

@@ -41,6 +41,8 @@ public:
 	bool shooting;
 	bool melee;
 
+	float shootingAngle;
+
 	Monster(double, double, float, int,Board*);
 
 	~Monster(void);
@@ -54,5 +56,6 @@ public:
 	int alert(float, float);
 
 	void shoot(float, float);
+	void updateShootingAngle(float, float);
 };
 #endif
