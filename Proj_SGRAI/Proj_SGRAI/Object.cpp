@@ -12,6 +12,7 @@ Object::Object(int type_o, float x_o, float y_o, float size_o, Board b)
 {
 	mdlviewer_init("bandage.mdl", bandage);
 	mdlviewer_init("bullets.mdl", bullet);
+	mdlviewer_init("dynamite.mdl", dynamite);
 	type = type_o;
 	x = x_o+0.5;
 	y = y_o+0.5;
@@ -49,8 +50,10 @@ void Object::Draw(void)
 			glColor3f(0, 0, 10);
 			glPushMatrix();
 			{
-				glTranslatef(Object::x, Object::y, size);
-				glutSolidSphere(size / 2, 10, 10);
+				glTranslatef(Object::x, Object::y, size-0.3);
+				glScalef(SCALE_PLAYER + 0.01, SCALE_PLAYER + 0.01, SCALE_PLAYER + 0.01);
+				mdlviewer_display(dynamite);
+				//glutSolidSphere(size / 2, 10, 10);
 
 			}
 			glPopMatrix();
