@@ -47,7 +47,7 @@ void Monster::Draw(void)
 		glPushMatrix();
 		{
 			glColor3f(0.0, 1.0, 0.0);
-			glScaled(0.05, 0.3, 0.05);
+			glScaled(0.05, 0.3*lives*0.01, 0.05);
 			desenhaCubo();
 			//glutSolidSphere(size / 2, 10, 10);
 		}glPopMatrix();
