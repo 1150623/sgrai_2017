@@ -682,6 +682,7 @@ void TimerFunction(int value)
 			{
 				view = (view == VIEW_FIRST_PERSON) ? VIEW_THIRD_PERSON : (view == VIEW_THIRD_PERSON) ? VIEW_MAP : (view == VIEW_MAP) ? VIEW_THIRD_PERSON : view;
 				if (view == VIEW_MAP && !DEBBUG) {
+					myCharacter->InitModelTerceicaPessoa();
 					view = VIEW_THIRD_PERSON;
 				}
 
@@ -694,6 +695,7 @@ void TimerFunction(int value)
 
 			if (GetAsyncKeyState(TECLA_E) && !GetAsyncKeyState(TECLA_V))
 			{
+				myCharacter->InitModelPrimeiraPessoa();
 				view = VIEW_FIRST_PERSON;
 				camera->Reshape(ratio, 60);
 			}
@@ -1060,59 +1062,213 @@ static int menu_id;
 static int submenu_id;
 static int window;
 static int value = 0;
-static int dificulty = 0;
+static int dificulty = 4;
 bool fullscreen = false;
 void menu(int num) {
 	if (num == 0) {
 		glutDestroyWindow(window);
 		exit(0);
 	}
-	else if(num==1){
-		myCharacter->lives = NUM_LIVES;
-		myCharacter->retrys= NUM_RETRYS;
-		init();
-		board->tp_restore();
-		gameover = false;
-		board = new Board();
-		board->GenerateRandoMonstersPositions();
-		board->generateRandomObjectsPosition(dificulty);
-		
+	else if (num == 1) {
+		if (dificulty==3) {
+			numBullets = 15;
+			myCharacter->lives = NUM_LIVES;
+			myCharacter->retrys = NUM_RETRYS + 2;
+			init();
+			board->tp_restore();
+			gameover = false;
+			board = new Board();
+			board->GenerateRandoMonstersPositions();
+			for (int IndexMonster = 0; IndexMonster < NUM_MONSTROS_RANDOM; IndexMonster++) {
+				monstros[IndexMonster] = new Monster(board->VecPositionMonsters[IndexMonster].coluna, board->VecPositionMonsters[IndexMonster].linha, CHARACTER_SIZE, IndexMonster, board);
+			}
+			dificulty = num;
+			board->generateRandomObjectsPosition(dificulty);
+			for (int k = 0; k < nr_objets; k++) {
+				if (board->VecPositionObjects[k].type == DYNAMITE) {
+					objects[k] = new Object(board->VecPositionObjects[k].type, board->VecPositionObjects[k].x,
+						board->VecPositionObjects[k].y, CHARACTER_SIZE, *board);
+
+				}
+
+				else if (board->VecPositionObjects[k].type == BANDAGES) {
+
+					objects[k] = new Object(board->VecPositionObjects[k].type, board->VecPositionObjects[k].x,
+						board->VecPositionObjects[k].y, CHARACTER_SIZE, *board);
+
+				}
+				else if (board->VecPositionObjects[k].type == BULLETS) {
+					objects[k] = new Object(board->VecPositionObjects[k].type, board->VecPositionObjects[k].x,
+						board->VecPositionObjects[k].y, CHARACTER_SIZE, *board);
+				}
+			}
+		}else if (dificulty == 4) {
+			numBullets = 6;
+			myCharacter->lives = NUM_LIVES;
+			myCharacter->retrys = NUM_RETRYS;
+			init();
+			board->tp_restore();
+			gameover = false;
+			board = new Board();
+			board->GenerateRandoMonstersPositions();
+			for (int IndexMonster = 0; IndexMonster < NUM_MONSTROS_RANDOM; IndexMonster++) {
+				monstros[IndexMonster] = new Monster(board->VecPositionMonsters[IndexMonster].coluna, board->VecPositionMonsters[IndexMonster].linha, CHARACTER_SIZE, IndexMonster, board);
+			}
+			dificulty = num;
+			board->generateRandomObjectsPosition(dificulty);
+			for (int k = 0; k < nr_objets; k++) {
+				if (board->VecPositionObjects[k].type == DYNAMITE) {
+					objects[k] = new Object(board->VecPositionObjects[k].type, board->VecPositionObjects[k].x,
+						board->VecPositionObjects[k].y, CHARACTER_SIZE, *board);
+
+				}
+
+				else if (board->VecPositionObjects[k].type == BANDAGES) {
+
+					objects[k] = new Object(board->VecPositionObjects[k].type, board->VecPositionObjects[k].x,
+						board->VecPositionObjects[k].y, CHARACTER_SIZE, *board);
+
+				}
+				else if (board->VecPositionObjects[k].type == BULLETS) {
+					objects[k] = new Object(board->VecPositionObjects[k].type, board->VecPositionObjects[k].x,
+						board->VecPositionObjects[k].y, CHARACTER_SIZE, *board);
+				}
+			}
+		}else if (dificulty == 3) {
+			numBullets = 3;
+			myCharacter->lives = NUM_LIVES-50;
+			myCharacter->retrys = NUM_RETRYS -1;
+			init();
+			board->tp_restore();
+			gameover = false;
+			board = new Board();
+			board->GenerateRandoMonstersPositions();
+			for (int IndexMonster = 0; IndexMonster < NUM_MONSTROS_RANDOM; IndexMonster++) {
+				monstros[IndexMonster] = new Monster(board->VecPositionMonsters[IndexMonster].coluna, board->VecPositionMonsters[IndexMonster].linha, CHARACTER_SIZE, IndexMonster, board);
+			}
+			dificulty = num;
+			board->generateRandomObjectsPosition(dificulty);
+			for (int k = 0; k < nr_objets; k++) {
+				if (board->VecPositionObjects[k].type == DYNAMITE) {
+					objects[k] = new Object(board->VecPositionObjects[k].type, board->VecPositionObjects[k].x,
+						board->VecPositionObjects[k].y, CHARACTER_SIZE, *board);
+
+				}
+
+				else if (board->VecPositionObjects[k].type == BANDAGES) {
+
+					objects[k] = new Object(board->VecPositionObjects[k].type, board->VecPositionObjects[k].x,
+						board->VecPositionObjects[k].y, CHARACTER_SIZE, *board);
+
+				}
+				else if (board->VecPositionObjects[k].type == BULLETS) {
+					objects[k] = new Object(board->VecPositionObjects[k].type, board->VecPositionObjects[k].x,
+						board->VecPositionObjects[k].y, CHARACTER_SIZE, *board);
+				}
+			}
+		}
 	}
-	else if(num==2){
-			glutFullScreen();
+	else if (num == 2) {
+		glutFullScreen();
 	}
 	else if (num == 3) {
+		numBullets = 15;
 		myCharacter->lives = NUM_LIVES;
-		myCharacter->retrys = NUM_RETRYS+3;
+		myCharacter->retrys = NUM_RETRYS + 2;
 		init();
 		board->tp_restore();
 		gameover = false;
 		board = new Board();
 		board->GenerateRandoMonstersPositions();
+		for (int IndexMonster = 0; IndexMonster < NUM_MONSTROS_RANDOM; IndexMonster++) {
+			monstros[IndexMonster] = new Monster(board->VecPositionMonsters[IndexMonster].coluna, board->VecPositionMonsters[IndexMonster].linha, CHARACTER_SIZE, IndexMonster, board);
+		}
 		dificulty = num;
 		board->generateRandomObjectsPosition(dificulty);
+		for (int k = 0; k < nr_objets; k++) {
+			if (board->VecPositionObjects[k].type == DYNAMITE) {
+				objects[k] = new Object(board->VecPositionObjects[k].type, board->VecPositionObjects[k].x,
+					board->VecPositionObjects[k].y, CHARACTER_SIZE, *board);
+
+			}
+
+			else if (board->VecPositionObjects[k].type == BANDAGES) {
+
+				objects[k] = new Object(board->VecPositionObjects[k].type, board->VecPositionObjects[k].x,
+					board->VecPositionObjects[k].y, CHARACTER_SIZE, *board);
+
+			}
+			else if (board->VecPositionObjects[k].type == BULLETS) {
+				objects[k] = new Object(board->VecPositionObjects[k].type, board->VecPositionObjects[k].x,
+					board->VecPositionObjects[k].y, CHARACTER_SIZE, *board);
+			}
+		}
 	}
 	else if (num == 4) {
-		myCharacter->lives = NUM_LIVES;
+		numBullets = 6;
+		myCharacter->lives = 100;
 		myCharacter->retrys = NUM_RETRYS;
 		init();
 		board->tp_restore();
 		gameover = false;
 		board = new Board();
 		board->GenerateRandoMonstersPositions();
+		for (int IndexMonster = 0; IndexMonster < NUM_MONSTROS_RANDOM; IndexMonster++) {
+			monstros[IndexMonster] = new Monster(board->VecPositionMonsters[IndexMonster].coluna, board->VecPositionMonsters[IndexMonster].linha, CHARACTER_SIZE, IndexMonster, board);
+		}
 		dificulty = num;
 		board->generateRandomObjectsPosition(dificulty);
+		for (int k = 0; k < nr_objets; k++) {
+			if (board->VecPositionObjects[k].type == DYNAMITE) {
+				objects[k] = new Object(board->VecPositionObjects[k].type, board->VecPositionObjects[k].x,
+					board->VecPositionObjects[k].y, CHARACTER_SIZE, *board);
+
+			}
+
+			else if (board->VecPositionObjects[k].type == BANDAGES) {
+
+				objects[k] = new Object(board->VecPositionObjects[k].type, board->VecPositionObjects[k].x,
+					board->VecPositionObjects[k].y, CHARACTER_SIZE, *board);
+
+			}
+			else if (board->VecPositionObjects[k].type == BULLETS) {
+				objects[k] = new Object(board->VecPositionObjects[k].type, board->VecPositionObjects[k].x,
+					board->VecPositionObjects[k].y, CHARACTER_SIZE, *board);
+			}
+		}
 	}
 	else if (num == 5) {
-		myCharacter->lives = NUM_LIVES-50;
-		myCharacter->retrys = NUM_RETRYS - 2;
+		numBullets = 3;
+		myCharacter->lives = 50;
+		myCharacter->retrys = NUM_RETRYS - 1;
 		init();
 		board->tp_restore();
 		gameover = false;
 		board = new Board();
 		board->GenerateRandoMonstersPositions();
+		for (int IndexMonster = 0; IndexMonster < NUM_MONSTROS_RANDOM; IndexMonster++) {
+			monstros[IndexMonster] = new Monster(board->VecPositionMonsters[IndexMonster].coluna, board->VecPositionMonsters[IndexMonster].linha, CHARACTER_SIZE, IndexMonster, board);
+		}
 		dificulty = num;
 		board->generateRandomObjectsPosition(dificulty);
+		for (int k = 0; k < nr_objets - 3; k++) {
+			if (board->VecPositionObjects[k].type == DYNAMITE) {
+				objects[k] = new Object(board->VecPositionObjects[k].type, board->VecPositionObjects[k].x,
+					board->VecPositionObjects[k].y, CHARACTER_SIZE, *board);
+
+			}
+
+			else if (board->VecPositionObjects[k].type == BANDAGES) {
+
+				objects[k] = new Object(board->VecPositionObjects[k].type, board->VecPositionObjects[k].x,
+					board->VecPositionObjects[k].y, CHARACTER_SIZE, *board);
+
+			}
+			else if (board->VecPositionObjects[k].type == BULLETS) {
+				objects[k] = new Object(board->VecPositionObjects[k].type, board->VecPositionObjects[k].x,
+					board->VecPositionObjects[k].y, CHARACTER_SIZE, *board);
+			}
+		}
 	}
 }
 
