@@ -273,6 +273,33 @@ void drawGameOverText()
 	glMatrixMode(GL_MODELVIEW);
 }
 
+void notEnoughDynamiteText()
+{
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	gluOrtho2D(w / 2, w / 2, h / 2, h / 2);
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+	std::string s;
+	glColor3f(1, 0, 0);
+
+	s = "NOT ENOUGH DYNAMITES! (3 are Needed to open door)";
+	glRasterPos2d(w / 2 - 0.6, (h / 2) + 0.4);
+	int textSize = s.length();
+	for (int i = 0; i < textSize; i++) {
+		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, s[i]);
+
+	}
+
+	glPopMatrix();
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+}
+
+
 int numBullets = NUM_BULLETS;
 int numDynamite = 1;
 
@@ -409,14 +436,21 @@ void drawStart()
 
 }
 
+#define NOT_ENOUGH 100
 
+int notEnoughCoolDown = 0;
 void RenderScene()
 { //Draw Scene
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   
 	if (!gameWon) {
+		
+		if (notEnoughCoolDown > 0) {
+			notEnoughCoolDown-=0.1;
+			notEnoughDynamiteText();
+		}
+		
 		//camera update
-
 		camera->Set_position(myCharacter->x, myCharacter->y, view);
 
 		camera->set_light(myCharacter->x, myCharacter->y, myCharacter->size);
@@ -592,6 +626,7 @@ void printHelp() {
 }
 
 
+float fog = 0.15;
 
 //SET UP THE GAME
 void init(void)
@@ -620,7 +655,7 @@ void init(void)
 	GLfloat fogColor[4] = { 0.6f, 0.6, 0.6f, 1.0f };      // Fog Color
 	glFogi(GL_FOG_MODE, GL_EXP);        // Fog Mode
 	glFogfv(GL_FOG_COLOR, fogColor);            // Set Fog Color
-	glFogf(GL_FOG_DENSITY, 0.1f);              // How Dense Will The Fog Be
+	glFogf(GL_FOG_DENSITY, fog);              // How Dense Will The Fog Be
 	glHint(GL_FOG_HINT, GL_DONT_CARE);          // Fog Hint Value
 	glFogf(GL_FOG_START, 1.0);             // Fog Start Depth
 	glFogf(GL_FOG_END, 5.0);               // Fog End Depth
@@ -633,6 +668,9 @@ void init(void)
 
 }
 #define FIX 0.2
+
+
+
 int monsterShoot_coolDownTime = 0;
 int characterShoot_coolDownTime = 0;
 int characterShootingAnimation_coolDownTime = 0;
@@ -643,8 +681,9 @@ bool m_meleeDone = false, m_shootDone = false, c_shootDone = false, c_meleeDone 
 bool first = true;
 void TimerFunction(int value)
 {
-
 		if (!gameWon) {
+
+			
 
 
 			if (reloading2) {
@@ -769,13 +808,14 @@ void TimerFunction(int value)
 							myCharacter->y += MOVE_RATIO * sin(myCharacter->angle - RAD(90));
 						}
 						//Open doors wih 3 dynamites (pressing 'Q')
-						if (GetAsyncKeyState(TECLA_Q) && myCharacter->dynamiteFound == DYNAMITE_NEEDED) {
-							if (board->IsDoor(myCharacter->x  + MOVE_RATIO * cos(myCharacter->angle - RAD(90)), myCharacter->y  + MOVE_RATIO * sin(myCharacter->angle - RAD(90))))
+						if (GetAsyncKeyState(TECLA_Q) ) {
+							if (board->IsDoor(myCharacter->x  + MOVE_RATIO * cos(myCharacter->angle - RAD(90)), myCharacter->y  + MOVE_RATIO * sin(myCharacter->angle - RAD(90))) && numDynamite == DYNAMITE_NEEDED)
 							{
 								board->OpenDoor(myCharacter->x  + MOVE_RATIO * cos(myCharacter->angle - RAD(90)), myCharacter->y + MOVE_RATIO * sin(myCharacter->angle - RAD(90)));
 								gameWon = true;
-							}
+							}else if (board->IsDoor(myCharacter->x + MOVE_RATIO * cos(myCharacter->angle - RAD(90)), myCharacter->y + MOVE_RATIO * sin(myCharacter->angle - RAD(90))) && numDynamite != DYNAMITE_NEEDED) notEnoughCoolDown = NOT_ENOUGH;
 						}
+						
 					}
 					else {
 						if (board->IsOpen(myCharacter->x, myCharacter->y - FIX - MOVE_RATIO))
@@ -783,13 +823,14 @@ void TimerFunction(int value)
 							myCharacter->y -= MOVE_RATIO;
 						}
 						//Open doors wih 3 dynamites (pressing 'Q')
-						if (GetAsyncKeyState(TECLA_Q) && myCharacter->dynamiteFound == DYNAMITE_NEEDED) {
-							if (board->IsDoor(myCharacter->x, myCharacter->y - FIX - MOVE_RATIO))
+						if (GetAsyncKeyState(TECLA_Q)) {
+							if (board->IsDoor(myCharacter->x, myCharacter->y - FIX - MOVE_RATIO) && numDynamite == DYNAMITE_NEEDED)
 							{
 								board->OpenDoor(myCharacter->x, myCharacter->y - FIX - MOVE_RATIO);
 								gameWon = true;
-							}
+							}else if (board->IsDoor(myCharacter->x, myCharacter->y - FIX - MOVE_RATIO) && numDynamite != DYNAMITE_NEEDED) notEnoughCoolDown = NOT_ENOUGH;
 						}
+						
 					}
 
 				}
@@ -806,12 +847,13 @@ void TimerFunction(int value)
 							myCharacter->y += MOVE_RATIO * sin(myCharacter->angle + RAD(90));
 						}
 						//Open doors wih 3 dynamites (pressing 'Q')
-						if (GetAsyncKeyState(TECLA_Q) && myCharacter->dynamiteFound == DYNAMITE_NEEDED) {
-							if (board->IsDoor(myCharacter->x + MOVE_RATIO * cos(myCharacter->angle + RAD(90)), myCharacter->y +MOVE_RATIO * sin(myCharacter->angle + RAD(90))))
+						if (GetAsyncKeyState(TECLA_Q)) {
+							if (board->IsDoor(myCharacter->x + MOVE_RATIO * cos(myCharacter->angle + RAD(90)), myCharacter->y +MOVE_RATIO * sin(myCharacter->angle + RAD(90))) && numDynamite == DYNAMITE_NEEDED)
 							{
 								board->OpenDoor(myCharacter->x  + MOVE_RATIO * cos(myCharacter->angle + RAD(90)), myCharacter->y + MOVE_RATIO * sin(myCharacter->angle + RAD(90))); gameWon = true;
-							}
+							}else if (board->IsDoor(myCharacter->x + MOVE_RATIO * cos(myCharacter->angle + RAD(90)), myCharacter->y + MOVE_RATIO * sin(myCharacter->angle + RAD(90))) && numDynamite != DYNAMITE_NEEDED) notEnoughCoolDown = NOT_ENOUGH;
 						}
+						
 					}
 					else {
 						if (board->IsOpen(myCharacter->x, myCharacter->y + FIX + MOVE_RATIO))
@@ -819,12 +861,13 @@ void TimerFunction(int value)
 							myCharacter->y += MOVE_RATIO;
 						}
 						//Open doors wih 3 dynamites (pressing 'Q')
-						if (GetAsyncKeyState(TECLA_Q) && myCharacter->dynamiteFound == DYNAMITE_NEEDED) {
-							if (board->IsDoor(myCharacter->x, myCharacter->y + FIX + MOVE_RATIO))
+						if (GetAsyncKeyState(TECLA_Q)) {
+							if (board->IsDoor(myCharacter->x, myCharacter->y + FIX + MOVE_RATIO) && numDynamite == DYNAMITE_NEEDED)
 							{
 								board->OpenDoor(myCharacter->x, myCharacter->y + FIX + MOVE_RATIO); gameWon = true;
-							}
+							}else if (board->IsDoor(myCharacter->x, myCharacter->y + FIX + MOVE_RATIO) && numDynamite != DYNAMITE_NEEDED) notEnoughCoolDown = NOT_ENOUGH;
 						}
+						
 					}
 
 
@@ -843,24 +886,26 @@ void TimerFunction(int value)
 							myCharacter->y += MOVE_RATIO * sin(myCharacter->angle);
 						}
 
-						if (GetAsyncKeyState(TECLA_Q) && myCharacter->dynamiteFound == DYNAMITE_NEEDED) {//Open doors wih 3 dynamites (pressing 'Q')
-							if (board->IsDoor(myCharacter->x + MOVE_RATIO * cos(myCharacter->angle), myCharacter->y  + MOVE_RATIO * sin(myCharacter->angle)))
+						if (GetAsyncKeyState(TECLA_Q) ) {//Open doors wih 3 dynamites (pressing 'Q')
+							if (board->IsDoor(myCharacter->x + MOVE_RATIO * cos(myCharacter->angle), myCharacter->y  + MOVE_RATIO * sin(myCharacter->angle)) && numDynamite == DYNAMITE_NEEDED)
 							{
 								board->OpenDoor(myCharacter->x + MOVE_RATIO * cos(myCharacter->angle), myCharacter->y + MOVE_RATIO * sin(myCharacter->angle)); gameWon = true;
-							}
+							}else if (board->IsDoor(myCharacter->x + MOVE_RATIO * cos(myCharacter->angle), myCharacter->y + MOVE_RATIO * sin(myCharacter->angle)) && numDynamite != DYNAMITE_NEEDED) notEnoughCoolDown = NOT_ENOUGH;
 						}
+						
 					}
 					else { //3rd view or map
 						if (board->IsOpen(myCharacter->x + FIX + MOVE_RATIO, myCharacter->y))
 						{
 							myCharacter->x += MOVE_RATIO;
 						}
-						if (GetAsyncKeyState(TECLA_Q) && myCharacter->dynamiteFound == DYNAMITE_NEEDED) {//Open doors wih 3 dynamites (pressing 'Q')
-							if (board->IsDoor(myCharacter->x + FIX + MOVE_RATIO, myCharacter->y))
+						if (GetAsyncKeyState(TECLA_Q)) {//Open doors wih 3 dynamites (pressing 'Q')
+							if (board->IsDoor(myCharacter->x + FIX + MOVE_RATIO, myCharacter->y) && numDynamite == DYNAMITE_NEEDED)
 							{
 								board->OpenDoor(myCharacter->x + FIX + MOVE_RATIO, myCharacter->y); gameWon = true;
-							}
+							}else if (board->IsDoor(myCharacter->x + FIX + MOVE_RATIO, myCharacter->y) && numDynamite != DYNAMITE_NEEDED) notEnoughCoolDown = NOT_ENOUGH;
 						}
+						
 					}
 
 				}
@@ -877,14 +922,15 @@ void TimerFunction(int value)
 							myCharacter->y -= MOVE_RATIO * sin(myCharacter->angle);
 						}
 
-						if (GetAsyncKeyState(TECLA_Q) && myCharacter->dynamiteFound == DYNAMITE_NEEDED) {
+						if (GetAsyncKeyState(TECLA_Q) ) {
 
-							if (board->IsDoor(myCharacter->x  - MOVE_RATIO * cos(myCharacter->angle), myCharacter->y  - MOVE_RATIO * sin(myCharacter->angle)))
+							if (board->IsDoor(myCharacter->x  - MOVE_RATIO * cos(myCharacter->angle), myCharacter->y  - MOVE_RATIO * sin(myCharacter->angle)) && numDynamite == DYNAMITE_NEEDED)
 							{
 								board->OpenDoor(myCharacter->x  - MOVE_RATIO * cos(myCharacter->angle), myCharacter->y - MOVE_RATIO * sin(myCharacter->angle)); gameWon = true;
-							}
+							}else if (board->IsDoor(myCharacter->x - MOVE_RATIO * cos(myCharacter->angle), myCharacter->y - MOVE_RATIO * sin(myCharacter->angle)) && numDynamite != DYNAMITE_NEEDED) notEnoughCoolDown = NOT_ENOUGH;
 
 						}
+						
 					}
 					else {
 						if (board->IsOpen(myCharacter->x - FIX - MOVE_RATIO, myCharacter->y))
@@ -892,19 +938,22 @@ void TimerFunction(int value)
 							myCharacter->x -= MOVE_RATIO;
 						}
 
-						if (GetAsyncKeyState(TECLA_Q) && myCharacter->dynamiteFound == DYNAMITE_NEEDED) {
+						if (GetAsyncKeyState(TECLA_Q)) {
 
-							if (board->IsDoor(myCharacter->x - FIX - MOVE_RATIO, myCharacter->y))
+							if (board->IsDoor(myCharacter->x - FIX - MOVE_RATIO, myCharacter->y) && numDynamite == DYNAMITE_NEEDED)
 							{
 								board->OpenDoor(myCharacter->x - FIX - MOVE_RATIO, myCharacter->y); gameWon = true;
-							}
+							}else if (board->IsDoor(myCharacter->x - FIX - MOVE_RATIO, myCharacter->y) && numDynamite != DYNAMITE_NEEDED) notEnoughCoolDown = NOT_ENOUGH;
 
 						}
+						
 					}
 					//Open doors wih 3 dynamites (pressing 'Q')
 
 
 				}
+				
+				
 				if(ifs == 0)
 					myCharacter->Moving(false);
 				for (int i = 0; i < NUM_MONSTROS_RANDOM; i++)
@@ -953,19 +1002,20 @@ void TimerFunction(int value)
 
 				for (int i = 0; i < NUM_MONSTROS_RANDOM; i++) {
 					if (monstros[i]->shooting) {
-						if (board->IsOpen(monstros[i]->bullet->x, monstros[i]->bullet->y)) {
-							monstros[i]->updateShootingAngle(myCharacter->x, myCharacter->y);
-							monstros[i]->bullet->updateAngle(monstros[i]->shootingAngle);
-							monstros[i]->bullet->Move2();
-						}
+						if (monstros[i]->bullet != nullptr) {
+							if (board->IsOpen(monstros[i]->bullet->x, monstros[i]->bullet->y)) {
+								monstros[i]->updateShootingAngle(myCharacter->x, myCharacter->y);
+								monstros[i]->bullet->updateAngle(monstros[i]->shootingAngle);
+								monstros[i]->bullet->Move2();
+							}
 
-						if ((myCharacter->x <= monstros[i]->bullet->x + BULLET_SPEED*2.0 && myCharacter->x >= monstros[i]->bullet->x - BULLET_SPEED*2.0) && (myCharacter->y <= monstros[i]->bullet->y + BULLET_SPEED*2.0 && myCharacter->y >= monstros[i]->bullet->y - BULLET_SPEED*2.0)) {
-							monstros[i]->bullet->draw = false;
-							myCharacter->lives -= MONSTER_DAMAGE_SHOOT;
-						}
+							if ((myCharacter->x <= monstros[i]->bullet->x + BULLET_SPEED*2.0 && myCharacter->x >= monstros[i]->bullet->x - BULLET_SPEED*2.0) && (myCharacter->y <= monstros[i]->bullet->y + BULLET_SPEED*2.0 && myCharacter->y >= monstros[i]->bullet->y - BULLET_SPEED*2.0)) {
+								monstros[i]->bullet->draw = false;
+								myCharacter->lives -= MONSTER_DAMAGE_SHOOT;
+							}
 
+						}
 					}
-
 				}
 
 
@@ -1385,7 +1435,7 @@ int main(int argc, char **argv) {
 
 
 	//draw the level/floor...
-	glClearColor(.3, .3, .3, 1.0);
+	glClearColor(0.6f, 0.6, 0.6f, 1.0f);
 
 
 	//set up board
