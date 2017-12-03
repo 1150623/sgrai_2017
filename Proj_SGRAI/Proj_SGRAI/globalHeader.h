@@ -38,7 +38,8 @@
 //MAIN GLOBAL INFO
 #define TEXTURE_ON 1
 #define FULLSCREEN 0
-#define DEBBUG 0
+#define DEBBUG 1
+//int DEBBUG = 1;
 #define MOVE_RATIO 0.02
 #define DYNAMITE_NEEDED 3
 #define HIDE_MOUSE 1
@@ -46,12 +47,13 @@
 #define LAB_SIZE 31 //must be an odd number
 
 //TEXTURES INFO
-#define NUM_TEXTURES 2
+#define NUM_TEXTURES 3
 #define TEXTURE_FLOOR_1 "Texturas/FLOOR1_128_128.ppm" //FLOOR{Nr_IMAGE}_128_128.ppm
 #define TEXTURE_FLOOR_2 "Texturas/FLOOR2_128_128.ppm" //FLOOR{Nr_IMAGE}_128_128.ppm
 #define TEXTURE_FLOOR_3 "Texturas/FLOOR3_128_128.ppm" //FLOOR{Nr_IMAGE}_128_128.ppm
 #define TEXTURE_FLOOR_4 "Texturas/FLOOR4_128_128.ppm" //FLOOR{Nr_IMAGE}_128_128.ppm
 #define TEXTURE_WALL_1 "Texturas/WALL1_128_128.ppm"	//WALL{Nr_IMAGE}_128_128.ppm
+#define TEXTURE_START_IMAGE "Texturas/maze_initial_img.ppm"
 
 
 //CHARACTER
@@ -67,6 +69,7 @@
 #define CHARACTER_DAMAGE_MELEE 50
 #define CHARACTER_SHOOT_COOLDOWN_TIME 40
 #define CHARACTER_MELEE_COOLDOWN_TIME 75
+#define NEEDED_DYNAMITES 3
 
 //Monstros
 #define NUM_MONSTROS_RANDOM 20
@@ -81,12 +84,11 @@
 #define MONSTER_MELEE_DIST 0.5
 
 //Objetos
-
 #define BANDAGES 1
 #define BULLETS 2
 #define DYNAMITE 3
 
-#define NUM_DYNAMITES 1
+#define NUM_DYNAMITES NEEDED_DYNAMITES
 #define NUM_BANDAGES 6
 #define NUM_BULLETS 6
 

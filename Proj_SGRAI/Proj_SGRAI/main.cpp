@@ -22,12 +22,7 @@
 #define TECLA_DOWN VK_DOWN
 
 
-
-
-///////////////////////////
-#define FIX 0.5
-///////////////////////////
-
+GLuint textName[NUM_TEXTURES];
 //delays in game
 int start_timer;
 
@@ -253,6 +248,9 @@ void drawGameOverText()
 	glMatrixMode(GL_MODELVIEW);
 }
 
+int numBullets = NUM_BULLETS;
+int numDynamite = 0;
+
 void drawBulletsBar() {
 		glMatrixMode(GL_PROJECTION);
 		glPushMatrix();
@@ -279,12 +277,9 @@ void drawBulletsBar() {
 
 		glColor4f(0, 1, 0, 0.7);
 
-		//alterar aqui para numeros reais
-		int balas = 10;
-		int dinamites = 3;
 
 		std::string text_bullets = "Bullets: ";
-		text_bullets += std::to_string(balas);
+		text_bullets += std::to_string(numBullets);
 
 		glRasterPos2d(w / 2 + 0.01, (h / 2) + 0.03);
 		int textSize = text_bullets.length();
@@ -294,7 +289,7 @@ void drawBulletsBar() {
 		}
 
 		std::string text_dyn = "Dynamite: ";
-		text_dyn += std::to_string(dinamites);
+		text_dyn += std::to_string(numDynamite);
 
 		glRasterPos2d(w / 2 + 0.01, (h / 2) + 0.06);
 		int textSize2 = text_dyn.length();
@@ -316,15 +311,16 @@ void drawBulletsBar() {
 		glMatrixMode(GL_MODELVIEW);
 }
 
+
 typedef struct {
 	int sizeX, sizeY;
 	char *data;
-} PPMImage;
+} PPMImage2;
 
-extern "C" PPMImage *LoadPPM2(char * path) {
-	PPMImage* result = new PPMImage;
-	result->sizeX = 128;
-	result->sizeY = 128;
+extern "C" PPMImage2 *LoadPPM2(char * path) {
+	PPMImage2* result = new PPMImage2;
+	result->sizeX = 1024;
+	result->sizeY = 1024;
 	result->data = SAIL_load_image(path, &result->sizeX, &result->sizeY);
 
 	return result;
@@ -347,10 +343,16 @@ void drawStart()
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_COLOR_MATERIAL);
 
-	PPMImage *imagemPPM2;
-	imagemPPM2 = LoadPPM2("mazeimage.ppm");
+	PPMImage2 *imagemPPM;
+	imagemPPM = LoadPPM2(TEXTURE_START_IMAGE);
 	glBindTexture(GL_TEXTURE_2D, textName[2]);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imagemPPM2->sizeX, imagemPPM2->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, imagemPPM2->data);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imagemPPM->sizeX, imagemPPM->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, imagemPPM->data);
+
+
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
 	glBegin(GL_QUADS);
 	glColor4f(1, 0, 0, 0.7);
@@ -414,10 +416,13 @@ void RenderScene()
 					board_walls[(int)objects[i]->x][(int)objects[i]->y] = 0;
 
 					if (objects[i]->type == BANDAGES) {
-						myCharacter->lives = 100;
+						myCharacter->lives = NUM_LIVES;
 					}
 					else if (objects[i]->type == BULLETS) {
-
+						numBullets = NUM_BULLETS;
+					}
+					else if (objects[i]->type == DYNAMITE){
+						numDynamite++;
 					}
 				}
 			}
@@ -552,7 +557,7 @@ void printHelp() {
 	
 }
 
-GLuint textName[NUM_TEXTURES+1];
+
 
 //SET UP THE GAME
 void init(void)
@@ -738,8 +743,7 @@ void TimerFunction(int value)
 
 		}
 		//move up
-		if (GetAsyncKeyState(TECLA_W) && !GetAsyncKeyState(TECLA_S)
-			)
+		if (GetAsyncKeyState(TECLA_W) && !GetAsyncKeyState(TECLA_S))
 		{
 
 			if (view == VIEW_FIRST_PERSON) {
@@ -764,7 +768,7 @@ void TimerFunction(int value)
 			}
 
 		}
-		else
+
 			//move down
 			if (GetAsyncKeyState(TECLA_S) && !GetAsyncKeyState(TECLA_W))
 			{
@@ -797,6 +801,85 @@ void TimerFunction(int value)
 		for (int i = 0; i < NUM_MONSTROS_RANDOM; i++)
 			if (monstros[i]->killed == false && monstros[i]->patrol)
 				monstros[i]->MoveTo();
+
+
+
+		for (int i = 0; i < NUM_MONSTROS_RANDOM; i++) {
+			if (myCharacter->x <= monstros[i]->x + 0.5 && myCharacter->x >= monstros[i]->x - 0.5 && myCharacter->y <= monstros[i]->y + 0.5 && myCharacter->y >= monstros[i]->y - 0.5) {
+				if (monsterMelee_coolDownTime == 0) {
+					m_meleeDone = true;
+					myCharacter->lives -= MONSTER_DAMAGE_MELEE;
+				}
+				if (characterMelee_coolDownTime <= 0) {
+					c_meleeDone = true;
+					monstros[i]->lives -= CHARACTER_DAMAGE_MELEE;
+					if (monstros[i]->lives <= 0) {
+						monstros[i]->x = -5;
+						monstros[i]->killed = true;
+					}
+				}
+			}
+		}
+
+
+
+		if (c_bullet->shoot) { //if character shoot a bullet...
+			if (board->IsOpen(c_bullet->x, c_bullet->y))c_bullet->Move();
+			for (int i = 0; i < NUM_MONSTROS_RANDOM; i++) {
+				if (!monstros[i]->killed) {
+					if ((monstros[i]->x <= c_bullet->x + BULLET_SPEED && monstros[i]->x >= c_bullet->x - BULLET_SPEED) && (monstros[i]->y <= c_bullet->y + BULLET_SPEED && monstros[i]->y >= c_bullet->y - BULLET_SPEED)) {
+						monstros[i]->lives -= CHARACTER_DAMAGE_SHOOT;
+
+						if (monstros[i]->lives <= 0) {
+							monstros[i]->killed = true;
+							monstros[i]->x = -5;
+						}
+					}
+
+				}
+			}
+		}
+
+
+		for (int i = 0; i < NUM_MONSTROS_RANDOM; i++) {
+			if (monstros[i]->shooting) {
+				if (board->IsOpen(monstros[i]->bullet->x, monstros[i]->bullet->y)) {
+					monstros[i]->updateShootingAngle(myCharacter->x, myCharacter->y);
+					monstros[i]->bullet->updateAngle(monstros[i]->shootingAngle);
+					monstros[i]->bullet->Move2();
+				}
+
+				if ((myCharacter->x <= monstros[i]->bullet->x + BULLET_SPEED*2.0 && myCharacter->x >= monstros[i]->bullet->x - BULLET_SPEED*2.0) && (myCharacter->y <= monstros[i]->bullet->y + BULLET_SPEED*2.0 && myCharacter->y >= monstros[i]->bullet->y - BULLET_SPEED*2.0)) {
+					monstros[i]->bullet->draw = false;
+					myCharacter->lives -= MONSTER_DAMAGE_SHOOT;
+				}
+
+			}
+
+		}
+
+
+		int posValue = board->getBoardValue(myCharacter->y, myCharacter->x);
+
+		for (int i = 0; i < NUM_MONSTROS_RANDOM; i++) {
+			if (monstros[i]->startIndexMonster + BASE_INDEX_MONSTERS == posValue) {
+				switch (monstros[i]->alert(myCharacter->y, myCharacter->x)) {
+				case 1://melee aready done in timer
+					break;
+				case 2://shooting
+					monstros[i]->shooting = true;
+					monstros[i]->patrol = false;
+					if (monsterShoot_coolDownTime <= 0) {
+						monstros[i]->shoot(myCharacter->y, myCharacter->x);
+						monstros[i]->bullet->draw = true;
+						m_shootDone = true;
+					}
+					break;
+				}
+			}
+		}
+
+
 	}
 	//DEBBUG KEYS
 	if (DEBBUG) {
@@ -823,23 +906,7 @@ void TimerFunction(int value)
 		}
 	}
 
-	for (int i = 0; i < NUM_MONSTROS_RANDOM; i++) {
-		if (myCharacter->x <= monstros[i]->x +0.5 && myCharacter->x >= monstros[i]->x - 0.5 && myCharacter->y <= monstros[i]->y + 0.5 && myCharacter->y >= monstros[i]->y - 0.5) {
-			if (monsterMelee_coolDownTime == 0) {
-				m_meleeDone = true;
-				myCharacter->lives -= MONSTER_DAMAGE_MELEE;
-			}
-			if (characterMelee_coolDownTime <= 0) {
-				c_meleeDone = true;
-				monstros[i]->lives -= CHARACTER_DAMAGE_MELEE;
-				if (monstros[i]->lives <= 0) {
-					monstros[i]->x = -5;
-					monstros[i]->killed = true;
-				}
-			}
-		}
-	}
-
+	
 
 
 	//quit
@@ -849,61 +916,7 @@ void TimerFunction(int value)
 		exit(0);
 	}
 
-	if (c_bullet->shoot) { //if character shoot a bullet...
-		if (board->IsOpen(c_bullet->x, c_bullet->y))c_bullet->Move();
-			for (int i = 0; i < NUM_MONSTROS_RANDOM; i++) {
-				if (!monstros[i]->killed) {
-					if ((monstros[i]->x <= c_bullet->x + BULLET_SPEED && monstros[i]->x >= c_bullet->x - BULLET_SPEED) && (monstros[i]->y <= c_bullet->y + BULLET_SPEED && monstros[i]->y >= c_bullet->y - BULLET_SPEED)) {
-						monstros[i]->lives -= CHARACTER_DAMAGE_SHOOT;
-						
-							if (monstros[i]->lives <= 0) {
-								monstros[i]->killed = true;
-								monstros[i]->x = -5;
-							}
-						}
-					
-				}
-			}
-	}
 	
-
-	for (int i = 0; i < NUM_MONSTROS_RANDOM; i++) {
-		if (monstros[i]->shooting) {
-			if (board->IsOpen(monstros[i]->bullet->x, monstros[i]->bullet->y)) { 
-				monstros[i]->updateShootingAngle(myCharacter->x, myCharacter->y);
-				monstros[i]->bullet->updateAngle(monstros[i]->shootingAngle);
-				monstros[i]->bullet->Move2(); 
-			}
-
-			if ((myCharacter->x <= monstros[i]->bullet->x + BULLET_SPEED && myCharacter->x >= monstros[i]->bullet->x - BULLET_SPEED) && (myCharacter->y <= monstros[i]->bullet->y + BULLET_SPEED && myCharacter->y >= monstros[i]->bullet->y - BULLET_SPEED)) {
-				monstros[i]->bullet->draw = false;
-				myCharacter->lives -= MONSTER_DAMAGE_SHOOT;
-			}
-
-		}
-	
-	}
-
-
-	int posValue = board->getBoardValue(myCharacter->y, myCharacter->x);
-
-	for (int i = 0; i < NUM_MONSTROS_RANDOM; i++) {
-		if (monstros[i]->startIndexMonster + BASE_INDEX_MONSTERS == posValue) {
-			switch (monstros[i]->alert(myCharacter->y, myCharacter->x)) {
-			case 1://melee aready done in timer
-				break;
-			case 2://shooting
-				monstros[i]->shooting = true;
-				monstros[i]->patrol = false;
-				if (monsterShoot_coolDownTime <= 0) {
-					monstros[i]->shoot(myCharacter->y, myCharacter->x);
-					monstros[i]->bullet->draw = true;
-					m_shootDone = true;
-				}
-				break;
-			}
-		}
-	}
 
 	glutPostRedisplay();
 	glutTimerFunc(1, TimerFunction, 1);
@@ -959,7 +972,8 @@ void MouseMotion(int x, int y)
 
 void mouseClick(int button, int state, int x, int y)
 {
-	if (button == GLUT_LEFT_BUTTON && characterShoot_coolDownTime <= 0) {
+	if (button == GLUT_LEFT_BUTTON && characterShoot_coolDownTime <= 0 && numBullets > 0) {
+		numBullets--;
 		printf("SHOOT\n");
 		c_shootDone = true;
 		if (DEBBUG)printf("Vai entrar\n");

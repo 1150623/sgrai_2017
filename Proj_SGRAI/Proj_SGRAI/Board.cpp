@@ -64,19 +64,6 @@ Board::Board() {
 			}
 		}
 	}
-	if (DEBBUG) {
-		printf("\n       \t+---------------------------------------------------------------------------------------------------------------------------+");
-		for (int i = 0; i < LAB_SIZE; i++) {
-			printf("\n %d -> \t|", i);
-			for (int j = 0; j < LAB_SIZE; j++) {
-				if (board_walls[i][j] == START_POSITION_NUMBER || board_walls[i][j] == END_POSITION_NUMBER) {
-					printf("#%d#|", board_walls[i][j]);
-				}else
-				printf(" %d |", board_walls[i][j]);
-			}
-			printf("\n       \t+---------------------------------------------------------------------------------------------------------------------------+");
-		}
-	}
 	initAStarGenerator();
 }
 
@@ -562,10 +549,10 @@ void Board::GenerateRandoMonstersPositions(void)
 
 		board_walls[vectorTeste[SelectedPosition].linha][vectorTeste[SelectedPosition].coluna] = k + BASE_INDEX_MONSTERS;
 		vectorTeste.erase(vectorTeste.begin() + SelectedPosition);
-		ImprimeBoarder();
+		//ImprimeBoarder();
 	}
 
-	ImprimeBoarder();
+	//ImprimeBoarder();
 }
 
 //gera posições aleatorias no mapa
@@ -623,15 +610,7 @@ void Board::generateRandomObjectsPosition(int num) {
 		}
 
 	}
-	if (DEBBUG) {
-		printf("COM OBJETOS: \n");
-		for (int i = 0; i < Board::BOARD_X; i++) {
-			for (int j = 0; j < Board::BOARD_Y; j++) {
-				printf(" %2d ", board_walls[i][j]);
-			}
-			printf("\n");
-		}
-	}
+	ImprimeBoarder();
 }
 
 void Board::ImprimeBoarder(void) {
