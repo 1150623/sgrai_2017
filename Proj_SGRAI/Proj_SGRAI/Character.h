@@ -43,8 +43,12 @@ public:
 	void InitModelTerceicaPessoa();
 
 	void InitModelPrimeiraPessoa();
+	int seq;
+	int seqAtual;
 
-
+	void Reload(bool);
+	void Moving(bool);
+	void Shooting(bool);
 	void Reinit();				//reinitialize everything
 
 	void Draw(float, float,int);			//draw character

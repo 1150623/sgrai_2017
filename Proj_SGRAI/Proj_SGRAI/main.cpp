@@ -336,7 +336,11 @@ void drawBulletsBar() {
 		glMatrixMode(GL_MODELVIEW);
 }
 
+bool reloading2 = false;
+bool reloading = false;
 
+bool shootingAnimation = false;
+bool shootingAnimation2 = false;
 typedef struct {
 	int sizeX, sizeY;
 	char *data;
@@ -448,6 +452,9 @@ void RenderScene()
 						}
 						else if (objects[i]->type == BULLETS) {
 							numBullets = NUM_BULLETS;
+							myCharacter->Reload(true);
+							reloading = true;
+							reloading2 = true;
 						}
 						else if (objects[i]->type == DYNAMITE) {
 							numDynamite++;
@@ -455,7 +462,9 @@ void RenderScene()
 					}
 				}
 			}
-
+			if (!reloading) {
+				myCharacter->Reload(false);
+			}
 			for (int i = 0; i < nr_objets; i++) {
 				objects[i]->Draw();
 			}
@@ -625,7 +634,8 @@ void init(void)
 #define FIX 0.2
 int monsterShoot_coolDownTime = 0;
 int characterShoot_coolDownTime = 0;
-
+int characterShootingAnimation_coolDownTime = 0;
+int characterReload_coolDownTime = 0;
 int monsterMelee_coolDownTime = 0;
 int characterMelee_coolDownTime = 0;
 bool m_meleeDone = false, m_shootDone = false, c_shootDone = false, c_meleeDone =  false;
@@ -636,6 +646,32 @@ void TimerFunction(int value)
 		if (!gameWon) {
 
 
+			if (reloading2) {
+				characterReload_coolDownTime = 100;
+				reloading2 = false;
+			}
+
+			if (characterReload_coolDownTime > 0) {
+				characterReload_coolDownTime--;
+				
+			}
+			if (characterReload_coolDownTime <= 0) {
+				reloading = false;
+			}
+
+			if (shootingAnimation2) {
+				characterShootingAnimation_coolDownTime = 70;
+				shootingAnimation2 = false;
+			}
+
+			if (characterShootingAnimation_coolDownTime > 0) {
+				characterShootingAnimation_coolDownTime--;
+
+			}
+			if (characterShootingAnimation_coolDownTime <= 0) {
+				shootingAnimation = false;
+				myCharacter->Shooting(false);
+			}
 
 			//COOL DOWN TIMES FROM ATTACKS (Monsters + Character)
 			if (c_meleeDone) {
@@ -723,6 +759,7 @@ void TimerFunction(int value)
 				//move right
 				if (GetAsyncKeyState(TECLA_D) && !GetAsyncKeyState(TECLA_A))
 				{
+					myCharacter->Moving(true);
 					if (view == VIEW_FIRST_PERSON) {
 						if (board->IsOpen(myCharacter->x  + MOVE_RATIO * cos(myCharacter->angle - RAD(90)), myCharacter->y  + MOVE_RATIO * sin(myCharacter->angle - RAD(90))))
 						{
@@ -753,11 +790,12 @@ void TimerFunction(int value)
 						}
 					}
 
-				}
+				}else
 
 				//move left
 				if (GetAsyncKeyState(TECLA_A) && !GetAsyncKeyState(TECLA_D))
 				{
+					myCharacter->Moving(true);
 					if (view == VIEW_FIRST_PERSON) {
 						if (board->IsOpen(myCharacter->x  + MOVE_RATIO * cos(myCharacter->angle + RAD(90)), myCharacter->y + MOVE_RATIO * sin(myCharacter->angle + RAD(90))))
 						{
@@ -788,9 +826,11 @@ void TimerFunction(int value)
 
 
 				}
+				else
 				//move up
 				if (GetAsyncKeyState(TECLA_W) && !GetAsyncKeyState(TECLA_S))
 				{
+					myCharacter->Moving(true);
 
 					if (view == VIEW_FIRST_PERSON) {
 						if (board->IsOpen(myCharacter->x+ MOVE_RATIO * cos(myCharacter->angle), myCharacter->y + MOVE_RATIO * sin(myCharacter->angle)))
@@ -822,10 +862,11 @@ void TimerFunction(int value)
 
 
 				}
-
+				else
 				//move down
 				if (GetAsyncKeyState(TECLA_S) && !GetAsyncKeyState(TECLA_W))
 				{
+					myCharacter->Moving(true);
 					//printf(" S - DOWN - NEXTPOS = [x = %f][y = %f]\n", round(myCharacter->x + -MOVE_RATIO * cos(myCharacter->angle)-0.5), round(myCharacter->y + MOVE_RATIO * sin(myCharacter->angle)));
 					if (view == VIEW_FIRST_PERSON) {
 						if (board->IsOpen(myCharacter->x - MOVE_RATIO * cos(myCharacter->angle), myCharacter->y  - MOVE_RATIO * sin(myCharacter->angle)))
@@ -862,7 +903,8 @@ void TimerFunction(int value)
 
 
 				}
-
+				else
+					myCharacter->Moving(false);
 				for (int i = 0; i < NUM_MONSTROS_RANDOM; i++)
 					if (monstros[i]->killed == false && monstros[i]->patrol)
 						monstros[i]->MoveTo();
@@ -889,6 +931,7 @@ void TimerFunction(int value)
 
 
 				if (c_bullet->shoot) { //if character shoot a bullet...
+					
 					if (board->IsOpen(c_bullet->x, c_bullet->y))c_bullet->Move();
 					for (int i = 0; i < NUM_MONSTROS_RANDOM; i++) {
 						if (!monstros[i]->killed) {
@@ -1052,6 +1095,9 @@ void mouseClick(int button, int state, int x, int y)
 			float _pitch = camera->pitch;
 			c_bullet->setInitial(myCharacter->x, myCharacter->y, _yaw,_pitch);
 			c_bullet->shoot = true;
+			myCharacter->Shooting(true);
+			shootingAnimation = true;
+			shootingAnimation2 = true;
 			bulletConfig();
 		}
 

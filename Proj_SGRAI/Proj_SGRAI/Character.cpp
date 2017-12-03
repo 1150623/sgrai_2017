@@ -46,6 +46,31 @@ Character::Reinit(void)
 	animate = false;
 }
 
+bool firstDraw = true;
+bool firstDraw2 = true;
+
+void Character::Reload(bool reload) {
+	
+		reload? weapon.SetSequence(1)
+					: weapon.SetSequence(seq);
+}
+
+void Character::Shooting(bool shooting) {
+
+	shooting ? weapon.SetSequence(4)
+		: weapon.SetSequence(seq);
+}
+
+void Character::Moving(bool move) {
+
+	int newSeq;
+
+	move ? newSeq = 3: newSeq = 1;
+
+	if (newSeq != model.GetSequence()) {
+		model.SetSequence(newSeq);
+	}
+}
 
 void
 Character::Draw(float pitch, float yaw, int view)
@@ -61,7 +86,16 @@ Character::Draw(float pitch, float yaw, int view)
 
 				glScalef(SCALE_PLAYER + 0.01, SCALE_PLAYER + 0.01, SCALE_PLAYER + 0.01);
 				mdlviewer_display(weapon);
-				mdlviewer_nextsequence;
+				if (firstDraw) {
+					seq = weapon.GetSequence();
+					seqAtual = seq;
+					firstDraw = false;
+					model.SetSequence(3);
+				}
+				else {
+					weapon.AdvanceFrame(0.01);
+				}
+
 			}glPopMatrix();
 	}
 	else {
@@ -74,8 +108,11 @@ Character::Draw(float pitch, float yaw, int view)
 			glRotatef(GRAUS(yaw), 0, 0, 1);
 			glScalef(SCALE_PLAYER + 0.01, SCALE_PLAYER + 0.01, SCALE_PLAYER + 0.01);
 			mdlviewer_display(model);
-			model.AdvanceFrame(0.01);
-			
+			model.AdvanceFrame(0.001);
+			if (firstDraw2) {
+				model.SetSequence(3);
+				firstDraw2 = false;
+			}
 		}
 		glPopMatrix();
 
