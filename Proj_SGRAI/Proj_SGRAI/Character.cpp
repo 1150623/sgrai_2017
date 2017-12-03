@@ -12,9 +12,9 @@ Character::Character(double tx, double ty, float size, Board b)
 	Character::size = size;
 	lives = NUM_LIVES;
 	retrys = NUM_RETRYS;
-	x = tx + 0.5;
+	x = tx + 1;
 	startX = x;
-	y = ty + 0.5;
+	y = ty - 0.5;
 	startY = y;
 	angle = CHAR_ANGLE;
 	speed = CHAR_SPEED;
@@ -25,26 +25,20 @@ Character::Character(double tx, double ty, float size, Board b)
 void
 Character::Reinit(void)
 {
-	x = CHARACTER_STARTLOCATION_X;
-	y = CHARACTER_STARTLOCATION_Y;
+	x = startX;
+	y = startY;
 	angle = CHAR_ANGLE;
 	retrys--;
 	lives = NUM_LIVES;
 	animate = false;
 }
 
-void
-Character::MoveTo(int xF, int yF)
-{
-	AStar::CoordList coords = board.getPath(x, y, xF, yF);
-	
-}
 
 void
 Character::Draw(float pitch, float yaw, int view)
 {
 	//draw Weapon
-	if (view == VIEW_FIRST_PERSON) {
+	if (true/*view == VIEW_FIRST_PERSON*/) {
 		//Codigo para a mira Aqui
 			glPushMatrix(); {
 				glTranslatef(Character::x, Character::y, 0.45);
