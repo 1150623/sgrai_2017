@@ -876,11 +876,11 @@ void TimerFunction(int value)
 						}
 						//Open doors wih 3 dynamites (pressing 'Q')
 						if (GetAsyncKeyState(TECLA_Q) ) {
-							if (board->IsDoor(myCharacter->x  + MOVE_RATIO * cos(myCharacter->angle - RAD(90)), myCharacter->y  + MOVE_RATIO * sin(myCharacter->angle - RAD(90))) && numDynamite == DYNAMITE_NEEDED)
+							if (board->IsDoor(myCharacter->x  + MOVE_RATIO * cos(myCharacter->angle - RAD(90)), myCharacter->y  + MOVE_RATIO * sin(myCharacter->angle - RAD(90))) && numDynamite >= DYNAMITE_NEEDED)
 							{
 								board->OpenDoor(myCharacter->x  + MOVE_RATIO * cos(myCharacter->angle - RAD(90)), myCharacter->y + MOVE_RATIO * sin(myCharacter->angle - RAD(90)));
 								gameWon = true;
-							}else if (board->IsDoor(myCharacter->x + MOVE_RATIO * cos(myCharacter->angle - RAD(90)), myCharacter->y + MOVE_RATIO * sin(myCharacter->angle - RAD(90))) && numDynamite != DYNAMITE_NEEDED) notEnoughCoolDown = NOT_ENOUGH;
+							}else if (board->IsDoor(myCharacter->x + MOVE_RATIO * cos(myCharacter->angle - RAD(90)), myCharacter->y + MOVE_RATIO * sin(myCharacter->angle - RAD(90))) && numDynamite < DYNAMITE_NEEDED) notEnoughCoolDown = NOT_ENOUGH;
 						}
 						
 					}
@@ -891,11 +891,11 @@ void TimerFunction(int value)
 						}
 						//Open doors wih 3 dynamites (pressing 'Q')
 						if (GetAsyncKeyState(TECLA_Q)) {
-							if (board->IsDoor(myCharacter->x, myCharacter->y - FIX - MOVE_RATIO) && numDynamite == DYNAMITE_NEEDED)
+							if (board->IsDoor(myCharacter->x, myCharacter->y - FIX - MOVE_RATIO) && numDynamite >= DYNAMITE_NEEDED)
 							{
 								board->OpenDoor(myCharacter->x, myCharacter->y - FIX - MOVE_RATIO);
 								gameWon = true;
-							}else if (board->IsDoor(myCharacter->x, myCharacter->y - FIX - MOVE_RATIO) && numDynamite != DYNAMITE_NEEDED) notEnoughCoolDown = NOT_ENOUGH;
+							}else if (board->IsDoor(myCharacter->x, myCharacter->y - FIX - MOVE_RATIO) && numDynamite < DYNAMITE_NEEDED) notEnoughCoolDown = NOT_ENOUGH;
 						}
 						
 					}
@@ -915,10 +915,10 @@ void TimerFunction(int value)
 						}
 						//Open doors wih 3 dynamites (pressing 'Q')
 						if (GetAsyncKeyState(TECLA_Q)) {
-							if (board->IsDoor(myCharacter->x + MOVE_RATIO * cos(myCharacter->angle + RAD(90)), myCharacter->y +MOVE_RATIO * sin(myCharacter->angle + RAD(90))) && numDynamite == DYNAMITE_NEEDED)
+							if (board->IsDoor(myCharacter->x + MOVE_RATIO * cos(myCharacter->angle + RAD(90)), myCharacter->y +MOVE_RATIO * sin(myCharacter->angle + RAD(90))) && numDynamite >= DYNAMITE_NEEDED)
 							{
 								board->OpenDoor(myCharacter->x  + MOVE_RATIO * cos(myCharacter->angle + RAD(90)), myCharacter->y + MOVE_RATIO * sin(myCharacter->angle + RAD(90))); gameWon = true;
-							}else if (board->IsDoor(myCharacter->x + MOVE_RATIO * cos(myCharacter->angle + RAD(90)), myCharacter->y + MOVE_RATIO * sin(myCharacter->angle + RAD(90))) && numDynamite != DYNAMITE_NEEDED) notEnoughCoolDown = NOT_ENOUGH;
+							}else if (board->IsDoor(myCharacter->x + MOVE_RATIO * cos(myCharacter->angle + RAD(90)), myCharacter->y + MOVE_RATIO * sin(myCharacter->angle + RAD(90))) && numDynamite < DYNAMITE_NEEDED) notEnoughCoolDown = NOT_ENOUGH;
 						}
 						
 					}
@@ -929,10 +929,10 @@ void TimerFunction(int value)
 						}
 						//Open doors wih 3 dynamites (pressing 'Q')
 						if (GetAsyncKeyState(TECLA_Q)) {
-							if (board->IsDoor(myCharacter->x, myCharacter->y + FIX + MOVE_RATIO) && numDynamite == DYNAMITE_NEEDED)
+							if (board->IsDoor(myCharacter->x, myCharacter->y + FIX + MOVE_RATIO) && numDynamite >= DYNAMITE_NEEDED)
 							{
 								board->OpenDoor(myCharacter->x, myCharacter->y + FIX + MOVE_RATIO); gameWon = true;
-							}else if (board->IsDoor(myCharacter->x, myCharacter->y + FIX + MOVE_RATIO) && numDynamite != DYNAMITE_NEEDED) notEnoughCoolDown = NOT_ENOUGH;
+							}else if (board->IsDoor(myCharacter->x, myCharacter->y + FIX + MOVE_RATIO) && numDynamite < DYNAMITE_NEEDED) notEnoughCoolDown = NOT_ENOUGH;
 						}
 						
 					}
@@ -954,10 +954,10 @@ void TimerFunction(int value)
 						}
 
 						if (GetAsyncKeyState(TECLA_Q) ) {//Open doors wih 3 dynamites (pressing 'Q')
-							if (board->IsDoor(myCharacter->x + MOVE_RATIO * cos(myCharacter->angle), myCharacter->y  + MOVE_RATIO * sin(myCharacter->angle)) && numDynamite == DYNAMITE_NEEDED)
+							if (board->IsDoor(myCharacter->x + MOVE_RATIO * cos(myCharacter->angle), myCharacter->y  + MOVE_RATIO * sin(myCharacter->angle)) && numDynamite >= DYNAMITE_NEEDED)
 							{
 								board->OpenDoor(myCharacter->x + MOVE_RATIO * cos(myCharacter->angle), myCharacter->y + MOVE_RATIO * sin(myCharacter->angle)); gameWon = true;
-							}else if (board->IsDoor(myCharacter->x + MOVE_RATIO * cos(myCharacter->angle), myCharacter->y + MOVE_RATIO * sin(myCharacter->angle)) && numDynamite != DYNAMITE_NEEDED) notEnoughCoolDown = NOT_ENOUGH;
+							}else if (board->IsDoor(myCharacter->x + MOVE_RATIO * cos(myCharacter->angle), myCharacter->y + MOVE_RATIO * sin(myCharacter->angle)) && numDynamite < DYNAMITE_NEEDED) notEnoughCoolDown = NOT_ENOUGH;
 						}
 						
 					}
@@ -967,10 +967,10 @@ void TimerFunction(int value)
 							myCharacter->x += MOVE_RATIO;
 						}
 						if (GetAsyncKeyState(TECLA_Q)) {//Open doors wih 3 dynamites (pressing 'Q')
-							if (board->IsDoor(myCharacter->x + FIX + MOVE_RATIO, myCharacter->y) && numDynamite == DYNAMITE_NEEDED)
+							if (board->IsDoor(myCharacter->x + FIX + MOVE_RATIO, myCharacter->y) && numDynamite >= DYNAMITE_NEEDED)
 							{
 								board->OpenDoor(myCharacter->x + FIX + MOVE_RATIO, myCharacter->y); gameWon = true;
-							}else if (board->IsDoor(myCharacter->x + FIX + MOVE_RATIO, myCharacter->y) && numDynamite != DYNAMITE_NEEDED) notEnoughCoolDown = NOT_ENOUGH;
+							}else if (board->IsDoor(myCharacter->x + FIX + MOVE_RATIO, myCharacter->y) && numDynamite < DYNAMITE_NEEDED) notEnoughCoolDown = NOT_ENOUGH;
 						}
 						
 					}
@@ -991,10 +991,10 @@ void TimerFunction(int value)
 
 						if (GetAsyncKeyState(TECLA_Q) ) {
 
-							if (board->IsDoor(myCharacter->x  - MOVE_RATIO * cos(myCharacter->angle), myCharacter->y  - MOVE_RATIO * sin(myCharacter->angle)) && numDynamite == DYNAMITE_NEEDED)
+							if (board->IsDoor(myCharacter->x  - MOVE_RATIO * cos(myCharacter->angle), myCharacter->y  - MOVE_RATIO * sin(myCharacter->angle)) && numDynamite >= DYNAMITE_NEEDED)
 							{
 								board->OpenDoor(myCharacter->x  - MOVE_RATIO * cos(myCharacter->angle), myCharacter->y - MOVE_RATIO * sin(myCharacter->angle)); gameWon = true;
-							}else if (board->IsDoor(myCharacter->x - MOVE_RATIO * cos(myCharacter->angle), myCharacter->y - MOVE_RATIO * sin(myCharacter->angle)) && numDynamite != DYNAMITE_NEEDED) notEnoughCoolDown = NOT_ENOUGH;
+							}else if (board->IsDoor(myCharacter->x - MOVE_RATIO * cos(myCharacter->angle), myCharacter->y - MOVE_RATIO * sin(myCharacter->angle)) && numDynamite < DYNAMITE_NEEDED) notEnoughCoolDown = NOT_ENOUGH;
 
 						}
 						
@@ -1007,10 +1007,10 @@ void TimerFunction(int value)
 
 						if (GetAsyncKeyState(TECLA_Q)) {
 
-							if (board->IsDoor(myCharacter->x - FIX - MOVE_RATIO, myCharacter->y) && numDynamite == DYNAMITE_NEEDED)
+							if (board->IsDoor(myCharacter->x - FIX - MOVE_RATIO, myCharacter->y) && numDynamite >= DYNAMITE_NEEDED)
 							{
 								board->OpenDoor(myCharacter->x - FIX - MOVE_RATIO, myCharacter->y); gameWon = true;
-							}else if (board->IsDoor(myCharacter->x - FIX - MOVE_RATIO, myCharacter->y) && numDynamite != DYNAMITE_NEEDED) notEnoughCoolDown = NOT_ENOUGH;
+							}else if (board->IsDoor(myCharacter->x - FIX - MOVE_RATIO, myCharacter->y) && numDynamite < DYNAMITE_NEEDED) notEnoughCoolDown = NOT_ENOUGH;
 
 						}
 						

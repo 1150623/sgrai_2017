@@ -37,8 +37,8 @@
 
 //MAIN GLOBAL INFO
 #define TEXTURE_ON 1
-#define FULLSCREEN 1
-#define DEBBUG 1
+#define FULLSCREEN 0
+#define DEBBUG 0
 //int DEBBUG = 1;
 #define MOVE_RATIO 0.02
 #define DYNAMITE_NEEDED 3
@@ -94,7 +94,7 @@
 #define NUM_BULLETS 6
 
 //Camera
-#define VELOCIDADE_ROTACAO	0.01
+#define VELOCIDADE_ROTACAO	0.005
 #define VIEW_FIRST_PERSON	3
 #define VIEW_THIRD_PERSON	0
 #define VIEW_MAP	1
